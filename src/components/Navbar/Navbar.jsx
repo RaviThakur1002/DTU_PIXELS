@@ -1,6 +1,6 @@
 import React from 'react'
 import { Menu, X, ChevronDown, ChevronRight } from 'lucide-react'
-import authService from '../../firbase/auth/auth'
+import authService from '../../firebase/auth/auth'
 
 const menuItems = [
   {
