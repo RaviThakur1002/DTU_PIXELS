@@ -1,26 +1,27 @@
 import React, { useState, useEffect } from "react";
 import Images from "./Images";
 import Pagination from "./Pagination";
+import { useLoaderData } from "react-router-dom";
 const Gallery = () => {
-  const [imageData, setImageData] = useState([]);
+  // const [imageData, setImageData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [postPerPage, setPostPerPage] = useState(10);
   
-
-  useEffect(() => {
-    fetch("https://api.unsplash.com/photos/random?count=30", {
-      headers: {
-        Authorization: "Client-ID r44OcdTVIj6wgDTdHRXB3nW-kfWDYxT6Y1f__CYhzME",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setImageData(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching image data:", error);
-      });
-  }, []);
+  const imageData = useLoaderData()
+  // useEffect(() => {
+  //   fetch("https://api.unsplash.com/photos/random?count=30", {
+  //     headers: {
+  //       Authorization: "Client-ID r44OcdTVIj6wgDTdHRXB3nW-kfWDYxT6Y1f__CYhzME",
+  //     },
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setImageData(data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching image data:", error);
+  //     });
+  // }, []);
 
     const lastPostIndex = currentPage* postPerPage;
     const firstPostIndex = lastPostIndex- postPerPage;
