@@ -131,7 +131,7 @@ const Images = ({ imageData }) => {
               </button>
             </div>
             <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-4 transition-opacity duration-300">
-              <h2 className="text-2xl font-bold">User {imageData[currentIndex].user.id}</h2>
+              <h2 className="text-2xl font-bold">{imageData[currentIndex].user.name}</h2>
             </div>
             <button 
               className="absolute top-2 right-2 text-white text-xl bg-black bg-opacity-50 w-8 h-8 rounded-full flex items-center justify-center hover:bg-opacity-75 transition-opacity duration-300"
