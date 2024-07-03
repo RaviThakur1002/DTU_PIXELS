@@ -1,28 +1,39 @@
+import {useState, useEffect} from 'react'
 import React from 'react'
-import { Menu, X, ChevronDown, ChevronRight } from 'lucide-react'
+import { Menu, X, ChevronDown, ChevronRight, ChevronLeft } from 'lucide-react'
 import authService from '../../firebase/auth/auth'
+import { Link, NavLink } from 'react-router-dom'
 
 const menuItems = [
   {
     name: 'Home',
-    href: '#',
+    href: '/',
   },
   {
-    name: 'About',
-    href: '#',
+    name: 'Gallery',
+    href: 'gallery',
   },
   {
-    name: 'Contact',
-    href: '#',
+    name: 'Contest',
+    href: 'contest',
   },
 ]
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false)
-
+  const [user, setUser] = useState(null)
+ 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }
+
+  useEffect(() => {
+    const unsubscribe = authService.auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
+    });
+    
+    return () => unsubscribe();
+  }, []);
 
   return (
     <div className="relative w-full bg-white">
@@ -47,41 +58,56 @@ const Navbar = () => {
         <div className="hidden grow items-start lg:flex">
           <ul className="ml-12 inline-flex space-x-8">
             {menuItems.map((item) => (
-              <li key={item.name}>
-                <a
-                  href={item.href}
-                  className="inline-flex items-center text-sm font-semibold text-gray-800 hover:text-gray-900"
+              <li key={item.name} className="relative group">
+                <NavLink
+                  to={item.href}
+                  className={ ({ isActive })=>`inline-flex items-center text-md font-semibold  ${isActive ? "text-blue-600": "text-gray-800"} hover:text-blue-600 py-2` }
                 >
-                  {item.name}
+                  <span className='relative'>
+                    {item.name}
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
+                  </span>
                   <span>
                     <ChevronDown className="ml-2 h-4 w-4" />
                   </span>
-                </a>
+                </NavLink>
+                
               </li>
             ))}
           </ul>
         </div>
         <div className="hidden space-x-2 lg:block">
-          <button
-            type="button"
-            className="rounded-md bg-transparent px-3 py-2 text-sm font-semibold text-black hover:bg-black/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-            onClick={authService.googleSignIn}
-          >
-            Sign In
-          </button>
-          <button
-            type="button"
-            className="rounded-md border border-black px-3 py-2 text-sm font-semibold text-black shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-          >
-            Log In
-          </button>
+          {
+            user ?
+            (
+              <div className='flex justify-center gap-6'>
+                <img className='rounded-full w-10 h-10' src={user.photoURL}/>
+                <button onClick={authService.signOutUser} className='px-3 py-2text-gray-600 border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300'>
+                  Sign Out
+                </button>
+              </div>
+            ):(
+              <button 
+                className="flex items-center justify-center px-3 py-2 bg-white text-gray-600 border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300"
+                onClick={authService.googleSignIn}
+              >
+                <svg className="w-4 h-5 mr-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M23.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                  <path d="M13 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M6.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                  <path d="M13 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                Login with Google 
+              </button>
+            )
+          }
         </div>
         <div className="lg:hidden">
           <Menu onClick={toggleMenu} className="h-6 w-6 cursor-pointer" />
         </div>
 
         {isMenuOpen && (
-          <div className="absolute inset-x-0 top-0 z-50 origin-top-right transform p-2 transition lg:hidden">
+          <div className="absolute right-2 top-8 z-50 origin-top-right p-2 transition lg:hidden">
             <div className="divide-y-2 divide-gray-50 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
               <div className="px-5 pb-6 pt-5">
                 <div className="flex items-center justify-between">
@@ -114,37 +140,46 @@ const Navbar = () => {
                   </div>
                 </div>
                 <div className="mt-6">
-                  <nav className="grid gap-y-4">
+                  <nav className="grid gap-y-1">
                     {menuItems.map((item) => (
-                      <a
+                      <NavLink
                         key={item.name}
-                        href={item.href}
-                        className="-m-3 flex items-center rounded-md p-3 text-sm font-semibold hover:bg-gray-50"
+                        to={item.href}
+                        className="m-1 rounded-md p-3 hover:text-blue-600 text-md text-gray-900 font-semibold hover:bg-gray-50"
                       >
-                        <span className="ml-3 text-base font-medium text-gray-900">
-                          {item.name}
+                        <span className="mr-3 flex justify-end align-middle ">
+                          <ChevronLeft className="m-auto mr-2 h-4 w-4" />{item.name}
                         </span>
-                        <span>
-                          <ChevronRight className="ml-3 h-4 w-4" />
-                        </span>
-                      </a>
+                        
+                      </NavLink>
                     ))}
                   </nav>
                 </div>
                 <div className="mt-2 space-y-2">
-                  <button
-                    type="button"
-                    className="w-full rounded-md border border-black px-3 py-2 text-sm font-semibold text-black shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-                    onClick={authService.googleSignIn}
-                  >
-                    Sign In
-                  </button>
-                  <button
-                    type="button"
-                    className="w-full rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-                  >
-                    Log In
-                  </button>
+                  {
+                    user ?
+                    (
+                      <div className='flex justify-center gap-6'>
+                        <img className='rounded-full w-10 h-10' src={user.photoURL}/>
+                        <button onClick={authService.signOutUser} className='px-3 py-2text-gray-600 border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300'>
+                          Sign Out
+                        </button>
+                      </div>
+                    ):(
+                      <button 
+                        className="flex items-center justify-center px-3 py-2 bg-white text-gray-600 border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300"
+                        onClick={authService.googleSignIn}
+                      >
+                        <svg className="w-4 h-5 mr-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M23.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                          <path d="M13 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                          <path d="M6.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                          <path d="M13 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                        Login with Google 
+                      </button>
+                    )
+                  }
                 </div>
               </div>
             </div>
