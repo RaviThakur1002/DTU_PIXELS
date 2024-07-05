@@ -53,7 +53,7 @@ const Navbar = () => {
               />
             </svg>
           </span>
-          <span className="font-bold">DTU PIXELS</span>
+          <NavLink to={"/"}><span className="font-bold">DTU PIXELS</span></NavLink>
         </div>
         <div className="hidden grow items-start lg:flex">
           <ul className="ml-12 inline-flex space-x-8">
