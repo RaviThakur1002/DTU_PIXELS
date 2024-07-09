@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import imageOps from '../../../firebase/imageOps/imageOps';
 
+const styles = `
+  @keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+  @keyframes slideOut {
+    from { transform: translateX(0); }
+    to { transform: translateX(100%); }
+  }
+`;
+
 const UploadComponent = ({ onUploadComplete }) => {
   const [previewImage, setPreviewImage] = useState(null);
   const [uploadFile, setUploadFile] = useState(null);
@@ -56,20 +67,42 @@ const UploadComponent = ({ onUploadComplete }) => {
     }
   };
 
+  const handleCancel = () => {
+    setPreviewImage(null);
+    setUploadFile(null);
+    setMessage('Upload cancelled.');
+    setMessageType('info');
+    setTimeout(() => {
+      setMessage('');
+      setMessageType('');
+    }, 3000);
+  };
+
   return (
     <div className="mb-4 flex flex-col items-center">
+      <style>{styles}</style>
+      
       {message && (
-        <div className={`mb-4 p-3 rounded-lg w-64 ${
-          messageType === 'success' 
-            ? 'bg-gradient-to-r from-green-400 to-green-600 text-white' 
-            : 'bg-gradient-to-r from-red-400 to-red-600 text-white'
-        } border border-solid ${
-          messageType === 'success' ? 'border-green-300' : 'border-red-300'
-        } text-center transition-all duration-300 animate-fade-in-down shadow-md`}>
+        <div 
+          className={`fixed top-4 right-0 mb-4 p-3 rounded-l-lg w-64 ${
+            messageType === 'success' 
+              ? 'bg-gradient-to-r from-green-400 to-green-600 text-white' 
+              : messageType === 'error'
+              ? 'bg-gradient-to-r from-red-400 to-red-600 text-white'
+              : 'bg-gradient-to-r from-blue-400 to-blue-600 text-white'
+          } border border-solid ${
+            messageType === 'success' ? 'border-green-300' : 
+            messageType === 'error' ? 'border-red-300' : 'border-blue-300'
+          } text-center transition-all duration-300 ease-in-out transform translate-x-0 shadow-md z-50`}
+          style={{
+            animation: `${message ? 'slideIn' : 'slideOut'} 0.3s ease-in-out forwards`
+          }}
+        >
           <p className="font-semibold">{message}</p>
         </div>
       )}
-      <label className="w-64 mb-4 cursor-pointer bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 text-center font-semibold border-2 border-blue-400">
+
+      <label className="w-64 mb-4 cursor-pointer bg-indigo-600 text-white py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 text-center font-semibold border-2 border-indigo-400 hover:bg-indigo-700">
         Choose File
         <input type="file" onChange={handleFileChange} accept="image/*" className="hidden" />
       </label>
@@ -77,12 +110,20 @@ const UploadComponent = ({ onUploadComplete }) => {
         <div className="mt-2 flex flex-col items-center">
           <img src={previewImage} alt="Preview" className="max-w-sm w-full rounded-lg shadow-lg mb-4" />
           {!isUploading && (
-            <button 
-              onClick={handleUpload}
-              className="bg-gradient-to-r from-green-400 to-green-600 text-white py-3 px-8 rounded-full hover:from-green-500 hover:to-green-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 shadow-lg hover:shadow-xl font-bold text-lg"
-            >
-              Upload Image
-            </button>
+            <div className="flex space-x-4">
+              <button 
+                onClick={handleUpload}
+                className="bg-emerald-500 text-white py-3 px-8 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-50 shadow-lg hover:shadow-xl font-bold text-lg hover:bg-emerald-600"
+              >
+                Upload Image
+              </button>
+              <button 
+                onClick={handleCancel}
+                className="bg-amber-500 text-white py-3 px-8 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-opacity-50 shadow-lg hover:shadow-xl font-bold text-lg hover:bg-amber-600"
+              >
+                Cancel
+              </button>
+            </div>
           )}
         </div>
       )}
@@ -90,7 +131,7 @@ const UploadComponent = ({ onUploadComplete }) => {
         <div className="w-64 mt-4">
           <div className="bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 overflow-hidden">
             <div 
-              className="bg-gradient-to-r from-blue-400 to-blue-600 h-2.5 rounded-full transition-all duration-300 ease-out"
+              className="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-out"
               style={{ width: `${uploadProgress}%` }}
             ></div>
           </div>
