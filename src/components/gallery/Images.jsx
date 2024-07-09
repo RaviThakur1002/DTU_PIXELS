@@ -104,18 +104,20 @@ const Images = ({ imageData }) => {
       {isPopupOpen && (
         <div 
           ref={popupRef}
-          className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-filter backdrop-blur-sm transition-opacity duration-300 ${popupVisible ? 'opacity-100' : 'opacity-0'}`}
+          className={`fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 backdrop-filter backdrop-blur-sm transition-opacity duration-300 ${popupVisible ? 'opacity-100' : 'opacity-0'}`}
           onClick={closePopup}
         >
           <div 
             className="relative max-w-4xl max-h-[90vh] overflow-hidden rounded-lg transition-transform duration-300 transform ${popupVisible ? 'scale-100' : 'scale-95'}"
             onClick={(e) => e.stopPropagation()}
           >
-            <img
-              src={imageData[currentIndex].urls.regular}
-              alt={`Image ${currentIndex + 1}`}
-              className="w-full h-auto"
-            />
+            <div className="flex items-center justify-center w-full h-full">
+              <img
+                src={imageData[currentIndex].urls.regular}
+                alt={`Image ${currentIndex + 1}`}
+                className="max-w-full max-h-[70vh] object-contain"
+              />
+            </div>
             <div className="absolute inset-0 flex items-center justify-between">
               <button
                 className="bg-black bg-opacity-50 text-white p-2 rounded-full m-4 hover:bg-opacity-75 transition-opacity duration-300"
@@ -130,10 +132,9 @@ const Images = ({ imageData }) => {
                 &#10095;
               </button>
             </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-4 transition-opacity duration-300">
-              <h2 className="text-2xl font-bold">{imageData[currentIndex].user.name}</h2>
-            </div>
-            <button 
+            <div className="absolute bottom-0 left-0 right-0 block bg-opacity-50 text-black p-4 transition-opacity duration-300">
+              <h2 className="bg-white backdrop-filter backdrop-blur-lg bg-opacity-30 rounded-tl-3xl rounded-br-3xl p-2 w-fit text-2xl font-bold">{imageData[currentIndex].user.name}</h2>
+            </div>            <button 
               className="absolute top-2 right-2 text-white text-xl bg-black bg-opacity-50 w-8 h-8 rounded-full flex items-center justify-center hover:bg-opacity-75 transition-opacity duration-300"
               onClick={closePopup}
             >
