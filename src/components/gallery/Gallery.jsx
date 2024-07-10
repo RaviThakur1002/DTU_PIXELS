@@ -4,7 +4,7 @@ import Pagination from "./Pagination";
 import { getDatabase, ref, query, orderByChild, limitToLast, onValue } from "firebase/database";
 import app from "../../config/conf.js";
 
-const Gallery = () => {
+const Gallery = ({userName = "/////"}) => {
   const [imageData, setImageData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const postPerPage = 10;
@@ -17,7 +17,12 @@ const Gallery = () => {
     const unsubscribe = onValue(recentImagesQuery, (snapshot) => {
       const images = [];
       snapshot.forEach((childSnapshot) => {
-        images.push({
+        console.log(childSnapshot.val());
+        if(childSnapshot.val().user.name === userName)images.push({
+          id: childSnapshot.key,
+          ...childSnapshot.val()
+        });
+        else if(userName === "/////")images.push({
           id: childSnapshot.key,
           ...childSnapshot.val()
         });
