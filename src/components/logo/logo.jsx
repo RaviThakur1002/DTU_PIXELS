@@ -1,149 +1,66 @@
-import React, { useEffect, useRef } from 'react';
-import styled, { keyframes } from 'styled-components';
-import piggy from './piggy.png';
-import Taglines from './tagline.jsx'
+import React, { useEffect, useState } from 'react';
+import image1 from './camera.jpg';
+import image2 from './image2.jpg';
+import image3 from './image3.jpg';
+import image4 from './image4.jpg';
+import image5 from './image5.jpg';
 
-const strokeOffset = keyframes`
-  100% {stroke-dashoffset: -35%;}
-`;
+const SimpleText = () => {
+  const [offset, setOffset] = useState(0);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-const fadeInUp = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  width: 100vw;
-  align-items: center;
-  justify-content: center;
-  background: #030321;
-  padding: 0 5%;
-
-`;
-
-const AnimatedContainer = styled(Container)`
-  opacity: 0;
-  transform: translateY(50px);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-  &.visible {
-    animation: ${fadeInUp} 0.6s ease-out forwards;
-  }
-`;
-
-const ContentWrapper = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const LogoContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 50%;
-`;
-
-const Svg = styled.svg`
-  display: block;
-  font: 10em 'Montserrat', sans-serif;
-  width: 100%;
-  height: auto;
-`;
-
-const TextCopy = styled.use`
-  fill: none;
-  stroke: white;
-  stroke-dasharray: 6% 29%;
-  stroke-width: 5px;
-  stroke-dashoffset: 0%;
-  animation: ${strokeOffset} 5.5s infinite linear;
-  &:nth-child(1) {
-    stroke: #4D163D;
-    animation-delay: -1s;
-  }
-  &:nth-child(2) {
-    stroke: #840037;
-    animation-delay: -2s;
-  }
-  &:nth-child(3) {
-    stroke: #BD0034;
-    animation-delay: -3s;
-  }
-  &:nth-child(4) {
-    stroke: #BD0034;
-    animation-delay: -4s;
-  }
-  &:nth-child(5) {
-    stroke: #FDB731;
-    animation-delay: -5s;
-  }
-`;
-
-const DTUPixelLogo = () => {
-  const containerRef = useRef(null);
+  const images = [image1 , image2, image3, image4, image5];
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-          } else {
-            entry.target.classList.remove('visible');
-          }
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setOffset(window.pageYOffset);
+          ticking = false;
         });
-      },
-      {
-        threshold: 0.1,
+        ticking = true;
       }
-    );
+    };
 
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
+    window.addEventListener('scroll', handleScroll);
+
+    const loadTimer = setTimeout(() => setIsLoaded(true), 100);
+
+   
+    const rotationTimer = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 6000);
 
     return () => {
-      if (containerRef.current) {
-        observer.unobserve(containerRef.current);
-      }
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(loadTimer);
+      clearInterval(rotationTimer);
     };
   }, []);
 
   return (
-    <AnimatedContainer ref={containerRef}>
-      <ContentWrapper>
-        <LogoContainer display="flex" flexDirection="column" justifyContent="center">
-          <Svg viewBox="0 0 800 200">
-            <symbol id="s-text">
-              <text textAnchor="middle" x="50%" y="60%">DTU Pixels</text>
-            </symbol>
-            <g className="g-ants">
-              <TextCopy xlinkHref="#s-text" />
-              <TextCopy xlinkHref="#s-text" />
-              <TextCopy xlinkHref="#s-text" />
-              <TextCopy xlinkHref="#s-text" />
-              <TextCopy xlinkHref="#s-text" />
-            </g>
-          </Svg>
-          <p><Taglines /></p>
-        </LogoContainer>
-        <div style={{ width: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <img src={piggy} alt="Landing Page Image" style={{ width: '70%', height: 'auto' }} />
-        </div>
-      </ContentWrapper>
-    </AnimatedContainer>
+    <header className="relative h-screen overflow-hidden">
+      <div
+        className="absolute inset-0 bg-cover bg-center will-change-transform transition-all duration-1000 ease-in-out"
+        style={{
+          backgroundImage: `url(${images[currentImageIndex]})`,
+          transform: `translateY(${offset * 0.5}px)`,
+        }}
+      ></div>
+      <div className="flex-col absolute inset-0 flex items-center justify-center">
+        <h1
+          className={`text-4xl md:text-8xl lg:text-32xl xl:text-9xl font-oswald text-white text-center transition-all duration-1000 ease-out ${
+            isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+          }`}
+          style={{ fontSize: '15vw', color: '#EF9C66' }}
+        >
+          DTU Pixels
+        </h1>
+      </div>
+    </header>
   );
 };
 
-export default DTUPixelLogo;
+export default SimpleText;

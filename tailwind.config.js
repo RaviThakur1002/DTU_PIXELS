@@ -6,6 +6,10 @@ export default {
   ],
   theme: {
     extend: {},
+    fontFamily: {
+      'montserrat': ['Montserrat', 'sans-serif'],
+      'oswald': ['Oswald', 'sans-serif'], 
+    }
   },
   plugins: [],
 }
