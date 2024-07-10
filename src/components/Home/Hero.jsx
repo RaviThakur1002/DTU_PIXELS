@@ -1,11 +1,26 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
 const Hero = () => {
+  const images = [
+    "https://images.pexels.com/photos/212372/pexels-photo-212372.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    "https://images.pexels.com/photos/322207/pexels-photo-322207.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    "https://images.pexels.com/photos/34950/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  ]
+
+  const [currentImg, setCurrImg] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrImg((prev) => (prev + 1) % images.length)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [images.length])
+
   return (
     <div className='relative w-full h-screen border-b-2'>
       <img 
         className='w-full h-full object-cover' 
-        src="https://images.pexels.com/photos/212372/pexels-photo-212372.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
+        src={images[currentImg]} 
         alt="/" 
       />
       <div className='absolute top-0 left-0 w-full h-full bg-black/30'/>
