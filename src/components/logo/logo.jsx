@@ -1,15 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import image1 from './camera.jpg';
 import image2 from './image2.jpg';
-import image3 from './image3.jpg';
-import image4 from './image4.jpg';
-import image5 from './image5.jpg';
 
 const SimpleText = () => {
   const [offset, setOffset] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const images = [image1, image2, image3, image4, image5];
   const requestRef = useRef();
   const previousTimeRef = useRef();
 
@@ -24,15 +18,10 @@ const SimpleText = () => {
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animate);
     const loadTimer = setTimeout(() => setIsLoaded(true), 100);
-   
-    const rotationTimer = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 6000);
 
     return () => {
       cancelAnimationFrame(requestRef.current);
       clearTimeout(loadTimer);
-      clearInterval(rotationTimer);
     };
   }, []);
 
@@ -41,7 +30,7 @@ const SimpleText = () => {
       <div
         className="absolute inset-0 bg-cover bg-center will-change-transform transition-all duration-500 ease-out"
         style={{
-          backgroundImage: `url(${images[currentImageIndex]})`,
+          backgroundImage: `url(${image2})`,
           transform: `translateY(${offset * 0.5}px)`,
         }}
       ></div>
@@ -60,3 +49,4 @@ const SimpleText = () => {
 };
 
 export default SimpleText;
+

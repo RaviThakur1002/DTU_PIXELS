@@ -1,42 +1,49 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react';
 
 const Hero = () => {
-  const images = [
-    "https://images.pexels.com/photos/212372/pexels-photo-212372.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    "https://images.pexels.com/photos/322207/pexels-photo-322207.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    "https://images.pexels.com/photos/34950/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-  ]
-
-  const [currentImg, setCurrImg] = useState(0)
+  const [isVisible, setIsVisible] = useState(false);
+  const heroRef = useRef(null);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrImg((prev) => (prev + 1) % images.length)
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [images.length])
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      {
+        threshold: 0.1 
+      }
+    );
+
+    if (heroRef.current) {
+      observer.observe(heroRef.current);
+    }
+
+    return () => {
+      if (heroRef.current) {
+        observer.unobserve(heroRef.current);
+      }
+    };
+  }, []);
 
   return (
-    <div className='relative w-full h-screen border-b-2'>
-      <img 
-        className='w-full h-full object-cover' 
-        src={images[currentImg]} 
-        alt="/" 
-      />
-      <div className='absolute top-0 left-0 w-full h-full bg-black/30'/>
-
-      <div className='absolute top-0 w-full h-full flex flex-col justify-center text-white'>
-        <div className='md:left-[5%] max-w-[1100px] m-auto absolute p-4'>
-          <p >DTU Pixels</p>
-          <h1 className='font-bold text-5xl md:text-7xl drop-shadow-2xl mt-4 mb-6'>Unleashing Creativity Through the Lens.</h1>
-          <p className='max-w-[600px] drop-shadow-2xl py-2 text-xl mb-5'>
-            Here, we celebrate the art of photography through dynamic competitions that inspire creativity, showcase talent, and foster a thriving community of visual storytellers. Whether you are a seasoned photographer or just starting your journey, DTU Pixels offers you the perfect stage to capture and share your unique perspective with the world.
-          </p>
-          <button className='bg-white text-black'>Contests</button>
-        </div>
+    <div ref={heroRef} className='relative w-full h-screen flex items-center' style={{ backgroundColor: '#031320' }}>
+      <div className='w-full max-w-[1100px] mx-auto p-4 text-white'>
+             <h1 className={`font-bold text-5xl md:text-7xl mt-4 mb-6 transition-all duration-1000 ease-out ${
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`} style={{ transitionDelay: '600ms' }}>
+          Unleashing Creativity Through the Lens.
+        </h1>
+        <p className={`max-w-[600px] py-2 text-2xl md:text-3xl lg:text-3xl xl:text-4xl  mb-5 transition-all duration-1000 ease-out ${
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`} style={{ transitionDelay: '900ms' }}>
+          Here, we celebrate the art of photography through dynamic competitions that inspire creativity, showcase talent, and foster a thriving community of visual storytellers. Whether you are a seasoned photographer or just starting your journey, DTU Pixels offers you the perfect stage to capture and share your unique perspective with the world.
+        </p> 
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Hero;
