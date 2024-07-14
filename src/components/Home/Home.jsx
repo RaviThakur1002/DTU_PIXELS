@@ -5,7 +5,7 @@ import Contact from "../Footer/Contact.jsx";
 import Hero from "./Hero.jsx";
 import Footer from "../Footer/Footer.jsx";
 import DTUPixelLogo from "../../components/logo/logo.jsx";
-import Separator from "../Separator.jsx";
+
 
 const Home = () => {
   return (
@@ -13,12 +13,15 @@ const Home = () => {
       <DTUPixelLogo />
       <Hero />
 
- 
-
+      <UploadComponent
+        onUploadComplete={() => {
+          console.log("Upload completed");
+        }}
+      />
       <ImageSlider />
 
       <Contact />
-     
+
       <Footer />
     </>
   );
