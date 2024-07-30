@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import UploadService from "../../../firebase/services/UplaodService.js";
+import UploadService from "../../../firebase/services/UplaodService.js"
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import app from "../../../config/conf.js";
 
@@ -14,7 +14,7 @@ const styles = `
   }
 `;
 
-const UploadComponent = ({ contestId }) => {
+const UploadComponent = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const [uploadFile, setUploadFile] = useState(null);
   const [message, setMessage] = useState('');
@@ -76,7 +76,6 @@ const UploadComponent = ({ contestId }) => {
       try {
         const result = await UploadService.uploadContestImage(
           uploadFile,
-          contestId,
           quote,
           (progress) => {
             setUploadProgress(progress);

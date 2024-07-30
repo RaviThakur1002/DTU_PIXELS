@@ -6,7 +6,6 @@ import Hero from "./Hero.jsx";
 import Footer from "../Footer/Footer.jsx";
 import DTUPixelLogo from "../../components/logo/logo.jsx";
 
-
 const Home = () => {
   return (
     <>
@@ -21,8 +20,6 @@ const Home = () => {
       <ImageSlider />
 
       <Contact />
-
-      <Footer />
     </>
   );
 };

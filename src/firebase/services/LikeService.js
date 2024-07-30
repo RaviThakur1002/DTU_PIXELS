@@ -1,11 +1,8 @@
-import { getDatabase, ref, runTransaction } from "firebase/database";
-
+import { getDatabase, ref, runTransaction, get } from "firebase/database";
 import { getAuth } from "firebase/auth";
 import app from "../../config/conf.js";
 
-export class LikeService {
-  database;
-  auth;
+class LikeService {
   constructor() {
     this.database = getDatabase(app);
     this.auth = getAuth(app);
@@ -57,9 +54,9 @@ export class LikeService {
         return photoData;
       });
 
-      console.log("operation successful");
+      console.log("Like operation successful");
     } catch (error) {
-      console.error("operation failed:", error);
+      console.error("Like operation failed:", error);
       throw error;
     }
   }
@@ -78,7 +75,7 @@ export class LikeService {
 
       return userData ? userData.likedPhoto : null;
     } catch (error) {
-      console.error("operation failed:", error);
+      console.error("Get liked photo operation failed:", error);
       throw error;
     }
   }

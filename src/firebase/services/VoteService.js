@@ -1,12 +1,8 @@
-import { getDatabase, ref, runTransaction } from "firebase/database";
-
+import { getDatabase, ref, runTransaction, get } from "firebase/database";
 import { getAuth } from "firebase/auth";
 import app from "../../config/conf.js";
 
-export class VoteService {
-  database;
-  auth;
-
+class VoteService {
   constructor() {
     this.database = getDatabase(app);
     this.auth = getAuth(app);
@@ -19,7 +15,7 @@ export class VoteService {
 
       const userContestRef = ref(
         this.database,
-        `users/${users.uid}/contests/${contestId}`,
+        `users/${user.uid}/contests/${contestId}`,
       );
       const photoRef = ref(
         this.database,
@@ -31,7 +27,7 @@ export class VoteService {
         }
 
         if (userData.votedPhoto) {
-          throw new Error("You have already voted in the contest");
+          throw new Error("You have already voted in this contest");
         }
 
         userData.votedPhoto = photoId;
@@ -50,7 +46,26 @@ export class VoteService {
       });
       console.log("Vote operation successful");
     } catch (error) {
-      console.error("operation failed:", error);
+      console.error("Vote operation failed:", error);
+      throw error;
+    }
+  }
+
+  async getVotedPhoto(contestId) {
+    try {
+      const user = this.auth.currentUser;
+      if (!user) throw new Error("No user logged in");
+
+      const userContestRef = ref(
+        this.database,
+        `users/${user.uid}/contests/${contestId}`,
+      );
+      const snapshot = await get(userContestRef);
+      const userData = snapshot.val();
+
+      return userData ? userData.votedPhoto : null;
+    } catch (error) {
+      console.error("Get voted photo operation failed:", error);
       throw error;
     }
   }
