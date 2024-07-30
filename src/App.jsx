@@ -5,6 +5,9 @@ import Navbar from './components/Navbar/Navbar.jsx'
 import Home from './components/Home/Home.jsx'
 import Gallery from './components/gallery/Gallery.jsx'
 import Profile from './components/Profile/Profile.jsx'
+import Temp from './components/contests/temp/Temp.jsx'
+import Footer from './components/Footer/Footer.jsx'
+import CreateContest from './components/Admin/CreateContest.jsx'
 
 const App = () => {
   return (
@@ -14,9 +17,11 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="*" element={<Home />} />
-        <Route path="/contest" element={<Home />} />
+        <Route path="/contest" element={<Temp />} />
         <Route path="/submissions" element={<Profile />} />
+        <Route path="/contest/createcontest" element={<CreateContest />} />
       </Routes>
+      <Footer />
     </Router>
 
   )

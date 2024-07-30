@@ -1,9 +1,8 @@
-import {useState, useEffect} from 'react'
-import React from 'react'
-import { Menu, X, ChevronDown, ChevronRight, ChevronLeft } from 'lucide-react'
+import {useState, useEffect, useRef } from 'react'
+import { Menu, X, ChevronDown, ChevronRight } from 'lucide-react'
 import authService from '../../firebase/auth/auth'
-import { Link, NavLink } from 'react-router-dom'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { NavLink } from 'react-router-dom'
+import CopyUID  from './CopyUID'
 
 const menuItems = [
   {
@@ -21,9 +20,12 @@ const menuItems = [
 ]
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [user, setUser] = useState(null)
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const dropdownRef = useRef(null)
+  const mobileMenuRef = useRef(null)
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }
@@ -35,6 +37,28 @@ const Navbar = () => {
     
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if(dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [dropdownRef])
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if(mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+        setIsMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   return (
     <div className="sticky z-50 top-0 w-full bg-white shadow-md">
@@ -76,20 +100,21 @@ const Navbar = () => {
         </div>
         <div className="hidden space-x-2 lg:block">
           {user ? (
-            <div className="relative">
+            <div className="relative" ref={dropdownRef}>
               <button 
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center focus:outline-none"
+                className="flex items-center focus:outline-none gap-2 p-1"
               >
                 <img className='rounded-full w-10 h-10' src={user.photoURL} alt="User profile"/>
                 <ChevronDown className="h-4 w-4 ml-1" />
               </button>
               {dropdownOpen && (
                 <div className="absolute z-50 right-0 mt-2 w-48 bg-white rounded-md shadow-xl py-1">
-                  <div className="px-4 py-3 border-b border-gray-200">
+                  <div className="px-4 py-3 border-gray-200">
                     <h2 className='text-lg font-semibold text-gray-800'>Welcome,</h2>
                     <h3 className='text-md font-medium text-gray-600'>{user.displayName}</h3>
                   </div>
+                  <CopyUID className="border-t border-gray-200 my-1" />
                   <div className="border-t border-gray-200 my-1"></div>
                   <NavLink 
                     to="/submissions" 
@@ -97,14 +122,17 @@ const Navbar = () => {
                   >
                     My Submissions
                   </NavLink>
+                  
                   <button 
-                    onClick={authService.signOutUser}
-                    className="flex justify-center gap-5 w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={authService.signOutUser} 
+                    className='w-full px-3 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300'
                   >
-                    <svg className='h-6 w-5' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                      <path d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 192 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l210.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128zM160 96c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 32C43 32 0 75 0 128L0 384c0 53 43 96 96 96l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l64 0z"/>
-                    </svg>
-                    <span className="ml-2">Sign Out</span>
+                    <div className="flex items-center justify-center gap-2">
+                      <svg className='h-5 w-5' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                        <path d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 192 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l210.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128zM160 96c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 32C43 32 0 75 0 128L0 384c0 53 43 96 96 96l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l64 0z"/>
+                      </svg>
+                      <span>Sign Out</span>
+                    </div>
                   </button>
                 </div>
               )}
@@ -129,7 +157,7 @@ const Navbar = () => {
         </div>
 
         {isMenuOpen && (
-          <div className="absolute right-2 top-8 z-50 origin-top-right p-2 transition lg:hidden">
+          <div ref={mobileMenuRef} className="absolute right-2 top-8 z-50 origin-top-right p-2 transition lg:hidden">
             <div className="divide-y-2 divide-gray-50 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
               <div className="px-5 pb-6 pt-5">
                 <div className="flex items-center justify-between">
@@ -172,7 +200,8 @@ const Navbar = () => {
                         <img className='rounded-full w-10 h-10' src={user.photoURL} alt="User profile"/>
                         <span className="text-sm font-medium">My Submissions</span>
                       </NavLink>
-                      <div className="w-full border-t border-gray-200 my-2"></div>
+                      <CopyUID />
+                      <div className="w-full border-t border-gray-200 my-1"></div>
                       {menuItems.map((item) => (
                         <NavLink
                           key={item.name}
@@ -185,7 +214,7 @@ const Navbar = () => {
                       ))}
                       <button 
                         onClick={authService.signOutUser} 
-                        className='w-full px-3 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300'
+                        className='w-full mx-2 px-3 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300'
                       >
                         <div className="flex items-center justify-center gap-2">
                           <svg className='h-5 w-5' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
