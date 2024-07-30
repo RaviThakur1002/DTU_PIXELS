@@ -20,19 +20,36 @@ const CreateContest = () => {
     theme: '',
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
+  const handleChange = (field, value) => {
+    if (typeof field === 'string') {
+      setFormData(prevState => ({
+        ...prevState,
+        [field]: value
+      }));
+    } else {
+      const { name, value } = field.target;
+      setFormData(prevState => ({
+        ...prevState,
+        [name]: value
+      }));
+    }
   }
 
   const handleSubmit = async (e) =>{
     e.preventDefault();
+    const formattedData = {
+      ...formData,
+      registrationEndDate: formData.registrationEndDate ? formData.registrationEndDate.format('YYYY-MM-DD') : null,
+      registrationEndTime: formData.registrationEndTime ? formData.registrationEndTime.format('HH:mm') : null,
+      contestStartDate: formData.contestStartDate ? formData.contestStartDate.format('YYYY-MM-DD') : null,
+      contestStartTime: formData.contestStartTime ? formData.contestStartTime.format('HH:mm') : null,
+      contestEndDate: formData.contestEndDate ? formData.contestEndDate.format('YYYY-MM-DD') : null,
+      contestEndTime: formData.contestEndTime ? formData.contestEndTime.format('HH:mm') : null,
+    };  
     
     try{
-      const newContestId = await ContestServiceInstance.createContest(formData);
+      const newContestId = await ContestServiceInstance.createContest(formattedData);
+      console.log(formattedData);
       alert(`Contest created with id ${newContestId}`);
 
       setFormData({
@@ -47,6 +64,7 @@ const CreateContest = () => {
     }
     catch(err){
       console.error(err);
+      console.log(formData);
       alert("Error creating Contest");
     }
 
@@ -91,14 +109,15 @@ const CreateContest = () => {
             ))}
             
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Theme:</label>
+              <label htmlFor="theme" className="block text-sm font-medium text-gray-700">Theme:</label>
               <input
+                id="theme"
                 type="text"
                 name="theme"
                 value={formData.theme}
                 onChange={(e) => handleChange('theme', e.target.value)}
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-1 px-1 block w-full rounded-md border-gray-300 shadow-md focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               />
             </div>
             
