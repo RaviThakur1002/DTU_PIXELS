@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-
 import styled from "styled-components";
-
 import img1 from "./img1.png";
 import img2 from "./img2.png";
 import img3 from "./img3.jpg";
@@ -10,6 +8,12 @@ import img6 from "./img6.jpg";
 import img7 from "./img7.jpg";
 
 const images = [img1, img2, img3, img4, img6, img7];
+
+const SliderSection = styled.section`
+  background-color: #031320;
+  padding: 40px 0;
+`;
+
 const SliderContainer = styled.div`
   width: 100%;
   overflow: hidden;
@@ -27,17 +31,16 @@ const Card = styled.div`
   margin: 0 10px;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
-  perspective: 1500px; /* Increased perspective */
+  perspective: 1500px;
   transform-style: preserve-3d;
-  background: #fff;
-
+  background: #031320;
   &:hover {
-    transform: scale(1.05) rotateY(10deg) rotateX(5deg) translateZ(30px); /* Enhanced 3D transformation */
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05) rotateY(10deg) rotateX(5deg) translateZ(30px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
   }
 `;
 
@@ -90,20 +93,22 @@ const ImageSlider = () => {
   const extendedImages = [...images, ...images, ...images];
 
   return (
-    <SliderContainer>
-      <SliderTrack
-        ref={sliderRef}
-        style={{ transform: `translateX(-${currentIndex * 270}px)` }}
-        onMouseEnter={stopAutoplay}
-        onMouseLeave={startAutoplay}
-      >
-        {extendedImages.map((image, index) => (
-          <Card key={index}>
-            <Image src={image} alt={`Slide ${index + 1}`} />
-          </Card>
-        ))}
-      </SliderTrack>
-    </SliderContainer>
+    <SliderSection>
+      <SliderContainer>
+        <SliderTrack
+          ref={sliderRef}
+          style={{ transform: `translateX(-${currentIndex * 270}px)` }}
+          onMouseEnter={stopAutoplay}
+          onMouseLeave={startAutoplay}
+        >
+          {extendedImages.map((image, index) => (
+            <Card key={index}>
+              <Image src={image} alt={`Slide ${index + 1}`} />
+            </Card>
+          ))}
+        </SliderTrack>
+      </SliderContainer>
+    </SliderSection>
   );
 };
 
