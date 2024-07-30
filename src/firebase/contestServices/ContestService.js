@@ -17,7 +17,8 @@ class perContestService {
   }
 
   async createContest(contestData) {
-    let newContestId;
+    try{
+      let newContestId;
     await runTransaction(this.highestIdRef, (currentHighestId) => {
       if (currentHighestId === null) {
         newContestId = 1;
@@ -34,6 +35,10 @@ class perContestService {
     });
 
     return newContestId;
+    } 
+    catch(error){
+      console.error("Error creating contest: ", error.message)
+    }
   }
 
   async getContestbyId(contestId) {
