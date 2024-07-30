@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import roleService from '../../../firebase/roleAssigning/RoleService'
 import { getAuth } from 'firebase/auth'
+import ContestPage from '../contestPage/ContestPage'
 
 function Temp() {
   const [isAdmin, setIsAdmin] = useState(false)
@@ -35,9 +36,12 @@ function Temp() {
     <div>
       {isAdmin && (
         <NavLink to="createcontest">
-          <button className="m-3 hover:bg-red-100">Create a Contest</button>
+          <div className='bg-gray-800 flex justify-center '>
+            <button className="m-3 hover:bg-gray-700 text-white">Create a Contest</button>
+          </div>
         </NavLink>
       )}
+      <ContestPage />
     </div>
   )
 }
