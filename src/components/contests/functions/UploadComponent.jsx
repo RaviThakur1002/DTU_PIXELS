@@ -117,13 +117,13 @@ const UploadComponent = () => {
       {message && (
         <div className={`fixed top-4 right-0 mb-4 p-3 rounded-l-lg w-64 ${
           messageType === 'success' 
-            ? 'bg-gradient-to-r from-gray-700 to-gray-900 text-white' 
+            ? 'bg-gradient-to-r from-green-600 to-green-800 text-white' 
             : messageType === 'error'
             ? 'bg-gradient-to-r from-red-600 to-red-800 text-white'
-            : 'bg-gradient-to-r from-gray-500 to-gray-700 text-white'
+            : 'bg-gradient-to-r from-blue-500 to-blue-700 text-white'
         } border border-solid ${
-          messageType === 'success' ? 'border-gray-600' : 
-          messageType === 'error' ? 'border-red-500' : 'border-gray-400'
+          messageType === 'success' ? 'border-green-500' : 
+          messageType === 'error' ? 'border-red-500' : 'border-blue-400'
         } text-center transition-all duration-300 ease-in-out transform translate-x-0 shadow-md z-50`}
           style={{
             animation: `${message ? 'slideIn' : 'slideOut'} 0.3s ease-in-out forwards`

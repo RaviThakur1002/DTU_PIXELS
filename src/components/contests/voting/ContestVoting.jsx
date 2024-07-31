@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { getDatabase, ref, onValue } from "firebase/database";
 import app from "../../../config/conf.js";
 import VoteService from "../../../firebase/services/VoteService.js";
@@ -6,6 +6,7 @@ import LikeService from "../../../firebase/services/LikeService.js";
 import ContestServiceInstance from "../../../firebase/contestServices/ContestService.js";
 import VoteCard from "./VoteCard.jsx";
 import VotePopup from "./VotePopup.jsx";
+import MessagePopup from "./MessagePopup.jsx";
 
 const ContestVoting = () => {
     const [currentContest, setCurrentContest] = useState(null);
@@ -13,6 +14,7 @@ const ContestVoting = () => {
     const [likedPhotoId, setLikedPhotoId] = useState(null);
     const [votedPhotoId, setVotedPhotoId] = useState(null);
     const [popupEntry, setPopupEntry] = useState(null);
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
         const fetchCurrentContest = async () => {
@@ -64,36 +66,47 @@ const ContestVoting = () => {
     }, [currentContest]);
 
     const handleLike = async (photoId) => {
+        if (votedPhotoId) {
+            setMessage("You've already voted and can't change your like.");
+            return;
+        }
+
         try {
             await LikeService.likePhoto(currentContest.id, photoId);
-            setLikedPhotoId(photoId);
+            setLikedPhotoId((prevLikedPhotoId) =>
+                prevLikedPhotoId === photoId ? null : photoId,
+            );
         } catch (error) {
             console.error("Error liking photo:", error);
+            setMessage("Error liking photo. Please try again.");
         }
     };
 
     const handleVote = async () => {
         if (!likedPhotoId) {
-            alert("Please like a photo before voting.");
+            setMessage("Please like a photo before voting.");
             return;
         }
 
         try {
             await VoteService.voteForPhoto(currentContest.id, likedPhotoId);
             setVotedPhotoId(likedPhotoId);
+            setMessage("Your vote has been recorded!");
         } catch (error) {
             console.error("Error voting for photo:", error);
-            alert(error.message);
+            setMessage(error.message);
         }
     };
 
-    const openPopup = (entry) => {
+    const openPopup = useCallback((entry) => {
         setPopupEntry(entry);
-    };
+        document.body.style.overflow = 'hidden';
+    }, []);
 
-    const closePopup = () => {
+    const closePopup = useCallback(() => {
         setPopupEntry(null);
-    };
+        document.body.style.overflow = 'auto';
+    }, []);
 
     if (!currentContest) {
         return <div>Loading contest...</div>;
@@ -104,7 +117,8 @@ const ContestVoting = () => {
             <h2 className="text-2xl font-bold mb-4">
                 Contest Voting: {currentContest.theme}
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                 {entries.map((entry) => (
                     <VoteCard
                         key={entry.id}
@@ -116,11 +130,21 @@ const ContestVoting = () => {
                 ))}
             </div>
             <button
-                className="mt-4 bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-400"
+                className={`mt-4 px-4 py-2 rounded transition-colors duration-300 ${
+                    votedPhotoId
+                        ? "bg-green-500 text-white"
+                        : likedPhotoId
+                        ? "bg-blue-500 text-white hover:bg-blue-600"
+                        : "bg-gray-400 text-white cursor-not-allowed"
+                }`}
                 onClick={handleVote}
-                disabled={votedPhotoId !== null}
+                disabled={votedPhotoId !== null || !likedPhotoId}
             >
-                {votedPhotoId ? "Voted" : "Vote"}
+                {votedPhotoId
+                    ? "Voted"
+                    : likedPhotoId
+                    ? "Confirm Vote"
+                    : "Like a photo to vote"}
             </button>
             {popupEntry && (
                 <VotePopup
@@ -130,6 +154,7 @@ const ContestVoting = () => {
                     onLike={() => handleLike(popupEntry.id)}
                 />
             )}
+            <MessagePopup message={message} setMessage={setMessage} />
         </div>
     );
 };

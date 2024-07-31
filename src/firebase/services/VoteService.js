@@ -9,65 +9,33 @@ class VoteService {
   }
 
   async voteForPhoto(contestId, photoId) {
-    try {
-      const user = this.auth.currentUser;
-      if (!user) throw new Error("No user logged in");
+    const user = this.auth.currentUser;
+    if (!user) throw new Error("No user logged in");
 
-      const userContestRef = ref(
-        this.database,
-        `users/${user.uid}/contests/${contestId}`,
-      );
-      const photoRef = ref(
-        this.database,
-        `contests/${contestId}/entries/${photoId}`,
-      );
-      await runTransaction(userContestRef, (userData) => {
-        if (userData === null) {
-          return { votedPhoto: photoId };
-        }
+    const userVoteRef = ref(this.database, `users/${user.uid}/contests/${contestId}/vote`);
+    const photoRef = ref(this.database, `contests/${contestId}/entries/${photoId}`);
 
-        if (userData.votedPhoto) {
-          throw new Error("You have already voted in this contest");
-        }
+    await runTransaction(userVoteRef, (currentVote) => {
+      if (currentVote !== null) {
+        throw new Error("You have already voted in this contest");
+      }
+      return photoId;
+    });
 
-        userData.votedPhoto = photoId;
-        return userData;
-      });
-
-      await runTransaction(photoRef, (photoData) => {
-        if (photoData === null) return null;
-
-        if (!photoData.voteCount) {
-          photoData.voteCount = 0;
-        }
-
-        photoData.voteCount += 1;
-        return photoData;
-      });
-      console.log("Vote operation successful");
-    } catch (error) {
-      console.error("Vote operation failed:", error);
-      throw error;
-    }
+    await runTransaction(photoRef, (photoData) => {
+      if (photoData === null) return null;
+      photoData.voteCount = (photoData.voteCount || 0) + 1;
+      return photoData;
+    });
   }
 
   async getVotedPhoto(contestId) {
-    try {
-      const user = this.auth.currentUser;
-      if (!user) throw new Error("No user logged in");
+    const user = this.auth.currentUser;
+    if (!user) throw new Error("No user logged in");
 
-      const userContestRef = ref(
-        this.database,
-        `users/${user.uid}/contests/${contestId}`,
-      );
-      const snapshot = await get(userContestRef);
-      const userData = snapshot.val();
-
-      return userData ? userData.votedPhoto : null;
-    } catch (error) {
-      console.error("Get voted photo operation failed:", error);
-      throw error;
-    }
+    const userVoteRef = ref(this.database, `users/${user.uid}/contests/${contestId}/vote`);
+    const snapshot = await get(userVoteRef);
+    return snapshot.val();
   }
 }
 
