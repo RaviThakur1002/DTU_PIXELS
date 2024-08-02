@@ -7,13 +7,14 @@ import ContestServiceInstance from "../../../firebase/contestServices/ContestSer
 import VoteCard from "./VoteCard.jsx";
 import VotePopup from "./VotePopup.jsx";
 import MessagePopup from "./MessagePopup.jsx";
+import "./ContestVoting.css"
 
 const ContestVoting = () => {
     const [currentContest, setCurrentContest] = useState(null);
     const [entries, setEntries] = useState([]);
     const [likedPhotoId, setLikedPhotoId] = useState(null);
     const [votedPhotoId, setVotedPhotoId] = useState(null);
-    const [popupEntry, setPopupEntry] = useState(null);
+    const [currentEntryIndex, setCurrentEntryIndex] = useState(null);
     const [message, setMessage] = useState("");
 
     useEffect(() => {
@@ -99,14 +100,27 @@ const ContestVoting = () => {
     };
 
     const openPopup = useCallback((entry) => {
-        setPopupEntry(entry);
-        document.body.style.overflow = 'hidden';
-    }, []);
+        const index = entries.findIndex(e => e.id === entry.id);
+        setCurrentEntryIndex(index);
+        document.body.style.overflow = "hidden";
+    }, [entries]);
 
     const closePopup = useCallback(() => {
-        setPopupEntry(null);
-        document.body.style.overflow = 'auto';
+        setCurrentEntryIndex(null);
+        document.body.style.overflow = "auto";
     }, []);
+
+    const handlePrevious = useCallback(() => {
+        setCurrentEntryIndex((prevIndex) => 
+            prevIndex > 0 ? prevIndex - 1 : entries.length - 1
+        );
+    }, [entries]);
+
+    const handleNext = useCallback(() => {
+        setCurrentEntryIndex((prevIndex) => 
+            prevIndex < entries.length - 1 ? prevIndex + 1 : 0
+        );
+    }, [entries]);
 
     if (!currentContest) {
         return <div>Loading contest...</div>;
@@ -118,7 +132,7 @@ const ContestVoting = () => {
                 Contest Voting: {currentContest.theme}
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="contest-grid grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                 {entries.map((entry) => (
                     <VoteCard
                         key={entry.id}
@@ -134,8 +148,8 @@ const ContestVoting = () => {
                     votedPhotoId
                         ? "bg-green-500 text-white"
                         : likedPhotoId
-                        ? "bg-blue-500 text-white hover:bg-blue-600"
-                        : "bg-gray-400 text-white cursor-not-allowed"
+                            ? "bg-blue-500 text-white hover:bg-blue-600"
+                            : "bg-gray-400 text-white cursor-not-allowed"
                 }`}
                 onClick={handleVote}
                 disabled={votedPhotoId !== null || !likedPhotoId}
@@ -143,15 +157,18 @@ const ContestVoting = () => {
                 {votedPhotoId
                     ? "Voted"
                     : likedPhotoId
-                    ? "Confirm Vote"
-                    : "Like a photo to vote"}
+                        ? "Confirm Vote"
+                        : "Like a photo to vote"}
             </button>
-            {popupEntry && (
+            {currentEntryIndex !== null && (
                 <VotePopup
-                    entry={popupEntry}
+                    entries={entries}
+                    currentIndex={currentEntryIndex}
                     onClose={closePopup}
-                    isLiked={popupEntry.id === likedPhotoId}
-                    onLike={() => handleLike(popupEntry.id)}
+                    isLiked={entries[currentEntryIndex].id === likedPhotoId}
+                    onLike={handleLike}
+                    onPrevious={handlePrevious}
+                    onNext={handleNext}
                 />
             )}
             <MessagePopup message={message} setMessage={setMessage} />
