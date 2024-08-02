@@ -2,8 +2,11 @@ import { get, set, getDatabase, ref } from 'firebase/database';
 import React, { useEffect, useState } from 'react'
 import { getAuth } from 'firebase/auth';
 import UploadComponent from '../functions/UploadComponent';
+import { useParams } from 'react-router-dom';
 
-function PerContestPage({contestId}) {
+function PerContestPage() {
+  const {contestId} = useParams();
+  console.log(contestId);
   const [contestData, setContestData] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isRegistered, setIsRegistered] = useState(false);
@@ -59,8 +62,6 @@ function PerContestPage({contestId}) {
       const userContestRef = ref(db, `users/${user.uid}/contests/${contestId}`);
       await set(userContestRef, {
         isRegistered: true,
-        hasSubmitted: false, // or you can omit this if not relevant at registration
-        submittedPhotoId: null // or initialize it as needed
       });
       setIsRegistered(true);
     }

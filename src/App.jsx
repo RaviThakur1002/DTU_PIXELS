@@ -9,6 +9,7 @@ import Temp from './components/contests/temp/Temp.jsx'
 import Footer from './components/Footer/Footer.jsx'
 import CreateContest from './components/Admin/CreateContest.jsx'
 import ContestVoting from './components/contests/voting/ContestVoting.jsx' 
+import PerContestPage from './components/contests/perContestPage/PerContestPage.jsx'
 const App = () => {
   return (
     <Router>
@@ -20,7 +21,8 @@ const App = () => {
         <Route path="/contest" element={<Temp />} />
         <Route path="/submissions" element={<Profile />} />
         <Route path="/contest/createcontest" element={<CreateContest />} />
-        <Route path="/contest/voting" element={<ContestVoting />} /> {/* New route for contest voting */}
+        <Route path="/contest/voting" element={<ContestVoting />} />
+        <Route path="/contest/contest-:id" element={<PerContestPage />} />
       </Routes>
       <Footer />
     </Router>
