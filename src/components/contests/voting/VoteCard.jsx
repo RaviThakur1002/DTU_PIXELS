@@ -12,14 +12,22 @@ const VoteCard = ({ entry, isLiked, onLike, onClick }) => {
   };
 
   return (
-    <div className="w-full h-64 sm:h-72 md:h-80 lg:h-96 mb-4">
+    <motion.div 
+      className="w-full h-64 sm:h-72 md:h-80 lg:h-96 mb-4"
+      whileHover={{ scale: 1.05 }}
+      transition={{ duration: 0.3 }}
+    >
       <ReactCardFlip
         isFlipped={isFlipped}
         flipDirection="horizontal"
         containerStyle={{ height: "100%" }}
       >
         {/* Front Side */}
-        <div className="w-full h-full cursor-pointer" onClick={onClick}>
+        <motion.div 
+          className="w-full h-full cursor-pointer"
+          onClick={onClick}
+          whileHover={{ boxShadow: "0 10px 20px rgba(0,0,0,0.2)" }}
+        >
           <div className="relative h-full w-full rounded-lg overflow-hidden shadow-lg">
             <img
               src={entry.photoUrl}
@@ -36,12 +44,13 @@ const VoteCard = ({ entry, isLiked, onLike, onClick }) => {
               </p>
             </div>
             <motion.button
-              className="absolute bottom-4 right-4 p-2 bg-blue-500 text-white rounded-full shadow-lg"
+              className="absolute bottom-4 right-4 p-2 bg-blue-500 text-white rounded-full shadow-lg flex items-center justify-center"
               onClick={handleFlip}
+              whileHover={{ scale: 1.1, backgroundColor: "#3B82F6" }}
               whileTap={{ scale: 0.9 }}
-              transition={{ duration: 0.1 }}
+              transition={{ duration: 0.2 }}
             >
-              <FaSync />
+              <FaSync className="text-sm" />
             </motion.button>
             <motion.button
               className={`absolute top-4 right-4 p-2 rounded-full ${isLiked ? 'bg-red-500' : 'bg-white'} shadow-lg`}
@@ -74,9 +83,12 @@ const VoteCard = ({ entry, isLiked, onLike, onClick }) => {
               </motion.svg>
             </motion.button>
           </div>
-        </div>
+        </motion.div>
         {/* Back Side */}
-        <div className="w-full h-full cursor-pointer">
+        <motion.div 
+          className="w-full h-full cursor-pointer"
+          whileHover={{ boxShadow: "0 10px 20px rgba(0,0,0,0.2)" }}
+        >
           <div className="relative h-full w-full rounded-lg overflow-hidden shadow-lg bg-gradient-to-br from-blue-100 to-purple-100 flex flex-col justify-center items-center p-6">
             <div className="text-center mb-4">
               <svg
@@ -89,18 +101,20 @@ const VoteCard = ({ entry, isLiked, onLike, onClick }) => {
               <p className="text-gray-600 italic text-lg">{entry.quote}</p>
             </div>
             <motion.button
-              className="absolute bottom-4 right-4 p-2 bg-blue-500 text-white rounded-full shadow-lg"
+              className="absolute bottom-4 right-4 p-2 bg-blue-500 text-white rounded-full shadow-lg flex items-center justify-center"
               onClick={handleFlip}
+              whileHover={{ scale: 1.1, backgroundColor: "#3B82F6" }}
               whileTap={{ scale: 0.9 }}
-              transition={{ duration: 0.1 }}
+              transition={{ duration: 0.2 }}
             >
-              <FaSync />
+              <FaSync className="text-sm" />
             </motion.button>
           </div>
-        </div>
+        </motion.div>
       </ReactCardFlip>
-    </div>
+    </motion.div>
   );
 };
 
 export default VoteCard;
+
