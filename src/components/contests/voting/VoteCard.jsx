@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import ReactCardFlip from "react-card-flip";
 import { FaSync, FaExpand, FaTimes } from "react-icons/fa";
 
-const VoteCard = ({ entry, isLiked, onLike, onClick }) => {
+const VoteCard = ({ entry, isLiked, onLike, onClick, showLikeButton }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleFlip = (e) => {
@@ -52,36 +52,38 @@ const VoteCard = ({ entry, isLiked, onLike, onClick }) => {
             >
               <FaSync className="text-sm" />
             </motion.button>
-            <motion.button
-              className={`absolute top-4 right-4 p-2 rounded-full ${isLiked ? 'bg-red-500' : 'bg-white'} shadow-lg`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onLike(entry.id);
-              }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              transition={{ duration: 0.1 }}
-            >
-              <motion.svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                viewBox="0 0 20 20"
-                initial={{ scale: 1 }}
-                animate={{ 
-                  scale: isLiked ? [1, 1.3, 1] : 1,
-                  fill: isLiked ? '#ffffff' : 'none',
-                  stroke: isLiked ? '#ffffff' : '#ef4444'
+            {showLikeButton && (
+              <motion.button
+                className={`absolute top-4 right-4 p-2 rounded-full ${isLiked ? 'bg-red-500' : 'bg-white'} shadow-lg`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onLike(entry.id);
                 }}
-                transition={{ duration: 0.2 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ duration: 0.1 }}
               >
-                <path
-                  strokeWidth="2"
-                  fillRule="evenodd"
-                  d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                  clipRule="evenodd"
-                />
-              </motion.svg>
-            </motion.button>
+                <motion.svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  viewBox="0 0 20 20"
+                  initial={{ scale: 1 }}
+                  animate={{ 
+                    scale: isLiked ? [1, 1.3, 1] : 1,
+                    fill: isLiked ? '#ffffff' : 'none',
+                    stroke: isLiked ? '#ffffff' : '#ef4444'
+                  }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <path
+                    strokeWidth="2"
+                    fillRule="evenodd"
+                    d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                    clipRule="evenodd"
+                  />
+                </motion.svg>
+              </motion.button>
+            )}
           </div>
         </motion.div>
         {/* Back Side */}
@@ -117,4 +119,3 @@ const VoteCard = ({ entry, isLiked, onLike, onClick }) => {
 };
 
 export default VoteCard;
-
