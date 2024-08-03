@@ -17,23 +17,18 @@ const Gallery = ({ userName = "/////" }) => {
       const contest = await ContestServiceInstance.getCurrentContest();
       setCurrentContest(contest);
     };
-
     fetchCurrentContest();
   }, []);
 
   useEffect(() => {
     const contestsRef = ref(database, 'contests');
-
     const unsubscribe = onValue(contestsRef, async (snapshot) => {
       const allImages = [];
       const currentTime = new Date().getTime();
-
       for (const contestSnapshot of Object.values(snapshot.val())) {
         const contestId = contestSnapshot.id;
         const contestData = contestSnapshot;
         const contestEndTime = new Date(`${contestData.contestEndDate} ${contestData.contestEndTime}`).getTime();
-
-        
         if (currentTime > contestEndTime) {
           const entriesRef = ref(database, `contests/${contestId}/entries`);
           const entriesSnapshot = await get(entriesRef);
@@ -44,20 +39,21 @@ const Gallery = ({ userName = "/////" }) => {
               allImages.push({
                 id: entrySnapshot.key,
                 contestId: contestId,
-                contestTheme: contestData.theme, 
-                ...entry
+                contestTheme: contestData.theme,
+                photoUrl: entry.photoUrl,
+                userName: entry.userName,
+                quote: entry.quote,
+                timestamp: entry.timestamp,
               });
             }
           });
         }
       }
-
       setImageData(allImages.sort((a, b) => b.timestamp - a.timestamp));
     }, (error) => {
       console.error("Error fetching images:", error);
     });
-
-    return () => unsubscribe();
+   return () => unsubscribe();
   }, [userName]);
 
   const lastPostIndex = currentPage * postPerPage;
@@ -91,3 +87,4 @@ const Gallery = ({ userName = "/////" }) => {
 };
 
 export default Gallery;
+
