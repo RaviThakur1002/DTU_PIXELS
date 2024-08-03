@@ -1,9 +1,11 @@
-import { get, set, getDatabase, ref } from 'firebase/database';
+import { get, set, getDatabase, ref, update } from 'firebase/database';
 import React, { useEffect, useState } from 'react'
 import { getAuth } from 'firebase/auth';
 import UploadComponent from '../functions/UploadComponent';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import ContestVoting from '../voting/ContestVoting';
+import UplaodService from '../../../firebase/services/UplaodService';
+import Standings from './Standings';
 
 const styles = `
   @keyframes slideIn {
@@ -17,14 +19,16 @@ const styles = `
 `;
 
 function PerContestPage() {
-  const {contestId} = useParams();
+  const { contestId } = useParams();
+  const navigate = useNavigate();
   const [contestData, setContestData] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isRegistered, setIsRegistered] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState('')
+  const [messageType, setMessageType] = useState('');
+  const [showStandings, setShowStandings] = useState(false);
 
   const rules = [
     "Eligibility: Participants must be current students or alumni of DTU. Each participant can submit only one entry per contest.",
@@ -49,13 +53,17 @@ function PerContestPage() {
     }, 3000);
   };
 
+  const toggleView = (view) => {
+    setShowStandings(view === 'standings');
+  };
+
   useEffect(() => {
     const fetchContestData = async () => {
       try {
         const db = getDatabase();
         const contestRef = ref(db, `contests/${contestId}`);
         const snapshot = await get(contestRef);
-        if(snapshot.exists()){
+        if (snapshot.exists()) {
           setContestData(snapshot.val());
         } else {
           setError("Contest not found");
@@ -66,7 +74,7 @@ function PerContestPage() {
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchContestData();
 
@@ -82,7 +90,7 @@ function PerContestPage() {
       const auth = getAuth();
       const db = getDatabase();
       const user = auth.currentUser;
-  
+
       if (user) {
         try {
           const userContestRef = ref(db, `users/${user.uid}/contests/${contestId}`);
@@ -93,7 +101,7 @@ function PerContestPage() {
         }
       }
     };
-  
+
     checkRegistrationStatus();
   }, [contestId]);
 
@@ -101,19 +109,50 @@ function PerContestPage() {
     const db = getDatabase();
     const auth = getAuth();
     const user = auth.currentUser;
-  
+
     if (user) {
       try {
         const userContestRef = ref(db, `users/${user.uid}/contests/${contestId}`);
-        await set(userContestRef, { isRegistered: true });
-        setIsRegistered(true);
-        setMessageWithTimer("Registered successfully!", "success");
+        await update(userContestRef, { isRegistered: !isRegistered });
+        setIsRegistered(!isRegistered);
+        isRegistered ? setMessageWithTimer("Unregistered successfully.", "error") : setMessageWithTimer("Registered successfully.", "success");
       } catch (error) {
         console.error("Error registering for contest:", error);
         setMessageWithTimer("Registration failed. Please reload.", "error");
       }
     }
   };
+
+  // Auto-reload logic
+  useEffect(() => {
+    if (contestData) {
+      const registrationEndTime = new Date(`${contestData.registrationEndDate}T${contestData.registrationEndTime}`);
+      const contestStartTime = new Date(`${contestData.contestStartDate}T${contestData.contestStartTime}`);
+      const contestEndTime = new Date(`${contestData.contestEndDate}T${contestData.contestEndTime}`);
+      const votingStartTime = new Date(`${contestData.votingStartDate}T${contestData.votingStartTime}`);
+
+      const timeEvents = [
+        { time: registrationEndTime, name: 'Registration End' },
+        { time: contestStartTime, name: 'Contest Start' },
+        { time: contestEndTime, name: 'Contest End' },
+        { time: votingStartTime, name: 'Voting Start' }
+      ];
+
+      const now = new Date();
+
+      // Find the next upcoming event
+      const nextEvent = timeEvents.find(event => event.time > now);
+
+      if (nextEvent) {
+        const timeUntilNextEvent = nextEvent.time - now;
+        const timeoutId = setTimeout(() => {
+          window.location.reload();
+        }, timeUntilNextEvent);
+
+        return () => clearTimeout(timeoutId);
+      }
+    }
+  }, [contestData, currentTime]);
 
   if (loading) {
     return <div className="flex justify-center items-center h-screen text-xl">Loading...</div>;
@@ -128,43 +167,44 @@ function PerContestPage() {
   const contestEndTime = new Date(`${contestData.contestEndDate}T${contestData.contestEndTime}`);
   const votingStartTime = new Date(`${contestData.votingStartDate}T${contestData.votingStartTime}`);
 
+  UplaodService.setContestId(contestId);
+
   const formatDateTime = (date) => {
-    return date.toLocaleString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric', 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 font-sans">
-      
+    <div className="mx-auto p-6 font-sans">
       <style>{styles}</style>
 
-      {/* Message display */}
-      {message && (
-        <div className={`fixed top-4 right-0 mb-4 p-3 rounded-l-lg w-64 ${
-          messageType === 'success' 
-            ? 'bg-gradient-to-r from-green-600 to-green-800 text-white' 
-            : messageType === 'error'
-            ? 'bg-gradient-to-r from-red-600 to-red-800 text-white'
-            : 'bg-gradient-to-r from-blue-500 to-blue-700 text-white'
-        } border border-solid ${
-          messageType === 'success' ? 'border-green-500' : 
-          messageType === 'error' ? 'border-red-500' : 'border-blue-400'
-        } text-center transition-all duration-300 ease-in-out transform translate-x-0 shadow-md z-50`}
-          style={{
-            animation: `${message ? 'slideIn' : 'slideOut'} 0.3s ease-in-out forwards`
-          }}
+      {/* Go Back Button */}
+      <button 
+        onClick={() => navigate('/contest')}
+        className="flex items-center text-blue-500 font-bold mb-4"
+      >
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          className="h-5 w-5 mr-2" 
+          viewBox="0 0 20 20" 
+          fill="currentColor"
         >
-          <p className="font-semibold">{message}</p>
-        </div>
-      )}
+          <path 
+            fillRule="evenodd" 
+            d="M7.707 14.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L4.414 9H17a1 1 0 110 2H4.414l3.293 3.293a1 1 0 010 1.414z" 
+            clipRule="evenodd" 
+          />
+        </svg>
+        Go Back to Contests
+      </button>
 
-      <h1 className="text-4xl font-bold text-gray-800 border-b-2 border-gray-300 pb-4 mb-8">{contestData.theme} Contest</h1>
-      
+      <h1 className="text-4xl font-bold text-gray-800 border-b-2 border-gray-300 pb-4 mb-8">Contest No- {contestId}, Theme- {contestData.theme}</h1>
+
       <section className="mb-12 bg-white shadow-md rounded-lg overflow-hidden">
         <h2 className="text-2xl font-semibold text-white bg-blue-600 p-4">Contest Timeline</h2>
         <div className="p-6 space-y-2">
@@ -173,7 +213,7 @@ function PerContestPage() {
           <p className="text-gray-700"><span className="font-semibold">Contest Ends:</span> {formatDateTime(contestEndTime)}</p>
         </div>
       </section>
-      
+
       <section className="mb-12 bg-white shadow-md rounded-lg overflow-hidden">
         <h2 className="text-2xl font-semibold text-white bg-blue-600 p-4">Rules</h2>
         <ul className="p-6 space-y-4 list-decimal list-inside">
@@ -182,7 +222,7 @@ function PerContestPage() {
           ))}
         </ul>
       </section>
-      
+
       <section className="bg-white shadow-md rounded-lg overflow-hidden">
         <h2 className="text-2xl font-semibold text-white bg-blue-600 p-4">Contest Actions</h2>
         <div className="p-6">
@@ -203,17 +243,48 @@ function PerContestPage() {
               <UploadComponent />
             </div>
           )}
-          {currentTime >= votingStartTime && currentTime <contestEndTime && (
-            <ContestVoting contestId={contestId} /> 
+          {currentTime >= votingStartTime && currentTime < contestEndTime && (
+            <ContestVoting contestId={contestId} />
           )}
           {isRegistered && currentTime < contestStartTime && (
-            <p className="text-blue-500">You are registered. The contest will start soon.</p>
+            <div>
+              <h3 className="text-xl font-semibold text-gray-700 mb-4">Register for the Contest</h3>
+              <button 
+                onClick={handleRegistration}
+                className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+              >
+                Unregister
+              </button>
+            </div>
           )}
-          {!isRegistered && currentTime >= registrationEndTime && currentTime < contestEndTime && (
+          {!isRegistered && currentTime >= registrationEndTime && currentTime < votingStartTime && (
             <p className="text-red-500 italic">Registration is closed. Please wait for voting to start.</p>
           )}
           {currentTime >= contestEndTime && (
-            <p className="text-gray-500 italic">The contest has ended. Thank you for participating!</p>
+            <div>
+              <div className="mb-4 flex justify-center space-x-4">
+                <button
+                  onClick={() => toggleView('voting')}
+                  className={`text-blue-500 font-bold py-2 px-4 ${!showStandings ? 'border-b-2 border-blue-500' : ''}`}
+                >
+                  Voting
+                </button>
+                <button
+                  onClick={() => toggleView('standings')}
+                  className={`text-blue-500 font-bold py-2 px-4 ${showStandings ? 'border-b-2 border-blue-500' : ''}`}
+                >
+                  Standings
+                </button>
+              </div>
+
+              <div className="mt-4">
+                {showStandings ? (
+                  <Standings contestId={contestId} />
+                ) : (
+                  <ContestVoting contestId={contestId} />
+                )}
+              </div>
+            </div>
           )}
         </div>
       </section>

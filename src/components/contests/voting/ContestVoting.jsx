@@ -9,7 +9,7 @@ import VotePopup from "./VotePopup.jsx";
 import MessagePopup from "./MessagePopup.jsx";
 import "./ContestVoting.css"
 
-const ContestVoting = () => {
+const ContestVoting = ({contestId}) => {
     const [currentContest, setCurrentContest] = useState(null);
     const [entries, setEntries] = useState([]);
     const [likedPhotoId, setLikedPhotoId] = useState(null);

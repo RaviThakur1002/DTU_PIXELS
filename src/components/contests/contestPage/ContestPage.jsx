@@ -69,7 +69,7 @@ const ContestPage = () => {
           <h2 className="text-2xl font-semibold mb-6">Past Contests</h2>
           <div>
             {getPastContests().map((contest, index) => (
-              <Contest key={index} contest={contest} isCurrent={false} />
+              <NavLink key={contest.id} to={`/contest/${contest.id}`}><Contest contest={contest} isCurrent={false} /></NavLink>
             ))}
           </div>
           <Pagination

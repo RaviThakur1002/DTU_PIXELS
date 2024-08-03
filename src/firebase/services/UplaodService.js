@@ -4,7 +4,7 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import { getDatabase, ref as dbRef, push, set, get } from "firebase/database";
+import { getDatabase, ref as dbRef, push, set, get, update } from "firebase/database";
 import { getAuth } from "firebase/auth";
 import app from "../../config/conf.js";
 
@@ -73,7 +73,7 @@ class UploadService {
               const entryRef = push(
                 dbRef(this.database, `contests/${this.contestId}/entries`),
               );
-              await set(entryRef, {
+              await update(entryRef, {
                 userId: userId,
                 userName: userName,
                 photoUrl: downloadURL,
@@ -83,7 +83,7 @@ class UploadService {
                 timestamp: Date.now(),
                 isWinner: false
               });
-              await set(userContestRef, {
+              await update(userContestRef, {
                 hasSubmitted: true,
                 submittedPhotoId: entryRef.key,
               });

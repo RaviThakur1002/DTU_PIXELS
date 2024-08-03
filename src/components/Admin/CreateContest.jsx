@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ContestServiceInstance from '../../firebase/contestServices/ContestService';
 import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -8,32 +8,99 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
 
-const CreateContest = () => {
+const styles = `
+  @keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+  @keyframes slideOut {
+    from { transform: translateX(0); }
+    to { transform: translateX(100%); }
+  }
+`;
 
+const CreateContest = () => {
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('');
   const [formData, setFormData] = useState({
     registrationEndDate: null,
     registrationEndTime: null,
     contestStartDate: null,
     contestStartTime: null,
+    votingStartDate: null,
+    votingStartTime: null,
     contestEndDate: null,
     contestEndTime: null,
     theme: '',
   });
 
+  const setMessageWithTimer = (msg, type) => {
+    setMessage(msg);
+    setMessageType(type);
+    setTimeout(() => {
+      setMessage('');
+      setMessageType('');
+    }, 3000);
+  };
+
+
+  useEffect(() => {
+    const now = dayjs();
+    const registrationEnd = now.add(3, 'day').startOf('day');
+    const contestStart = registrationEnd.add(1, 'minute');
+    const votingStart = contestStart.add(2, 'day').startOf('day');
+    const contestEnd = votingStart.add(2, 'day').startOf('day');
+
+    setFormData({
+      registrationEndDate: registrationEnd,
+      registrationEndTime: registrationEnd,
+      contestStartDate: contestStart,
+      contestStartTime: contestStart,
+      votingStartDate: votingStart,
+      votingStartTime: votingStart,
+      contestEndDate: contestEnd,
+      contestEndTime: contestEnd,
+      theme: '',
+    });
+  }, []);
+
   const handleChange = (field, value) => {
     if (typeof field === 'string') {
-      setFormData(prevState => ({
-        ...prevState,
-        [field]: value
-      }));
+      setFormData(prevState => {
+        const newState = { ...prevState, [field]: value };
+        return validateDates(newState, field);
+      });
     } else {
       const { name, value } = field.target;
-      setFormData(prevState => ({
-        ...prevState,
-        [name]: value
-      }));
+      setFormData(prevState => {
+        const newState = { ...prevState, [name]: value };
+        return validateDates(newState, name);
+      });
     }
   }
+
+  const validateDates = (newState, changedField) => {
+    const fields = ['registrationEnd', 'contestStart', 'votingStart', 'contestEnd'];
+    const index = fields.findIndex(field => changedField.startsWith(field));
+    
+    if (index > -1) {
+      for (let i = index + 1; i < fields.length; i++) {
+        const currentField = fields[i];
+        const prevField = fields[i - 1];
+        const currentDate = dayjs(`${newState[`${currentField}Date`].format('YYYY-MM-DD')} ${newState[`${currentField}Time`].format('HH:mm')}`);
+        const prevDate = dayjs(`${newState[`${prevField}Date`].format('YYYY-MM-DD')} ${newState[`${prevField}Time`].format('HH:mm')}`);
+
+        if (currentDate.isBefore(prevDate)) {
+          newState[`${currentField}Date`] = prevDate;
+          newState[`${currentField}Time`] = prevDate;
+        }
+      }
+    }
+
+    return newState;
+  }
+
+
 
   const handleSubmit = async (e) =>{
     e.preventDefault();
@@ -45,18 +112,22 @@ const CreateContest = () => {
       contestStartTime: formData.contestStartTime ? formData.contestStartTime.format('HH:mm') : null,
       contestEndDate: formData.contestEndDate ? formData.contestEndDate.format('YYYY-MM-DD') : null,
       contestEndTime: formData.contestEndTime ? formData.contestEndTime.format('HH:mm') : null,
+      votingStartDate: formData.votingStartDate ? formData.votingStartDate.format('YYYY-MM-DD') : null,
+      votingStartTime: formData.votingStartTime ? formData.votingStartTime.format('HH:mm') : null,
     };  
     
     try{
       const newContestId = await ContestServiceInstance.createContest(formattedData);
       console.log(formattedData);
-      alert(`Contest created with id ${newContestId}`);
+      setMessageWithTimer(`Contest created with id ${newContestId}`, 'success');
 
       setFormData({
         registrationEndDate: null,
         registrationEndTime: null,
         contestStartDate: null,
         contestStartTime: null,
+        votingStartDate: null,
+        votingStartTime: null,
         contestEndDate: null,
         contestEndTime: null,
         theme: '',
@@ -65,7 +136,7 @@ const CreateContest = () => {
     catch(err){
       console.error(err);
       console.log(formData);
-      alert("Error creating Contest");
+      setMessageWithTimer("Error creating Contest", 'error');
     }
 
   }    
@@ -73,6 +144,28 @@ const CreateContest = () => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
+        <style>{styles}</style>
+      
+        {/* Message display */}
+        {message && (
+          <div className={`fixed top-4 right-0 mb-4 p-3 rounded-l-lg w-64 ${
+            messageType === 'success' 
+              ? 'bg-gradient-to-r from-green-600 to-green-800 text-white' 
+              : messageType === 'error'
+              ? 'bg-gradient-to-r from-red-600 to-red-800 text-white'
+              : 'bg-gradient-to-r from-blue-500 to-blue-700 text-white'
+          } border border-solid ${
+            messageType === 'success' ? 'border-green-500' : 
+            messageType === 'error' ? 'border-red-500' : 'border-blue-400'
+          } text-center transition-all duration-300 ease-in-out transform translate-x-0 shadow-md z-50`}
+            style={{
+              animation: `${message ? 'slideIn' : 'slideOut'} 0.3s ease-in-out forwards`
+            }}
+          >
+            <p className="font-semibold">{message}</p>
+          </div>
+        )}
+
         <div className="w-full max-w-lg bg-white rounded-xl shadow-md overflow-hidden">
           <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-4">
             <h2 className="text-2xl font-bold text-white">Create New Contest</h2>
@@ -81,6 +174,7 @@ const CreateContest = () => {
             {[
               { label: "Registration End", dateKey: "registrationEndDate", timeKey: "registrationEndTime" },
               { label: "Contest Start", dateKey: "contestStartDate", timeKey: "contestStartTime" },
+              { label: "Voting Start", dateKey: "votingStartDate", timeKey: "votingStartTime" },
               { label: "Contest End", dateKey: "contestEndDate", timeKey: "contestEndTime" },
             ].map(({ label, dateKey, timeKey }) => (
               <div key={label} className="flex flex-col md:flex-row md:space-x-4">
