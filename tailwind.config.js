@@ -15,5 +15,9 @@ export default {
       'oswald': ['Oswald', 'sans-serif'], 
     }
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/aspect-ratio'),
+    require('@tailwindcss/typography'),
+  ],
 }
