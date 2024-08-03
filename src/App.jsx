@@ -22,7 +22,7 @@ const App = () => {
         <Route path="/submissions" element={<Profile />} />
         <Route path="/contest/createcontest" element={<CreateContest />} />
         <Route path="/contest/voting" element={<ContestVoting />} />
-        <Route path="/contest/contest-:id" element={<PerContestPage />} />
+        <Route path="/contest/:contestId" element={<PerContestPage />} />
       </Routes>
       <Footer />
     </Router>

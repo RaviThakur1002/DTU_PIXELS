@@ -59,7 +59,7 @@ const ContestPage = () => {
           <h2 className="text-2xl font-semibold mb-6">Current/Upcoming Contests</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {currentContests.map((contest, index) => (
-              <NavLink key={contest.id} to={`/contest/contest-${contest.id}`}><Contest contest={contest} isCurrent={true} /></NavLink>
+              <NavLink key={contest.id} to={`/contest/${contest.id}`}><Contest contest={contest} isCurrent={true} /></NavLink>
             ))}
           </div>
         </section>
