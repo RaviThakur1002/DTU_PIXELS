@@ -5,11 +5,19 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      screens:{
+        'xs':{'max' : '450px'},
+      }
+    },
     fontFamily: {
       'montserrat': ['Montserrat', 'sans-serif'],
       'oswald': ['Oswald', 'sans-serif'], 
     }
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/aspect-ratio'),
+    require('@tailwindcss/typography'),
+  ],
 }
