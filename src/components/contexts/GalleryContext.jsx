@@ -3,21 +3,38 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 const GalleryContext = createContext();
 
 export const GalleryProvider = ({ children }) => {
-  const [galleryData, setGalleryData] = useState(() => {
-    const savedData = localStorage.getItem('galleryData');
-    console.log("Initial galleryData from localStorage:", savedData ? JSON.parse(savedData) : null);
+  const [allGalleryData, setAllGalleryData] = useState(() => {
+    const savedData = localStorage.getItem('allGalleryData');
     return savedData ? JSON.parse(savedData) : null;
   });
 
+  const [userGalleryData, setUserGalleryData] = useState(null);
+
+  const [lastFetchTime, setLastFetchTime] = useState(() => {
+    return localStorage.getItem('lastGalleryFetchTime') || null;
+  });
+
   useEffect(() => {
-    if (galleryData) {
-      console.log("Saving galleryData to localStorage:", galleryData);
-      localStorage.setItem('galleryData', JSON.stringify(galleryData));
+    if (allGalleryData) {
+      localStorage.setItem('allGalleryData', JSON.stringify(allGalleryData));
     }
-  }, [galleryData]);
+  }, [allGalleryData]);
+
+  useEffect(() => {
+    if (lastFetchTime) {
+      localStorage.setItem('lastGalleryFetchTime', lastFetchTime);
+    }
+  }, [lastFetchTime]);
 
   return (
-    <GalleryContext.Provider value={{ galleryData, setGalleryData }}>
+    <GalleryContext.Provider value={{ 
+      allGalleryData, 
+      setAllGalleryData, 
+      userGalleryData, 
+      setUserGalleryData,
+      lastFetchTime, 
+      setLastFetchTime 
+    }}>
       {children}
     </GalleryContext.Provider>
   );

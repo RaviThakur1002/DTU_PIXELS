@@ -8,7 +8,14 @@ import { useGallery } from "../contexts/GalleryContext.jsx";
 import './Gallery.css';
 
 const Gallery = ({ userName = null }) => {
-  const { galleryData, setGalleryData } = useGallery();
+  const { 
+    allGalleryData, 
+    setAllGalleryData, 
+    userGalleryData, 
+    setUserGalleryData,
+    lastFetchTime, 
+    setLastFetchTime 
+  } = useGallery();
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const postPerPage = 10;
@@ -27,7 +34,7 @@ const Gallery = ({ userName = null }) => {
   [funnyQuotes]);
 
   const fetchImages = useCallback(async () => {
-    console.log("Fetching images for user:", userName);
+    console.log("Fetching images");
     setIsLoading(true);
     try {
       const contestsRef = ref(database, "contests");
@@ -48,39 +55,54 @@ const Gallery = ({ userName = null }) => {
 
           entriesSnapshot.forEach((entrySnapshot) => {
             const entry = entrySnapshot.val();
-            if (!userName || entry.userName === userName) {
-              allImages.push({
-                id: entrySnapshot.key,
-                contestId: contestId,
-                contestTheme: contestData.theme,
-                photoUrl: entry.photoUrl,
-                userName: entry.userName,
-                quote: entry.quote,
-                timestamp: entry.timestamp,
-              });
-            }
+            allImages.push({
+              id: entrySnapshot.key,
+              contestId: contestId,
+              contestTheme: contestData.theme,
+              photoUrl: entry.photoUrl,
+              userName: entry.userName,
+              quote: entry.quote,
+              timestamp: entry.timestamp,
+            });
           });
         }
       }
       const sortedImages = allImages.sort((a, b) => b.timestamp - a.timestamp);
       console.log("Fetched and sorted images:", sortedImages);
-      setGalleryData(sortedImages);
+      setAllGalleryData(sortedImages);
+      setLastFetchTime(new Date().toISOString());
     } catch (error) {
       console.error("Error fetching images:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [userName, database, setGalleryData]);
+  }, [database, setAllGalleryData, setLastFetchTime]);
 
   useEffect(() => {
-    if (!galleryData) {
-      fetchImages();
+    const checkAndFetchImages = () => {
+      const currentTime = new Date().getTime();
+      const fetchTimeThreshold = 60 * 60 * 1000; // 1 hour in milliseconds
+
+      if (!lastFetchTime || !allGalleryData || (currentTime - new Date(lastFetchTime).getTime() > fetchTimeThreshold)) {
+        fetchImages();
+      } else {
+        console.log("Using cached gallery data");
+      }
+    };
+
+    checkAndFetchImages();
+  }, [fetchImages, lastFetchTime, allGalleryData]);
+
+  useEffect(() => {
+    if (allGalleryData && userName) {
+      const filteredData = allGalleryData.filter(image => image.userName === userName);
+      setUserGalleryData(filteredData);
+    } else if (allGalleryData) {
+      setUserGalleryData(null);
     }
-  }, [fetchImages, galleryData]);
+  }, [allGalleryData, userName, setUserGalleryData]);
 
-  useEffect(() => {
-    console.log("Current galleryData:", galleryData);
-  }, [galleryData]);
+  const galleryData = userName ? userGalleryData : allGalleryData;
 
   const { currentPosts, totalPosts } = useMemo(() => {
     if (!galleryData) return { currentPosts: [], totalPosts: 0 };
@@ -91,13 +113,6 @@ const Gallery = ({ userName = null }) => {
       totalPosts: galleryData.length
     };
   }, [galleryData, currentPage, postPerPage]);
-
-  const refreshGallery = () => {
-    console.log("Refreshing gallery");
-    setGalleryData(null);
-    localStorage.removeItem('galleryData');
-    fetchImages();
-  };
 
   if (isLoading) {
     return <LoadingSpinner quote={randomQuote} />;
@@ -121,14 +136,6 @@ const Gallery = ({ userName = null }) => {
           setCurrentPage={setCurrentPage}
           currentPage={currentPage}
         />
-<button 
-  onClick={refreshGallery}
-  className="mb-4 px-6 py-3 bg-gradient-to-r from-blue-400 to-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
->
-  Refresh Gallery
-</button>
-
-
       </div>
     </div>
   );
