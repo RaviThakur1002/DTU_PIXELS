@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrophy } from '@fortawesome/free-solid-svg-icons';
 import Pagination from './Pagination';
 import ContestServiceInstance from '../../../firebase/contestServices/ContestService';
+import { NavLink } from 'react-router-dom';
 
 const contestsPerPage = 3;
 
@@ -57,7 +58,7 @@ const ContestPage = () => {
           <h2 className="text-2xl font-semibold mb-6">Current/Upcoming Contests</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {currentContests.map((contest, index) => (
-              <Contest key={index} contest={contest} isCurrent={true} />
+              <NavLink key={contest.id} to={`/contest/${contest.id}`}><Contest contest={contest} isCurrent={true} /></NavLink>
             ))}
           </div>
         </section>
@@ -67,7 +68,7 @@ const ContestPage = () => {
           <h2 className="text-2xl font-semibold mb-6">Past Contests</h2>
           <div>
             {getPastContests().map((contest, index) => (
-              <Contest key={index} contest={contest} isCurrent={false} />
+              <NavLink key={contest.id} to={`/contest/${contest.id}`}><Contest contest={contest} isCurrent={false} /></NavLink>
             ))}
           </div>
           <Pagination

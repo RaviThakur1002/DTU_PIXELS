@@ -4,19 +4,27 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import { getDatabase, ref as dbRef, push, set, get } from "firebase/database";
+import { getDatabase, ref as dbRef, push, set, get, update } from "firebase/database";
 import { getAuth } from "firebase/auth";
 import app from "../../config/conf.js";
-import ContestServiceInstance from "../../firebase/contestServices/ContestService";
 
 class UploadService {
   constructor() {
     this.storage = getStorage(app);
     this.database = getDatabase(app);
     this.auth = getAuth(app);
+    this.contestId = null;
+  }
+
+  setContestId(contestId) {
+    this.contestId = contestId;
   }
 
   async uploadContestImage(file, quote, onProgress) {
+    if (!this.contestId) {
+      throw new Error("Contest ID not set. Call setContestId first.");
+    }
+
     try {
       const user = this.auth.currentUser;
       if (!user) {
@@ -25,16 +33,9 @@ class UploadService {
       const userId = user.uid;
       const userName = user.displayName || user.email || "Anonymous User";
 
-      // Get the current contest
-      const currentContest = await ContestServiceInstance.getCurrentContest();
-      if (!currentContest) {
-        throw new Error("No active contest found");
-      }
-      const contestId = currentContest.id;
-
       const userContestRef = dbRef(
         this.database,
-        `users/${userId}/contests/${contestId}`,
+        `users/${userId}/contests/${this.contestId}`,
       );
       const userContestSnapshot = await get(userContestRef);
       if (
@@ -43,11 +44,13 @@ class UploadService {
       ) {
         throw new Error("You have already submitted an entry for this contest");
       }
+
       const fileRef = storageRef(
         this.storage,
-        `contests/${contestId}/${userId}/${file.name}`,
+        `contests/${this.contestId}/${userId}/${file.name}`,
       );
       const uploadTask = uploadBytesResumable(fileRef, file);
+
       return new Promise((resolve, reject) => {
         uploadTask.on(
           "state_changed",
@@ -68,9 +71,9 @@ class UploadService {
               const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
               console.log("File available at", downloadURL);
               const entryRef = push(
-                dbRef(this.database, `contests/${contestId}/entries`),
+                dbRef(this.database, `contests/${this.contestId}/entries`),
               );
-              await set(entryRef, {
+              await update(entryRef, {
                 userId: userId,
                 userName: userName,
                 photoUrl: downloadURL,
@@ -78,8 +81,9 @@ class UploadService {
                 likeCount: 0,
                 voteCount: 0,
                 timestamp: Date.now(),
+                isWinner: false
               });
-              await set(userContestRef, {
+              await update(userContestRef, {
                 hasSubmitted: true,
                 submittedPhotoId: entryRef.key,
               });

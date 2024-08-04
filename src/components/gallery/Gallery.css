@@ -1,0 +1,19 @@
+/* Add this to your main CSS file or a separate CSS module */
+.gallery-container {
+  margin-top: 0; /* Default margin for larger screens */
+}
+
+@media (max-width: 1024px) {
+  /* Tablet screens */
+  .gallery-container {
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Mobile screens */
+  .gallery-container {
+    margin-top: 0.5rem;
+  }
+}
+

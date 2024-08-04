@@ -1,22 +1,21 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import Card from "./Card";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaTimes, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const Images = ({ imageData }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [popupVisible, setPopupVisible] = useState(false);
   const popupRef = useRef(null);
   const touchStartX = useRef(null);
 
   const openPopup = useCallback((index) => {
     setCurrentIndex(index);
     setIsPopupOpen(true);
-    setTimeout(() => setPopupVisible(true), 10); // Delay to ensure transition works
   }, []);
 
   const closePopup = useCallback(() => {
-    setPopupVisible(false);
-    setTimeout(() => setIsPopupOpen(false), 300); // Duration should match the transition
+    setIsPopupOpen(false);
   }, []);
 
   const nextImage = useCallback(() => {
@@ -24,7 +23,9 @@ const Images = ({ imageData }) => {
   }, [imageData.length]);
 
   const prevImage = useCallback(() => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + imageData.length) % imageData.length);
+    setCurrentIndex(
+      (prevIndex) => (prevIndex - 1 + imageData.length) % imageData.length
+    );
   }, [imageData.length]);
 
   useEffect(() => {
@@ -75,77 +76,95 @@ const Images = ({ imageData }) => {
 
     const popup = popupRef.current;
     if (isPopupOpen && popup) {
-      popup.addEventListener('touchstart', handleTouchStart);
-      popup.addEventListener('touchmove', handleTouchMove);
+      popup.addEventListener("touchstart", handleTouchStart);
+      popup.addEventListener("touchmove", handleTouchMove);
     }
 
     return () => {
       if (popup) {
-        popup.removeEventListener('touchstart', handleTouchStart);
-        popup.removeEventListener('touchmove', handleTouchMove);
+        popup.removeEventListener("touchstart", handleTouchStart);
+        popup.removeEventListener("touchmove", handleTouchMove);
       }
     };
   }, [isPopupOpen, nextImage, prevImage]);
 
   return (
     <>
-      <div className="flex flex-wrap justify-center gap-4 p-4">
-        {imageData.map((pic, index) => (
-          <Card
-            key={pic.id}
-            src={pic.urls.regular}
-            alt={`Image ${index + 1}`}
-            name={pic.user.name}
-            onClick={() => openPopup(index)}
-          />
-        ))}
-      </div>
+<div className="grid gap-4 mt-2 justify-center" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))' }}>
+  {imageData.map((pic, index) => (
+    <Card
+      key={pic.id}
+      entry={{
+        photoUrl: pic.photoUrl,
+        userName: pic.userName,
+        quote: pic.quote,
+      }}
+      onClick={() => openPopup(index)}
+    />
+  ))}
+</div>
 
-      {isPopupOpen && (
-        <div 
-          ref={popupRef}
-          className={`fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 backdrop-filter backdrop-blur-sm transition-opacity duration-300 ${popupVisible ? 'opacity-100' : 'opacity-0'}`}
-          onClick={closePopup}
-        >
-          <div 
-            className="relative max-w-4xl max-h-[90vh] overflow-hidden rounded-lg transition-transform duration-300 transform ${popupVisible ? 'scale-100' : 'scale-95'}"
-            onClick={(e) => e.stopPropagation()}
+      <AnimatePresence>
+        {isPopupOpen && (
+          <motion.div
+            ref={popupRef}
+            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 backdrop-filter backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={closePopup}
           >
-            <div className="flex items-center justify-center w-full h-full">
+            <motion.div
+              className="relative max-w-4xl max-h-[90vh] overflow-hidden rounded-lg bg-white"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              onClick={(e) => e.stopPropagation()}
+            >
               <img
-                src={imageData[currentIndex].urls.regular}
+                src={imageData[currentIndex].photoUrl}
                 alt={`Image ${currentIndex + 1}`}
                 className="max-w-full max-h-[70vh] object-contain"
               />
-            </div>
-            <div className="absolute inset-0 flex items-center justify-between">
-              <button
-                className="bg-black bg-opacity-50 text-white p-2 rounded-full m-4 hover:bg-opacity-75 transition-opacity duration-300"
-                onClick={prevImage}
+              <div className="absolute inset-0 flex items-center justify-between">
+                <motion.button
+                  className="bg-black bg-opacity-50 text-white p-3 rounded-full m-4 hover:bg-opacity-75 transition-colors duration-300"
+                  onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <FaChevronLeft className="text-xl" />
+                </motion.button>
+                <motion.button
+                  className="bg-black bg-opacity-50 text-white p-3 rounded-full m-4 hover:bg-opacity-75 transition-colors duration-300"
+                  onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <FaChevronRight className="text-xl" />
+                </motion.button>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 block bg-black bg-opacity-50 text-white p-4 transition-opacity duration-300">
+                <h2 className="text-2xl font-bold">
+                  {imageData[currentIndex].userName}
+                </h2>
+              </div>
+              <motion.button
+                className="absolute top-2 right-2 text-white text-xl bg-black bg-opacity-50 w-10 h-10 rounded-full flex items-center justify-center hover:bg-opacity-75 transition-colors duration-300"
+                onClick={closePopup}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
               >
-                &#10094;
-              </button>
-              <button
-                className="bg-black bg-opacity-50 text-white p-2 rounded-full m-4 hover:bg-opacity-75 transition-opacity duration-300"
-                onClick={nextImage}
-              >
-                &#10095;
-              </button>
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 block bg-opacity-50 text-black p-4 transition-opacity duration-300">
-              <h2 className="bg-white backdrop-filter backdrop-blur-lg bg-opacity-30 rounded-tl-3xl rounded-br-3xl p-2 w-fit text-2xl font-bold">{imageData[currentIndex].user.name}</h2>
-            </div>            <button 
-              className="absolute top-2 right-2 text-white text-xl bg-black bg-opacity-50 w-8 h-8 rounded-full flex items-center justify-center hover:bg-opacity-75 transition-opacity duration-300"
-              onClick={closePopup}
-            >
-              &times;
-            </button>
-          </div>
-        </div>
-      )}
+                <FaTimes className="text-2xl" />
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };
 
 export default Images;
-

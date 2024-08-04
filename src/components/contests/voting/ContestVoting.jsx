@@ -3,59 +3,66 @@ import { getDatabase, ref, onValue } from "firebase/database";
 import app from "../../../config/conf.js";
 import VoteService from "../../../firebase/services/VoteService.js";
 import LikeService from "../../../firebase/services/LikeService.js";
-import ContestServiceInstance from "../../../firebase/contestServices/ContestService.js";
+import UploadService from "../../../firebase/services/UplaodService.js";
 import VoteCard from "./VoteCard.jsx";
 import VotePopup from "./VotePopup.jsx";
 import MessagePopup from "./MessagePopup.jsx";
-import "./ContestVoting.css"
+import "./ContestVoting.css";
 
 const ContestVoting = () => {
-    const [currentContest, setCurrentContest] = useState(null);
     const [entries, setEntries] = useState([]);
     const [likedPhotoId, setLikedPhotoId] = useState(null);
     const [votedPhotoId, setVotedPhotoId] = useState(null);
     const [currentEntryIndex, setCurrentEntryIndex] = useState(null);
     const [message, setMessage] = useState("");
+    const [contestId, setContestId] = useState(null);
+    const [contestEndDateTime, setContestEndDateTime] = useState(null);
 
     useEffect(() => {
-        const fetchCurrentContest = async () => {
-            const contest = await ContestServiceInstance.getCurrentContest();
-            setCurrentContest(contest);
-        };
-
-        fetchCurrentContest();
+        const contestIdFromService = UploadService.contestId;
+        if (contestIdFromService) {
+            setContestId(contestIdFromService);
+        } else {
+            console.error("Contest ID is not set in UploadService.");
+        }
     }, []);
 
     useEffect(() => {
-        if (currentContest) {
+        if (contestId) {
             const database = getDatabase(app);
-            const entriesRef = ref(database, `contests/${currentContest.id}/entries`);
+            const contestRef = ref(database, `contests/${contestId}`);
 
-            const unsubscribe = onValue(entriesRef, (snapshot) => {
-                const entriesData = snapshot.val();
-                if (entriesData) {
-                    const entriesArray = Object.entries(entriesData).map(
-                        ([key, value]) => ({
-                            id: key,
-                            ...value,
-                        }),
-                    );
-                    setEntries(entriesArray);
+            const unsubscribe = onValue(contestRef, (snapshot) => {
+                const contestData = snapshot.val();
+                if (contestData) {
+                    const { contestEndDate, contestEndTime, entries: entriesData } = contestData;
+                    const endDateTime = new Date(`${contestEndDate}T${contestEndTime}`);
+                    setContestEndDateTime(endDateTime);
+                    
+                    if (entriesData) {
+                        const entriesArray = Object.entries(entriesData).map(
+                            ([key, value]) => ({
+                                id: key,
+                                ...value,
+                            }),
+                        );
+                        setEntries(entriesArray);
+                    }
                 }
             });
 
             return () => unsubscribe();
         }
-    }, [currentContest]);
+    }, [contestId]);
 
     useEffect(() => {
-        if (currentContest) {
+        if (contestId) {
             const fetchUserVoteStatus = async () => {
                 try {
-                    const likedPhoto = await LikeService.getLikedPhoto(currentContest.id);
+                    const likedPhoto = await LikeService.getLikedPhoto(contestId);
                     setLikedPhotoId(likedPhoto);
 
-                    const votedPhoto = await VoteService.getVotedPhoto(currentContest.id);
+                    const votedPhoto = await VoteService.getVotedPhoto(contestId);
                     setVotedPhotoId(votedPhoto);
                 } catch (error) {
                     console.error("Error fetching user vote status:", error);
@@ -64,16 +71,26 @@ const ContestVoting = () => {
 
             fetchUserVoteStatus();
         }
-    }, [currentContest]);
+    }, [contestId]);
+
+    const isContestEnded = useCallback(() => {
+        if (!contestEndDateTime) return false;
+        return new Date() > contestEndDateTime;
+    }, [contestEndDateTime]);
 
     const handleLike = async (photoId) => {
+        if (isContestEnded()) {
+            setMessage("The contest has ended. Likes are no longer allowed.");
+            return;
+        }
+
         if (votedPhotoId) {
             setMessage("You've already voted and can't change your like.");
             return;
         }
 
         try {
-            await LikeService.likePhoto(currentContest.id, photoId);
+            await LikeService.likePhoto(contestId, photoId);
             setLikedPhotoId((prevLikedPhotoId) =>
                 prevLikedPhotoId === photoId ? null : photoId,
             );
@@ -84,13 +101,18 @@ const ContestVoting = () => {
     };
 
     const handleVote = async () => {
+        if (isContestEnded()) {
+            setMessage("The contest has ended. Voting is no longer allowed.");
+            return;
+        }
+
         if (!likedPhotoId) {
             setMessage("Please like a photo before voting.");
             return;
         }
 
         try {
-            await VoteService.voteForPhoto(currentContest.id, likedPhotoId);
+            await VoteService.voteForPhoto(contestId, likedPhotoId);
             setVotedPhotoId(likedPhotoId);
             setMessage("Your vote has been recorded!");
         } catch (error) {
@@ -111,25 +133,25 @@ const ContestVoting = () => {
     }, []);
 
     const handlePrevious = useCallback(() => {
-        setCurrentEntryIndex((prevIndex) => 
+        setCurrentEntryIndex((prevIndex) =>
             prevIndex > 0 ? prevIndex - 1 : entries.length - 1
         );
     }, [entries]);
 
     const handleNext = useCallback(() => {
-        setCurrentEntryIndex((prevIndex) => 
+        setCurrentEntryIndex((prevIndex) =>
             prevIndex < entries.length - 1 ? prevIndex + 1 : 0
         );
     }, [entries]);
 
-    if (!currentContest) {
+    if (!contestId) {
         return <div>Loading contest...</div>;
     }
 
     return (
         <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-4">
-                Contest Voting: {currentContest.theme}
+                Contest Voting
             </h2>
 
             <div className="contest-grid grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -140,26 +162,29 @@ const ContestVoting = () => {
                         isLiked={entry.id === likedPhotoId}
                         onLike={() => handleLike(entry.id)}
                         onClick={() => openPopup(entry)}
+                        showLikeButton={!isContestEnded()}
                     />
                 ))}
             </div>
-            <button
-                className={`mt-4 px-4 py-2 rounded transition-colors duration-300 ${
-                    votedPhotoId
-                        ? "bg-green-500 text-white"
+            {!isContestEnded() && (
+                <button
+                    className={`mt-4 px-4 py-2 rounded transition-colors duration-300 ${
+                        votedPhotoId
+                            ? "bg-green-500 text-white"
+                            : likedPhotoId
+                                ? "bg-blue-500 text-white hover:bg-blue-600"
+                                : "bg-gray-400 text-white cursor-not-allowed"
+                    }`}
+                    onClick={handleVote}
+                    disabled={votedPhotoId !== null || !likedPhotoId}
+                >
+                    {votedPhotoId
+                        ? "Voted"
                         : likedPhotoId
-                            ? "bg-blue-500 text-white hover:bg-blue-600"
-                            : "bg-gray-400 text-white cursor-not-allowed"
-                }`}
-                onClick={handleVote}
-                disabled={votedPhotoId !== null || !likedPhotoId}
-            >
-                {votedPhotoId
-                    ? "Voted"
-                    : likedPhotoId
-                        ? "Confirm Vote"
-                        : "Like a photo to vote"}
-            </button>
+                            ? "Confirm Vote"
+                            : "Like a photo to vote"}
+                </button>
+            )}
             {currentEntryIndex !== null && (
                 <VotePopup
                     entries={entries}
@@ -169,6 +194,7 @@ const ContestVoting = () => {
                     onLike={handleLike}
                     onPrevious={handlePrevious}
                     onNext={handleNext}
+                    showLikeButton={!isContestEnded()}
                 />
             )}
             <MessagePopup message={message} setMessage={setMessage} />
