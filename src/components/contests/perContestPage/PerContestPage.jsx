@@ -6,6 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ContestVoting from '../voting/ContestVoting';
 import UplaodService from '../../../firebase/services/UplaodService';
 import Standings from './Standings';
+import LoadingSpinner from '../../LoadingSpinner';
 
 const styles = `
   @keyframes slideIn {
@@ -155,7 +156,9 @@ function PerContestPage() {
   }, [contestData, currentTime]);
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen text-xl">Loading...</div>;
+    return (
+      <LoadingSpinner/>
+    );
   }
 
   if (error) {
