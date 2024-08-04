@@ -9,6 +9,7 @@ import Temp from './components/contests/temp/Temp.jsx'
 import Footer from './components/Footer/Footer.jsx'
 import CreateContest from './components/Admin/CreateContest.jsx'
 import ContestVoting from './components/contests/voting/ContestVoting.jsx' 
+import HallOfFame from './components/HallOfFame/HallOfFame.jsx'
 const App = () => {
   return (
     <Router>
@@ -23,6 +24,7 @@ const App = () => {
         <Route path="/contest/voting" element={<ContestVoting />} /> {/* New route for contest voting */}
       </Routes>
       <Footer />
+      <HallOfFame/>
     </Router>
   )
 }

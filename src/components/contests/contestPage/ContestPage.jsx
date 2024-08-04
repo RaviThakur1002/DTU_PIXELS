@@ -52,7 +52,6 @@ const ContestPage = () => {
         </div>
       </div>
 
-
       <div className="container mx-auto p-4">
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-6">Current/Upcoming Contests</h2>
@@ -82,6 +81,5 @@ const ContestPage = () => {
     </>
   );
 };
-
 
 export default ContestPage;
