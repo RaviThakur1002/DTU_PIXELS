@@ -10,9 +10,10 @@ function Card({ entry, onClick }) {
     e.stopPropagation();
     setIsFlipped(!isFlipped);
   };
+
   return (
     <motion.div
-      className="w-full max-w-sm mx-auto h-64 sm:h-72 md:h-80 lg:h-96 mb-4"
+      className="w-full h-64 sm:h-72 md:h-80 lg:h-96 mb-4 mt-5"
       whileHover={{ scale: 1.05 }}
       transition={{ duration: 0.3 }}
     >

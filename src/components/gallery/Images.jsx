@@ -90,19 +90,19 @@ const Images = ({ imageData }) => {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-        {imageData.map((pic, index) => (
-          <Card
-            key={pic.id}
-            entry={{
-              photoUrl: pic.photoUrl,
-              userName: pic.userName,
-              quote: pic.quote,
-            }}
-            onClick={() => openPopup(index)}
-          />
-        ))}
-      </div>
+<div className="grid gap-4 mt-2 justify-center" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))' }}>
+  {imageData.map((pic, index) => (
+    <Card
+      key={pic.id}
+      entry={{
+        photoUrl: pic.photoUrl,
+        userName: pic.userName,
+        quote: pic.quote,
+      }}
+      onClick={() => openPopup(index)}
+    />
+  ))}
+</div>
 
       <AnimatePresence>
         {isPopupOpen && (
