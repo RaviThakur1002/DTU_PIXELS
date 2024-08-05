@@ -12,11 +12,6 @@ const Home = () => {
       <DTUPixelLogo />
       <Hero />
 
-      <UploadComponent
-        onUploadComplete={() => {
-          console.log("Upload completed");
-        }}
-      />
       <ImageSlider />
 
       <Contact />
