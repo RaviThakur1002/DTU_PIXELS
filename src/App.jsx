@@ -10,6 +10,7 @@ import CreateContest from "./components/Admin/CreateContest.jsx";
 import ContestVoting from "./components/contests/voting/ContestVoting.jsx";
 import PerContestPage from "./components/contests/perContestPage/PerContestPage.jsx";
 import { GalleryProvider } from "./components/contexts/GalleryContext.jsx";
+import HallOfFame from './components/HallOfFame/HallOfFame.jsx'
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
           <Route path="/contest/createcontest" element={<CreateContest />} />
           <Route path="/contest/voting" element={<ContestVoting />} />
           <Route path="/contest/:contestId" element={<PerContestPage />} />
+          <Route path="/winners" element={<HallOfFame />} />
         </Routes>
         <Footer />
       </GalleryProvider>

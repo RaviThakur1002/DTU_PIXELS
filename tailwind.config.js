@@ -8,7 +8,12 @@ export default {
     extend: {
       screens:{
         'xs':{'max' : '450px'},
-      }
+      },
+      colors:{
+        brown:{
+          700: '#4E3B2F'
+        },
+      },
     },
     fontFamily: {
       'montserrat': ['Montserrat', 'sans-serif'],
