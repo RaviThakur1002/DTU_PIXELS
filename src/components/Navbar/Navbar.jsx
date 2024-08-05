@@ -114,8 +114,7 @@ const Navbar = () => {
                 <NavLink
                   to={item.href}
                   className={({ isActive }) =>
-                    `inline-flex items-center text-md font-semibold ${
-                      isActive ? "text-blue-600" : "text-gray-800"
+                    `inline-flex items-center text-md font-semibold ${isActive ? "text-blue-600" : "text-gray-800"
                     } hover:text-blue-600 py-2`
                   }
                 >
@@ -173,12 +172,16 @@ const Navbar = () => {
                       >
                         Create Contest
                       </NavLink>
-                      <button
-                        onClick={() => setIsPromotionPopupOpen(true)}
-                      className="inline-block px-4 py-2 text-md text-gray-700 hover:bg-gray-100"
+                      <NavLink
+                        to="/promote-admin"
+                        className="block px-4 py-1 my-2 text-md text-gray-700 hover:bg-gray-100"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setIsPromotionPopupOpen(true);
+                        }}
                       >
-                       Make Admin
-                      </button>
+                        <span>Make Admin</span>
+                      </NavLink>
                     </>
                   )}
 
@@ -320,14 +323,17 @@ const Navbar = () => {
                             <ChevronRight className="h-4 w-4" />
                             <span>Create Contest</span>
                           </NavLink>
-                          <button
-                            onClick={() => setIsPromotionPopupOpen(true)}
-                            className="flex items-center gap-2 text-md font-medium text-gray-700 hover:text-blue-600"
-                          >
-                            <ChevronRight className="h-4 w-4" />
-                            <span> Make Admin</span>
-                          </button>
-                        </>
+                         <NavLink
+      to="/promote-admin"
+      className="flex items-center gap-2 text-md font-medium text-gray-700 hover:text-blue-600"
+      onClick={(e) => {
+        e.preventDefault();
+        setIsPromotionPopupOpen(true);
+      }}
+    >
+      <ChevronRight className="h-4 w-4" />
+      <span>Make Admin</span>
+    </NavLink>                        </>
                       )}
                       <button
                         onClick={authService.signOutUser}
