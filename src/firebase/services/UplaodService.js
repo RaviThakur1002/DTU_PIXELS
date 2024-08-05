@@ -25,6 +25,20 @@ class UploadService {
       throw new Error("Contest ID not set. Call setContestId first.");
     }
 
+    // Check file type and size
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+      throw new Error('Only JPEG, JPG, and PNG files are allowed.');
+    }
+
+    const maxSize = 20 * 1024 * 1024; // 20MB
+    if (file.size > maxSize) {
+      throw new Error('File size should not exceed 20MB.');
+    }
+
+    // Truncate quote to 150 characters if necessary
+    const truncatedQuote = quote.slice(0, 150);
+
     try {
       const user = this.auth.currentUser;
       if (!user) {
@@ -77,7 +91,7 @@ class UploadService {
                 userId: userId,
                 userName: userName,
                 photoUrl: downloadURL,
-                quote: quote,
+                quote: truncatedQuote,
                 likeCount: 0,
                 voteCount: 0,
                 timestamp: Date.now(),

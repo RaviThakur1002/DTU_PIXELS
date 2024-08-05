@@ -23,6 +23,7 @@ const UploadComponent = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [quote, setQuote] = useState('');
   const [user, setUser] = useState(null);
+  const [fileError, setFileError] = useState('');
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -53,15 +54,32 @@ const UploadComponent = () => {
       return;
     }
 
-    const file = event.target.files[0];
-    if (file) {
+  const file = event.target.files[0];
+  if (file) {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+      setMessageWithTimer('Only JPEG, JPG, and PNG files are allowed.', 'error');
+      setFileError('Only JPEG, JPG, and PNG files are allowed.');
+      return;
+    }
+
+      // Check file size (20MB = 20 * 1024 * 1024 bytes)
+    const maxSize = 20 * 1024 * 1024;
+    if (file.size > maxSize) {
+      setMessageWithTimer('File size should not exceed 20MB.', 'error');
+      setFileError('File size should not exceed 20MB.');
+      return;
+    }
+
+      setFileError('');
       setUploadFile(file);
       setPreviewImage(URL.createObjectURL(file));
     }
   };
 
   const handleQuoteChange = (event) => {
-    setQuote(event.target.value);
+    const newQuote = event.target.value.slice(0, 150);
+    setQuote(newQuote);
   };
 
   const handleUpload = async () => {
@@ -139,8 +157,12 @@ const UploadComponent = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
         <span>Upload Photo</span>
-        <input type="file" onChange={handleFileChange} accept="image/*" className="hidden" />
+        <input type="file" onChange={handleFileChange} accept="image/jpeg,image/jpg,image/png" className="hidden" />
       </label>
+
+      {fileError && (
+        <p className="text-red-500 mt-2">{fileError}</p>
+      )}
 
       {/* Image preview, quote input, and upload/cancel buttons */}
       {previewImage && (
@@ -157,10 +179,10 @@ const UploadComponent = () => {
               placeholder="Enter your inspiring quote here..."
               className="w-full p-4 border-2 border-gray-300 rounded-lg focus:border-gray-500 focus:ring focus:ring-gray-200 focus:ring-opacity-50 transition duration-300 ease-in-out resize-none text-gray-700 text-lg"
               rows="4"
-              maxLength={250}
+              maxLength={150}
             />
             <div className="absolute bottom-3 right-3 text-gray-400 text-sm">
-              {quote.length}/250
+              {quote.length}/150
             </div>
           </div>
 
