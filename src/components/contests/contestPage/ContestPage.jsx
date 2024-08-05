@@ -6,7 +6,7 @@ import Pagination from './Pagination';
 import ContestServiceInstance from '../../../firebase/contestServices/ContestService';
 import { NavLink } from 'react-router-dom';
 
-const contestsPerPage = 3;
+const contestsPerPage = 4;
 
 const ContestPage = () => {
   const [currentContests, setCurrentContests] = useState([]);
@@ -22,6 +22,7 @@ const ContestPage = () => {
         const current = contests.filter(contest => new Date(contest.contestEndDate + ' ' + contest.contestEndTime) >= now);
         const past = contests.filter(contest => new Date(contest.contestEndDate + ' ' + contest.contestEndTime) < now);
 
+        past.sort((a, b) => new Date(b.contestEndDate + ' ' + b.contestEndTime) - new Date(a.contestEndDate + ' ' + a.contestEndTime));
 
         setCurrentContests(current);
         setPastContests(past);
@@ -32,16 +33,13 @@ const ContestPage = () => {
     fetchContests();
   }, []);
 
-
   const getPastContests = () => {
     const indexOfLast = pastPage * contestsPerPage;
     const indexOfFirst = indexOfLast - contestsPerPage;
     return pastContests.slice(indexOfFirst, indexOfLast);
   };
 
-
   const paginatePast = (pageNumber) => setPastPage(pageNumber);
-
 
   return (
     <>
@@ -54,29 +52,38 @@ const ContestPage = () => {
       </div>
 
       <div className="container mx-auto p-4">
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-6">Current/Upcoming Contests</h2>
+        <section className="mt-5 mb-12">
+          <div className="bg-gray-100 text-gray-800 py-2 px-4 rounded-lg inline-block mb-6">
+            <h2 className="text-2xl font-semibold">Current/Upcoming Contests</h2>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentContests.map((contest, index) => (
-              <NavLink key={contest.id} to={`/contest/${contest.id}`}><Contest contest={contest} isCurrent={true} /></NavLink>
+            {currentContests.map((contest) => (
+              <NavLink key={contest.id} to={`/contest/${contest.id}`}>
+                <Contest contest={contest} isCurrent={true} />
+              </NavLink>
             ))}
           </div>
         </section>
 
-
         <section>
-          <h2 className="text-2xl font-semibold mb-6">Past Contests</h2>
+          <div className="bg-gray-100 text-gray-800 py-2 px-4 rounded-lg inline-block mb-6">
+            <h2 className="text-2xl font-semibold">Past Contests</h2>
+          </div>
           <div>
-            {getPastContests().map((contest, index) => (
-              <NavLink key={contest.id} to={`/contest/${contest.id}`}><Contest contest={contest} isCurrent={false} /></NavLink>
+            {getPastContests().map((contest) => (
+              <NavLink key={contest.id} to={`/contest/${contest.id}`} className="block mb-6">
+                <Contest contest={contest} isCurrent={false} />
+              </NavLink>
             ))}
           </div>
-          <Pagination
-            contestsPerPage={contestsPerPage}
-            totalContests={pastContests.length}
-            paginate={paginatePast}
-            currentPage={pastPage}
-          />
+          <div className="mt-6">
+            <Pagination
+              contestsPerPage={contestsPerPage}
+              totalContests={pastContests.length}
+              paginate={paginatePast}
+              currentPage={pastPage}
+            />
+          </div>
         </section>
       </div>
     </>
@@ -84,3 +91,5 @@ const ContestPage = () => {
 };
 
 export default ContestPage;
+
+
