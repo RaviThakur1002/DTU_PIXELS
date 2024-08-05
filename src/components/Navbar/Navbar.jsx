@@ -17,6 +17,10 @@ const menuItems = [
     name: 'Contest',
     href: 'contest',
   },
+  {
+    name: 'Hall of Fame',
+    href: 'winners',
+  },
 ]
 
 const Navbar = () => {
