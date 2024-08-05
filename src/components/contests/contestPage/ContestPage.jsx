@@ -1,37 +1,30 @@
-import { React, useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import Contest from './Contest';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrophy } from '@fortawesome/free-solid-svg-icons';
 import Pagination from './Pagination';
-import ContestServiceInstance from '../../../firebase/contestServices/ContestService';
 import { NavLink } from 'react-router-dom';
+import { useContest } from '../../contexts/ContestContext';
 
 const contestsPerPage = 4;
 
 const ContestPage = () => {
-  const [currentContests, setCurrentContests] = useState([]);
-  const [pastContests, setPastContests] = useState([]);
+  const { allContestData } = useContest();
   const [pastPage, setPastPage] = useState(1);
 
-  useEffect(() => {
-    const fetchContests = async () => {
-      try {
-        const contests = await ContestServiceInstance.getAllContests();
-        const now = new Date();
-
-        const current = contests.filter(contest => new Date(contest.contestEndDate + ' ' + contest.contestEndTime) >= now);
-        const past = contests.filter(contest => new Date(contest.contestEndDate + ' ' + contest.contestEndTime) < now);
-
-        past.sort((a, b) => new Date(b.contestEndDate + ' ' + b.contestEndTime) - new Date(a.contestEndDate + ' ' + a.contestEndTime));
-
-        setCurrentContests(current);
-        setPastContests(past);
-      } catch (error) {
-        console.error('Error fetching contests: ', error);
+  const { currentContests, pastContests } = useMemo(() => {
+    if (!allContestData) return { currentContests: [], pastContests: [] };
+    const currentTime = new Date().getTime();
+    return allContestData.reduce((acc, contest) => {
+      const contestEndTime = new Date(`${contest.contestEndDate} ${contest.contestEndTime}`).getTime();
+      if (currentTime <= contestEndTime) {
+        acc.currentContests.push(contest);
+      } else {
+        acc.pastContests.push(contest);
       }
-    };
-    fetchContests();
-  }, []);
+      return acc;
+    }, { currentContests: [], pastContests: [] });
+  }, [allContestData]);
 
   const getPastContests = () => {
     const indexOfLast = pastPage * contestsPerPage;
@@ -40,6 +33,10 @@ const ContestPage = () => {
   };
 
   const paginatePast = (pageNumber) => setPastPage(pageNumber);
+
+  if (!allContestData) {
+    return <p className="text-center text-gray-500 text-xl">No contests available.</p>;
+  }
 
   return (
     <>
@@ -91,5 +88,3 @@ const ContestPage = () => {
 };
 
 export default ContestPage;
-
-

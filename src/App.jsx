@@ -10,25 +10,28 @@ import CreateContest from "./components/Admin/CreateContest.jsx";
 import ContestVoting from "./components/contests/voting/ContestVoting.jsx";
 import PerContestPage from "./components/contests/perContestPage/PerContestPage.jsx";
 import { GalleryProvider } from "./components/contexts/GalleryContext.jsx";
+import { ContestProvider } from "./components/contexts/ContestContext.jsx";
 import HallOfFame from './components/HallOfFame/HallOfFame.jsx'
 
 const App = () => {
   return (
     <Router>
       <GalleryProvider>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="*" element={<Home />} />
-          <Route path="/contest" element={<Temp />} />
-          <Route path="/submissions" element={<Profile />} />
-          <Route path="/contest/createcontest" element={<CreateContest />} />
-          <Route path="/contest/voting" element={<ContestVoting />} />
-          <Route path="/contest/:contestId" element={<PerContestPage />} />
-          <Route path="/winners" element={<HallOfFame />} />
-        </Routes>
-        <Footer />
+        <ContestProvider>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="*" element={<Home />} />
+            <Route path="/contest" element={<Temp />} />
+            <Route path="/submissions" element={<Profile />} />
+            <Route path="/contest/createcontest" element={<CreateContest />} />
+            <Route path="/contest/voting" element={<ContestVoting />} />
+            <Route path="/contest/:contestId" element={<PerContestPage />} />
+            <Route path="/winners" element={<HallOfFame />} />
+          </Routes>
+          <Footer />
+        </ContestProvider>
       </GalleryProvider>
     </Router>
   );

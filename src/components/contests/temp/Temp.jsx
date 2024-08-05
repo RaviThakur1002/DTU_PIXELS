@@ -1,39 +1,47 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
+import { getDatabase, ref, get } from 'firebase/database';
 import roleService from '../../../firebase/roleAssigning/RoleService';
 import ContestPage from '../contestPage/ContestPage';
-import LoadingSpinner from '../../LoadingSpinner.jsx'; 
+import LoadingSpinner from '../../LoadingSpinner.jsx';
+import { useContest } from '../../contexts/ContestContext';
+import app from '../../../config/conf.js';
+
 function Temp() {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const auth = getAuth();
+  const database = getDatabase(app);
+  const { allContestData, setAllContestData, lastFetchTime, setLastFetchTime } = useContest();
 
-  const contestQuotes = [
-    "Preparing the contest arena... May the odds be ever in your favor!",
-    "Polishing the trophies... They're so shiny, you might need sunglasses!",
-    "Rolling out the red carpet... Or was it the green carpet? Blue?",
-    "Tuning the applause-o-meter... Get ready to make some noise!",
-    "Mark your calendars! Exciting contests are just around the corner.",
-    "Stay tuned! The next big contest is coming soon.",
-    "Prepare yourself! Upcoming contests will be announced shortly.",
-    "Anticipate the thrill! New contests are on their way.",
-    "The battle is on! Participate in the current contest now.",
-    "Join the action! Our current contest is live.",
-    "Get involved! The contest arena is open for entries.",
-    "Dive in! Compete in the ongoing contest and showcase your talent.",
-  ];
+  const fetchContests = useCallback(async () => {
+    console.log("Fetching contests");
+    setIsLoading(true);
+    try {
+      const contestsRef = ref(database, "contests");
+      const snapshot = await get(contestsRef);
+      const contestsData = snapshot.val();
+      
+      const processedData = Object.entries(contestsData).map(([id, contest]) => ({
+        id,
+        ...contest,
+      }));
 
-  const randomQuote = useMemo(() => {
-    return contestQuotes[Math.floor(Math.random() * contestQuotes.length)];
-  }, []);
+      setAllContestData(processedData);
+      setLastFetchTime(new Date().toISOString());
+    } catch (error) {
+      console.error("Error fetching contests:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [database, setAllContestData, setLastFetchTime]);
 
   useEffect(() => {
     const unregisterAuthObserver = auth.onAuthStateChanged(async (user) => {
       if (user) {
         try {
           const role = await roleService.getRole();
-          console.log(role);
           setIsAdmin(role === 'admin');
         } catch (error) {
           console.error(error);
@@ -41,32 +49,35 @@ function Temp() {
       } else {
         setIsAdmin(false);
       }
-      setLoading(false);
-    }); 
-    return () => unregisterAuthObserver(); 
+    });
+    return () => unregisterAuthObserver();
   }, [auth]);
 
-  if (loading) {
-    return (
-      <LoadingSpinner quote={randomQuote} />
-    );
+  useEffect(() => {
+    const checkAndFetchContests = () => {
+      const currentTime = new Date().getTime();
+      const fetchTimeThreshold = 60 * 60 * 1000; // 1 hour in milliseconds
+
+      if (!lastFetchTime || !allContestData || (currentTime - new Date(lastFetchTime).getTime() > fetchTimeThreshold)) {
+        fetchContests();
+      } else {
+        console.log("Using cached contest data");
+        setIsLoading(false);
+      }
+    };
+
+    checkAndFetchContests();
+  }, [fetchContests, lastFetchTime, allContestData]);
+
+  if (isLoading) {
+    return <LoadingSpinner quote="Loading contests... Get your voting fingers ready!" />;
   }
 
   return (
-    <div>
-      {isAdmin && (
-        <NavLink to="createcontest">
-          <div className='bg-gray-800 flex justify-center'>
-            <button className="m-3 hover:bg-gray-700 text-white px-4 py-2 rounded transition duration-300 ease-in-out">
-              Create a Contest
-            </button>
-          </div>
-        </NavLink>
-      )}
+    <div> 
       <ContestPage />
     </div>
   );
 }
 
 export default Temp;
-
