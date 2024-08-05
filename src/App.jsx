@@ -10,6 +10,7 @@ import Footer from './components/Footer/Footer.jsx'
 import CreateContest from './components/Admin/CreateContest.jsx'
 import ContestVoting from './components/contests/voting/ContestVoting.jsx' 
 import PerContestPage from './components/contests/perContestPage/PerContestPage.jsx'
+import HallOfFame from './components/HallOfFame/HallOfFame.jsx'
 const App = () => {
   return (
     <Router>
@@ -19,6 +20,7 @@ const App = () => {
         <Route path="/gallery" element={<Gallery />} />
         <Route path="*" element={<Home />} />
         <Route path="/contest" element={<Temp />} />
+        <Route path="/winners" element={<HallOfFame />} />
         <Route path="/submissions" element={<Profile />} />
         <Route path="/contest/createcontest" element={<CreateContest />} />
         <Route path="/contest/voting" element={<ContestVoting />} />

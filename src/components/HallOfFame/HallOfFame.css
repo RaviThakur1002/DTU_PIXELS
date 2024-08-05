@@ -1,0 +1,16 @@
+.bg-pattern {
+  background-image: url('./tile.png');
+  background-repeat: repeat;
+  background-size: 10%; 
+  background-position: 0% 0%; 
+  animation: pan 70s linear infinite; 
+}
+
+@keyframes pan {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 0%;
+  }
+}
