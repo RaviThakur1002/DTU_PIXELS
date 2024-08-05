@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import Gallery from '../gallery/Gallery';
-import authService from '../../firebase/auth/auth';
-import { Navigate } from 'react-router-dom';
-import roleService from '../../firebase/roleAssigning/RoleService';
+import React, { useState, useEffect } from "react";
+import Gallery from "../gallery/Gallery";
+import authService from "../../firebase/auth/auth";
+import { Navigate } from "react-router-dom";
+import roleService from "../../firebase/roleAssigning/RoleService";
+import { GalleryProvider } from "../contexts/GalleryContext.jsx";
 
 function Profile() {
   const [user, setUser] = useState(authService.auth.currentUser);
   const [isLoading, setIsLoading] = useState(true);
-  const [userId, setUserId] = useState('');
+  const [userId, setUserId] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-
     const unsubscribe = authService.auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser);
-      setIsLoading(false); 
+      setIsLoading(false);
     });
 
     return () => unsubscribe();
@@ -22,28 +22,26 @@ function Profile() {
 
   useEffect(() => {
     const checkAdminStatus = async () => {
-      const role = await roleService.getRole()
-      console.log(role)
-      setIsAdmin(role === 'admin')
-    }
+      const role = await roleService.getRole();
+      console.log(role);
+      setIsAdmin(role === "admin");
+    };
     checkAdminStatus();
-  }, [])
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if(isAdmin){
-      try{
-        await roleService.setRole(userId, 'admin');
-      }
-      catch(error){
+    if (isAdmin) {
+      try {
+        await roleService.setRole(userId, "admin");
+      } catch (error) {
         // setMessage(`Error: ${error.message}`);
       }
-    }
-    else{
+    } else {
       // setMessage('You do not have permission to add admins.');
     }
-  }
+  };
 
   if (isLoading) {
     return <div>Loading...</div>; //  Loading indicator while checking the auth state
@@ -56,8 +54,13 @@ function Profile() {
   return (
     <div className="container mx-auto p-4">
       {isAdmin ? (
-        <form onSubmit={handleSubmit} className="mb-8 bg-white shadow-md rounded px-8 pt-6 pb-8">
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">Promote User to Admin</h2>
+        <form
+          onSubmit={handleSubmit}
+          className="mb-8 bg-white shadow-md rounded px-8 pt-6 pb-8"
+        >
+          <h2 className="text-2xl font-bold mb-4 text-gray-800">
+            Promote User to Admin
+          </h2>
           <div className="mb-4">
             <input
               type="text"
@@ -75,9 +78,11 @@ function Profile() {
           </button>
         </form>
       ) : null}
-      <Gallery userName={user.displayName} />
+      <GalleryProvider>
+        <Gallery userName={user.displayName} />
+      </GalleryProvider>
     </div>
-  )
+  );
 }
 
 export default Profile;

@@ -1,46 +1,48 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { getDatabase, ref, get } from "firebase/database";
 import app from "../../config/conf.js";
-import ContestServiceInstance from "../../firebase/contestServices/ContestService.js";
 import Images from "./Images";
 import Pagination from "./Pagination";
 import LoadingSpinner from "../LoadingSpinner.jsx";
-const Gallery = ({ userName = "/////" }) => {
-  const [imageData, setImageData] = useState([]);
+import { useGallery } from "../contexts/GalleryContext.jsx";
+import './Gallery.css';
+
+const Gallery = ({ userName = null }) => {
+  const { 
+    allGalleryData, 
+    setAllGalleryData, 
+    userGalleryData, 
+    setUserGalleryData,
+    lastFetchTime, 
+    setLastFetchTime 
+  } = useGallery();
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentContest, setCurrentContest] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const postPerPage = 10;
   const database = getDatabase(app);
 
-  const funnyQuotes = [
+  const funnyQuotes = useMemo(() => [
     "Loading images faster than a cat can knock a glass off a table...",
     "Hang tight! We're developing these photos in our digital darkroom...",
     "Fetching images... and maybe a stick if we have time.",
     "Loading gallery... Please enjoy this virtual moment of zen.",
     "Curating your visual feast... It's like herding pixels!",
-  ];
+  ], []);
 
-  const randomQuote = useMemo(() => {
-    return funnyQuotes[Math.floor(Math.random() * funnyQuotes.length)];
-  }, []);
+  const randomQuote = useMemo(() => 
+    funnyQuotes[Math.floor(Math.random() * funnyQuotes.length)],
+  [funnyQuotes]);
 
-  useEffect(() => {
-    const fetchCurrentContest = async () => {
-      const contest = await ContestServiceInstance.getCurrentContest();
-      setCurrentContest(contest);
-    };
-    fetchCurrentContest();
-  }, []);
-
-  useEffect(() => {
-    const fetchImages = async () => {
-      setIsLoading(true);
+  const fetchImages = useCallback(async () => {
+    console.log("Fetching images");
+    setIsLoading(true);
+    try {
       const contestsRef = ref(database, "contests");
       const snapshot = await get(contestsRef);
       const allImages = [];
       const currentTime = new Date().getTime();
       const contestsData = snapshot.val();
+
       for (const contestId in contestsData) {
         const contestData = contestsData[contestId];
         const contestEndTime = new Date(
@@ -53,52 +55,90 @@ const Gallery = ({ userName = "/////" }) => {
 
           entriesSnapshot.forEach((entrySnapshot) => {
             const entry = entrySnapshot.val();
-            if (userName === "/////" || entry.userName === userName) {
-              allImages.push({
-                id: entrySnapshot.key,
-                contestId: contestId,
-                contestTheme: contestData.theme,
-                photoUrl: entry.photoUrl,
-                userName: entry.userName,
-                quote: entry.quote,
-                timestamp: entry.timestamp,
-              });
-            }
+            allImages.push({
+              id: entrySnapshot.key,
+              contestId: contestId,
+              contestTheme: contestData.theme,
+              photoUrl: entry.photoUrl,
+              userName: entry.userName,
+              quote: entry.quote,
+              timestamp: entry.timestamp,
+            });
           });
         }
       }
-      setImageData(allImages.sort((a, b) => b.timestamp - a.timestamp));
+      const sortedImages = allImages.sort((a, b) => b.timestamp - a.timestamp);
+      console.log("Fetched and sorted images:", sortedImages);
+      setAllGalleryData(sortedImages);
+      setLastFetchTime(new Date().toISOString());
+    } catch (error) {
+      console.error("Error fetching images:", error);
+    } finally {
       setIsLoading(false);
-    };
-    fetchImages();
-  }, [userName, database]);
+    }
+  }, [database, setAllGalleryData, setLastFetchTime]);
 
-  const lastPostIndex = currentPage * postPerPage;
-  const firstPostIndex = lastPostIndex - postPerPage;
-  const currentPosts = imageData.slice(firstPostIndex, lastPostIndex);
+  useEffect(() => {
+    const checkAndFetchImages = () => {
+      const currentTime = new Date().getTime();
+      const fetchTimeThreshold = 60 * 60 * 1000; // 1 hour in milliseconds
+
+      if (!lastFetchTime || !allGalleryData || (currentTime - new Date(lastFetchTime).getTime() > fetchTimeThreshold)) {
+        fetchImages();
+      } else {
+        console.log("Using cached gallery data");
+      }
+    };
+
+    checkAndFetchImages();
+  }, [fetchImages, lastFetchTime, allGalleryData]);
+
+  useEffect(() => {
+    if (allGalleryData && userName) {
+      const filteredData = allGalleryData.filter(image => image.userName === userName);
+      setUserGalleryData(filteredData);
+    } else if (allGalleryData) {
+      setUserGalleryData(null);
+    }
+  }, [allGalleryData, userName, setUserGalleryData]);
+
+  const galleryData = userName ? userGalleryData : allGalleryData;
+
+  const { currentPosts, totalPosts } = useMemo(() => {
+    if (!galleryData) return { currentPosts: [], totalPosts: 0 };
+    const lastPostIndex = currentPage * postPerPage;
+    const firstPostIndex = lastPostIndex - postPerPage;
+    return {
+      currentPosts: galleryData.slice(firstPostIndex, lastPostIndex),
+      totalPosts: galleryData.length
+    };
+  }, [galleryData, currentPage, postPerPage]);
+
+  if (isLoading) {
+    return <LoadingSpinner quote={randomQuote} />;
+  }
+
+  if (!galleryData || galleryData.length === 0) {
+    return (
+      <p className="text-center text-gray-500 text-xl">
+        No images to display. Check back after contests have ended.
+      </p>
+    );
+  }
 
   return (
-    <div className="container mx-auto px-4 min-h-screen">
-      {isLoading ? (
-        <LoadingSpinner quote={randomQuote} />
-      ) : imageData.length === 0 ? (
-        <p className="text-center text-gray-500 text-xl">
-          No images to display. Check back after contests have ended.
-        </p>
-      ) : (
-        <div className="w-full">
-          <Images imageData={currentPosts} />
-          <Pagination
-            totalPosts={imageData.length}
-            postsPerPage={postPerPage}
-            setCurrentPage={setCurrentPage}
-            currentPage={currentPage}
-          />
-        </div>
-      )}
+    <div className="container mx-auto px-4 min-h-screen gallery-container">
+      <div className="w-full">
+        <Images imageData={currentPosts} />
+        <Pagination
+          totalPosts={totalPosts}
+          postsPerPage={postPerPage}
+          setCurrentPage={setCurrentPage}
+          currentPage={currentPage}
+        />
+      </div>
     </div>
   );
 };
 
 export default Gallery;
-

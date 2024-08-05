@@ -24,7 +24,7 @@ const Images = ({ imageData }) => {
 
   const prevImage = useCallback(() => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + imageData.length) % imageData.length
+      (prevIndex) => (prevIndex - 1 + imageData.length) % imageData.length,
     );
   }, [imageData.length]);
 
@@ -90,19 +90,22 @@ const Images = ({ imageData }) => {
 
   return (
     <>
-<div className="grid gap-4 mt-2 justify-center" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))' }}>
-  {imageData.map((pic, index) => (
-    <Card
-      key={pic.id}
-      entry={{
-        photoUrl: pic.photoUrl,
-        userName: pic.userName,
-        quote: pic.quote,
-      }}
-      onClick={() => openPopup(index)}
-    />
-  ))}
-</div>
+      <div
+        className="grid gap-4 mt-2 justify-center"
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))" }}
+      >
+        {imageData.map((pic, index) => (
+          <Card
+            key={pic.id}
+            entry={{
+              photoUrl: pic.photoUrl,
+              userName: pic.userName,
+              quote: pic.quote,
+            }}
+            onClick={() => openPopup(index)}
+          />
+        ))}
+      </div>
 
       <AnimatePresence>
         {isPopupOpen && (
@@ -130,26 +133,34 @@ const Images = ({ imageData }) => {
               />
               <div className="absolute inset-0 flex items-center justify-between">
                 <motion.button
-                  className="bg-black bg-opacity-50 text-white p-3 rounded-full m-4 hover:bg-opacity-75 transition-colors duration-300"
-                  onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                  className="bg-black bg-opacity-50 text-white p-3 rounded-full m-4 hover:bg-opacity-75 transition-colors duration-300 hidden sm:block"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    prevImage();
+                  }}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
                   <FaChevronLeft className="text-xl" />
                 </motion.button>
                 <motion.button
-                  className="bg-black bg-opacity-50 text-white p-3 rounded-full m-4 hover:bg-opacity-75 transition-colors duration-300"
-                  onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                  className="bg-black bg-opacity-50 text-white p-3 rounded-full m-4 hover:bg-opacity-75 transition-colors duration-300 hidden sm:block"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nextImage();
+                  }}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
                   <FaChevronRight className="text-xl" />
                 </motion.button>
               </div>
-              <div className="absolute bottom-0 left-0 right-0 block bg-black bg-opacity-50 text-white p-4 transition-opacity duration-300">
-                <h2 className="text-2xl font-bold">
-                  {imageData[currentIndex].userName}
-                </h2>
+              <div className="absolute bottom-2 left-2">
+                <div className="inline-block bg-black bg-opacity-50 text-white px-6 py-3 rounded-full transition-opacity duration-300">
+                  <h2 className="text-xl font-bold leading-none">
+                    {imageData[currentIndex].userName}
+                  </h2>
+                </div>
               </div>
               <motion.button
                 className="absolute top-2 right-2 text-white text-xl bg-black bg-opacity-50 w-10 h-10 rounded-full flex items-center justify-center hover:bg-opacity-75 transition-colors duration-300"
