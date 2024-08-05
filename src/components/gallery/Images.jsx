@@ -119,7 +119,7 @@ const Images = ({ imageData }) => {
             onClick={closePopup}
           >
             <motion.div
-              className="relative max-w-4xl max-h-[90vh] overflow-hidden rounded-lg bg-white"
+              className="relative sm:max-w-xl md:max-w-2xl lg:max-w-3xl max-h-[90vh] w-90vw overflow-hidden rounded-lg"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -129,7 +129,7 @@ const Images = ({ imageData }) => {
               <img
                 src={imageData[currentIndex].photoUrl}
                 alt={`Image ${currentIndex + 1}`}
-                className="max-w-full max-h-[70vh] object-contain"
+                 className="w-full h-auto max-h-[80vh] object-contain"
               />
               <div className="absolute bottom-1 left-1">
                 <div className="inline-block bg-black bg-opacity-50 text-white px-4 py-2 rounded-full transition-opacity duration-300">
@@ -141,7 +141,10 @@ const Images = ({ imageData }) => {
               <motion.button
                 className="absolute top-2 right-2 text-white bg-black bg-opacity-50 w-9 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center hover:bg-opacity-75 transition-all duration-300 shadow-lg"
                 onClick={closePopup}
-                whileHover={{ scale: 1.1, backgroundColor: "rgba(0, 0, 0, 0.75)" }}
+                whileHover={{
+                  scale: 1.1,
+                  backgroundColor: "rgba(0, 0, 0, 0.75)",
+                }}
                 whileTap={{ scale: 0.9 }}
               >
                 <FaTimes className="text-2xl" />
