@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getDatabase, ref, query, orderByKey, get } from 'firebase/database';
 import FameCard from './FameCard';
 import './HallOfFame.css'; 
+import LoadingSpinner from '../LoadingSpinner';
 
 const ITEMS_PER_PAGE = 4; 
 
@@ -93,7 +94,7 @@ const HallOfFame = () => {
   const totalPages = Math.ceil(hallOfFameData.length / ITEMS_PER_PAGE);
 
   if (loading) {
-    return <div className="text-center mt-8">Loading Hall of Fame data...</div>;
+    return <LoadingSpinner quote={"Loading Winners Data"} />
   }
 
   if (error) {
