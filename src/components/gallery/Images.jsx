@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import Card from "./Card";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaTimes, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
 
 const Images = ({ imageData }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -131,41 +131,17 @@ const Images = ({ imageData }) => {
                 alt={`Image ${currentIndex + 1}`}
                 className="max-w-full max-h-[70vh] object-contain"
               />
-              <div className="absolute inset-0 flex items-center justify-between">
-                <motion.button
-                  className="bg-black bg-opacity-50 text-white p-3 rounded-full m-4 hover:bg-opacity-75 transition-colors duration-300 hidden sm:block"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    prevImage();
-                  }}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <FaChevronLeft className="text-xl" />
-                </motion.button>
-                <motion.button
-                  className="bg-black bg-opacity-50 text-white p-3 rounded-full m-4 hover:bg-opacity-75 transition-colors duration-300 hidden sm:block"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    nextImage();
-                  }}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <FaChevronRight className="text-xl" />
-                </motion.button>
-              </div>
-              <div className="absolute bottom-2 left-2">
-                <div className="inline-block bg-black bg-opacity-50 text-white px-6 py-3 rounded-full transition-opacity duration-300">
+              <div className="absolute bottom-1 left-1">
+                <div className="inline-block bg-black bg-opacity-50 text-white px-4 py-2 rounded-full transition-opacity duration-300">
                   <h2 className="text-xl font-bold leading-none">
                     {imageData[currentIndex].userName}
                   </h2>
                 </div>
               </div>
               <motion.button
-                className="absolute top-2 right-2 text-white text-xl bg-black bg-opacity-50 w-10 h-10 rounded-full flex items-center justify-center hover:bg-opacity-75 transition-colors duration-300"
+                className="absolute top-2 right-2 text-white bg-black bg-opacity-50 w-9 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center hover:bg-opacity-75 transition-all duration-300 shadow-lg"
                 onClick={closePopup}
-                whileHover={{ scale: 1.1 }}
+                whileHover={{ scale: 1.1, backgroundColor: "rgba(0, 0, 0, 0.75)" }}
                 whileTap={{ scale: 0.9 }}
               >
                 <FaTimes className="text-2xl" />
