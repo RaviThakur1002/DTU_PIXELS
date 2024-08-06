@@ -131,7 +131,7 @@ const UploadComponent = () => {
     <div className="mb-4 flex flex-col items-center w-full max-w-2xl mx-auto px-4">
       <style>{styles}</style>
       
-      {/* Message display */}
+       /* Message display */}
       {message && (
         <div className={`fixed top-4 right-0 mb-4 p-3 rounded-l-lg w-64 ${
           messageType === 'success' 

@@ -14,10 +14,19 @@ export default {
           700: '#4E3B2F'
         },
       },
+      transitionProperty: {
+        'height': 'height',
+        'spacing': 'margin, padding',
+      },
     },
     fontFamily: {
       'montserrat': ['Montserrat', 'sans-serif'],
       'oswald': ['Oswald', 'sans-serif'], 
+    }
+  },
+  variants: {
+    extend: {
+      translate: ['group-hover'],
     }
   },
   plugins: [
