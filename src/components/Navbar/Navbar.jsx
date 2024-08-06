@@ -8,19 +8,45 @@ import CopyUID from "./CopyUID";
 import roleService from "../../firebase/roleAssigning/RoleService";
 import AdminPromotionPopup from "../Admin/AdminPromotionPopup";
 
-
-
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isPromotionPopupOpen, setIsPromotionPopupOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const mobileMenuRef = useRef(null);
+  const sidebarRef = useRef(null);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const sidebarStyle = {
+    position: "fixed",
+    top: 0,
+    right: 0,
+    width: "80%",
+    maxWidth: "300px",
+    height: "100vh",
+    backgroundColor: "white",
+    boxShadow: "-2px 0 5px rgba(0,0,0,0.1)",
+    transition: "transform 0.3s ease-in-out",
+    zIndex: 1000,
+    overflowY: "auto",
+    transform: isSidebarOpen ? "translateX(0)" : "translateX(100%)",
+  };
+
+  const overlayStyle = {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    opacity: isSidebarOpen ? 1 : 0,
+    visibility: isSidebarOpen ? "visible" : "hidden",
+    transition: "opacity 0.3s ease-in-out, visibility 0.3s ease-in-out",
+    zIndex: 999,
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
   useEffect(() => {
@@ -56,11 +82,8 @@ const Navbar = () => {
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (
-        mobileMenuRef.current &&
-        !mobileMenuRef.current.contains(event.target)
-      ) {
-        setIsMenuOpen(false);
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+        setIsSidebarOpen(false);
       }
     }
 
@@ -68,7 +91,7 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-   const menuItems = [
+  const menuItems = [
     {
       name: "Home",
       href: "/",
@@ -236,17 +259,17 @@ const Navbar = () => {
             </button>
           )}
         </div>
+
         <div className="lg:hidden">
-          <Menu onClick={toggleMenu} className="h-6 w-6 cursor-pointer" />
+          <Menu onClick={toggleSidebar} className="h-6 w-6 cursor-pointer" />
         </div>
-        {isMenuOpen && (
-          <div
-            ref={mobileMenuRef}
-            className="absolute right-2 top-8 z-50 origin-top-right p-2 transition lg:hidden"
-          >
-            <div className="divide-y-2 divide-gray-50 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
-              <div className="px-5 pb-6 pt-5">
-                <div className="flex items-center justify-between">
+
+        {isSidebarOpen && (
+          <>
+            <div style={overlayStyle} onClick={toggleSidebar}></div>
+            <div style={sidebarStyle} ref={sidebarRef}>
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-4">
                   <div className="inline-flex items-center space-x-2">
                     <span>
                       <svg
@@ -264,92 +287,106 @@ const Navbar = () => {
                     </span>
                     <span className="font-bold">DTU PIXELS</span>
                   </div>
-                  <div className="-mr-2">
-                    <button
-                      type="button"
-                      onClick={toggleMenu}
-                      className="ml-1 inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-                    >
-                      <span className="sr-only">Close menu</span>
-                      <X className="h-6 w-6" aria-hidden="true" />
-                    </button>
-                  </div>
+                  <button
+                    onClick={toggleSidebar}
+                    className="p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:rotate-90"
+                  >
+                    <X className="h-6 w-6" aria-hidden="true" />
+                  </button>
                 </div>
-                <div className="mt-2 space-y-4">
-                  {user ? (
-                    <div className="flex flex-col items-start gap-4">
-                      <div className="w-full px-4 py-3 bg-gray-50 rounded-lg flex flex-col items-center">
-                        <img
-                          className="rounded-full w-16 h-16 mb-2"
-                          src={user.photoURL}
-                          alt="User profile"
-                        />
-                        <h3 className="text-xl font-bold text-gray-600">
-                          {user.displayName}
-                        </h3>
-                        {isAdmin && (
-                          <span className="text-xs font-semibold text-blue-600 mb-2">
-                            Admin
-                          </span>
-                        )}
-                        <CopyUID />
-                      </div>
 
-                      <div className="w-full border-t border-gray-200 my-1"></div>
-                      <div className="space-y-1">
-                        {menuItems.map((item) => (
-                          <NavLink
-                            key={item.name}
-                            to={item.href}
-                            className="flex items-center gap-2 px-4 py-2 text-md font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors duration-300"
-                          >
-                            <ChevronRight className="h-4 w-4" />
-                            <span>{item.name}</span>
-                          </NavLink>
-                        ))}
-                        {isAdmin && (
-                          <>
-                            <NavLink
-                              to="/contest/createcontest"
-                              className="flex items-center gap-2 px-4 py-2 text-md font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors duration-300"
-                            >
-                              <ChevronRight className="h-4 w-4" />
-                              <span>Create Contest</span>
-                            </NavLink>
-                            <NavLink
-                              to="/promote-admin"
-                              className="flex items-center gap-2 px-4 py-2 text-md font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors duration-300"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setIsPromotionPopupOpen(true);
-                              }}
-                            >
-                              <ChevronRight className="h-4 w-4" />
-                              <span>Make Admin</span>
-                            </NavLink>
-                          </>
-                        )}
-                        <button
-                          onClick={authService.signOutUser}
-                          className="w-full mx-2 px-3 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300"
+                {/* User profile section */}
+                {user && (
+                  <div className="mb-4 p-4 bg-gray-50 rounded-lg transform transition-all duration-300 hover:scale-105">
+                    <img
+                      className="rounded-full w-16 h-16 mb-2 mx-auto"
+                      src={user.photoURL}
+                      alt="User profile"
+                    />
+                    <h3 className="text-xl font-bold text-gray-600 text-center">
+                      {user.displayName}
+                    </h3>
+                    {isAdmin && (
+                      <span className="block text-xs font-semibold text-blue-600 text-center mb-2">
+                        Admin
+                      </span>
+                    )}
+                    <CopyUID />
+                  </div>
+                )}
+
+                {/* Navigation items */}
+                <nav className="space-y-1">
+                  {menuItems.map((item, index) => (
+                    <NavLink
+                      key={item.name}
+                      to={item.href}
+                      className="flex items-center gap-2 px-4 py-2 text-md font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-all duration-300 transform hover:translate-x-2 rounded-md"
+                      onClick={toggleSidebar}
+                      style={{ transitionDelay: `${index * 50}ms` }}
+                    >
+                      <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                      <span>{item.name}</span>
+                    </NavLink>
+                  ))}
+                  {isAdmin && (
+                    <>
+                      <NavLink
+                        to="/contest/createcontest"
+                        className="flex items-center gap-2 px-4 py-2 text-md font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-all duration-300 transform hover:translate-x-2 rounded-md"
+                        onClick={toggleSidebar}
+                        style={{
+                          transitionDelay: `${menuItems.length * 50}ms`,
+                        }}
+                      >
+                        <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                        <span>Create Contest</span>
+                      </NavLink>
+                      <button
+                        className="flex items-center gap-2 px-4 py-2 text-md font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-all duration-300 transform hover:translate-x-2 rounded-md w-full text-left"
+                        onClick={() => {
+                          setIsPromotionPopupOpen(true);
+                          toggleSidebar();
+                        }}
+                        style={{
+                          transitionDelay: `${(menuItems.length + 1) * 50}ms`,
+                        }}
+                      >
+                        <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                        <span>Make Admin</span>
+                      </button>
+                    </>
+                  )}
+                </nav>
+
+                {/* Sign in/out button */}
+                <div className="mt-4">
+                  {user ? (
+                    <button
+                      onClick={() => {
+                        authService.signOutUser();
+                        toggleSidebar();
+                      }}
+                      className="w-full px-3 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105"
+                    >
+                      <div className="flex items-center justify-center gap-2">
+                        <svg
+                          className="h-5 w-5"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 512 512"
                         >
-                          <div className="flex items-center justify-center gap-2">
-                            <svg
-                              className="h-5 w-5"
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 512 512"
-                            >
-                              <path d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 192 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l210.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128zM160 96c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 32C43 32 0 75 0 128L0 384c0 53 43 96 96 96l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l64 0z" />
-                            </svg>
-                            <span>Sign Out</span>
-                          </div>
-                        </button>
+                          <path d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 192 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l210.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128zM160 96c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 32C43 32 0 75 0 128L0 384c0 53 43 96 96 96l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l64 0z" />
+                        </svg>
+                        <span>Sign Out</span>
                       </div>
-                    </div>
+                    </button>
                   ) : (
                     <button
-                      className="w-full flex items-center justify-start px-3 py-2 bg-white text-gray-600 border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300"
-                      onClick={authService.googleSignIn}
+                      className="w-full flex items-center justify-center px-3 py-2 bg-white text-gray-600 border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105"
+                      onClick={() => {
+                        authService.googleSignIn();
+                        toggleSidebar();
+                      }}
                     >
                       <svg
                         className="w-4 h-5 mr-2"
@@ -379,7 +416,7 @@ const Navbar = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
       <AdminPromotionPopup
