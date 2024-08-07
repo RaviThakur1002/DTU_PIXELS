@@ -1,5 +1,5 @@
 import { getAuth } from "firebase/auth";
-import { get, getDatabase, ref, remove } from "firebase/database";
+import { get, getDatabase, ref, remove, runTransaction } from "firebase/database";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -52,8 +52,16 @@ function RemoveContest({ contestId }) {
   const handleClick = async () => {
     const db = getDatabase();
     try {
-      console.log("hellp")
       await remove(ref(db, `contests/${contestId}`));
+
+      const highestIdRef = ref(db, `highestContestId`);
+      await runTransaction(highestIdRef, (current)=>{
+        if(current===contestId){
+          return current-1;
+        }
+        return current;
+      })
+
       setMessageWithTimer("Contest removed successfully", "success");
       navigate("/contest");
     } catch (error) {
