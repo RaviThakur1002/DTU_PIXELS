@@ -8,6 +8,7 @@ import UplaodService from "../../../firebase/services/UplaodService";
 import Standings from "./Standings";
 import LoadingSpinner from "../../LoadingSpinner";
 import Countdown from "./Countdown";
+import RemoveContest from "./RemoveContest";
 
 const styles = `
   @keyframes slideIn {
@@ -275,7 +276,6 @@ function PerContestPage() {
     <div className="mx-auto p-6 font-sans">
       <style>{styles}</style>
 
-      {/* Message display */}
       {message && (
         <div
           className={`fixed top-4 right-0 mb-4 p-3 rounded-l-lg w-64 ${messageType === "success"
@@ -297,24 +297,32 @@ function PerContestPage() {
         </div>
       )}
 
-      <button
-        onClick={() => navigate("/contest")}
-        className="flex items-center text-blue-500 font-bold mb-4"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 mr-2"
-          viewBox="0 0 20 20"
-          fill="currentColor"
+      <div className="flex justify-between">
+        <button
+          onClick={() => navigate("/contest")}
+          className="flex items-center text-blue-500 font-bold mb-4"
         >
-          <path
-            fillRule="evenodd"
-            d="M7.707 14.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L4.414 9H17a1 1 0 110 2H4.414l3.293 3.293a1 1 0 010 1.414z"
-            clipRule="evenodd"
-          />
-        </svg>
-        Go Back to Contests
-      </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 mr-2"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M7.707 14.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L4.414 9H17a1 1 0 110 2H4.414l3.293 3.293a1 1 0 010 1.414z"
+              clipRule="evenodd"
+            />
+          </svg>
+          Go Back to Contests
+        </button>
+        {currentTime > contestEndTime ?
+          null :
+          (
+            <RemoveContest contestId={contestId} />
+          )
+        }
+      </div>
 
       <h1 className="text-4xl font-bold text-gray-800 border-b-2 border-gray-300 pb-4 mb-8">
         Contest No- {contestId}, Theme- {contestData.theme}

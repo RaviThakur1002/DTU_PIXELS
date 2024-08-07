@@ -47,4 +47,4 @@ export function Countdown({ targetDate }) {
   );
 }
 
-// export default Countdown;
+export default Countdown;
