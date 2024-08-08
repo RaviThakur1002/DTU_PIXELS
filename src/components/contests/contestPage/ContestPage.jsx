@@ -1,37 +1,30 @@
-import { React, useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import Contest from './Contest';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrophy } from '@fortawesome/free-solid-svg-icons';
 import Pagination from './Pagination';
-import ContestServiceInstance from '../../../firebase/contestServices/ContestService';
 import { NavLink } from 'react-router-dom';
+import { useContest } from '../../contexts/ContestContext';
 
-const contestsPerPage = 3;
+const contestsPerPage = 4;
 
 const ContestPage = () => {
-  const [currentContests, setCurrentContests] = useState([]);
-  const [pastContests, setPastContests] = useState([]);
+  const { allContestData } = useContest();
   const [pastPage, setPastPage] = useState(1);
 
-  useEffect(() => {
-    const fetchContests = async () => {
-      try {
-        const contests = await ContestServiceInstance.getAllContests();
-        const now = new Date();
-
-        const current = contests.filter(contest => new Date(contest.contestEndDate + ' ' + contest.contestEndTime) >= now);
-        const past = contests.filter(contest => new Date(contest.contestEndDate + ' ' + contest.contestEndTime) < now);
-
-
-        setCurrentContests(current);
-        setPastContests(past);
-      } catch (error) {
-        console.error('Error fetching contests: ', error);
+  const { currentContests, pastContests } = useMemo(() => {
+    if (!allContestData) return { currentContests: [], pastContests: [] };
+    const currentTime = new Date().getTime();
+    return allContestData.reduce((acc, contest) => {
+      const contestEndTime = new Date(`${contest.contestEndDate} ${contest.contestEndTime}`).getTime();
+      if (currentTime <= contestEndTime) {
+        acc.currentContests.push(contest);
+      } else {
+        acc.pastContests.push(contest);
       }
-    };
-    fetchContests();
-  }, []);
-
+      return acc;
+    }, { currentContests: [], pastContests: [] });
+  }, [allContestData]);
 
   const getPastContests = () => {
     const indexOfLast = pastPage * contestsPerPage;
@@ -39,9 +32,11 @@ const ContestPage = () => {
     return pastContests.slice(indexOfFirst, indexOfLast);
   };
 
-
   const paginatePast = (pageNumber) => setPastPage(pageNumber);
 
+  if (!allContestData) {
+    return <p className="text-center text-gray-500 text-xl">No contests available.</p>;
+  }
 
   return (
     <>
@@ -53,36 +48,43 @@ const ContestPage = () => {
         </div>
       </div>
 
-
       <div className="container mx-auto p-4">
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-6">Current/Upcoming Contests</h2>
+        <section className="mt-5 mb-12">
+          <div className="bg-gray-100 text-gray-800 py-2 px-4 rounded-lg inline-block mb-6">
+            <h2 className="text-2xl font-semibold">Current/Upcoming Contests</h2>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentContests.map((contest, index) => (
-              <NavLink key={contest.id} to={`/contest/${contest.id}`}><Contest contest={contest} isCurrent={true} /></NavLink>
+            {currentContests.map((contest) => (
+              <NavLink key={contest.id} to={`/contest/${contest.id}`}>
+                <Contest contest={contest} isCurrent={true} />
+              </NavLink>
             ))}
           </div>
         </section>
 
-
         <section>
-          <h2 className="text-2xl font-semibold mb-6">Past Contests</h2>
+          <div className="bg-gray-100 text-gray-800 py-2 px-4 rounded-lg inline-block mb-6">
+            <h2 className="text-2xl font-semibold">Past Contests</h2>
+          </div>
           <div>
-            {getPastContests().map((contest, index) => (
-              <NavLink key={contest.id} to={`/contest/${contest.id}`}><Contest contest={contest} isCurrent={false} /></NavLink>
+            {getPastContests().map((contest) => (
+              <NavLink key={contest.id} to={`/contest/${contest.id}`} className="block mb-6">
+                <Contest contest={contest} isCurrent={false} />
+              </NavLink>
             ))}
           </div>
-          <Pagination
-            contestsPerPage={contestsPerPage}
-            totalContests={pastContests.length}
-            paginate={paginatePast}
-            currentPage={pastPage}
-          />
+          <div className="mt-6">
+            <Pagination
+              contestsPerPage={contestsPerPage}
+              totalContests={pastContests.length}
+              paginate={paginatePast}
+              currentPage={pastPage}
+            />
+          </div>
         </section>
       </div>
     </>
   );
 };
-
 
 export default ContestPage;
