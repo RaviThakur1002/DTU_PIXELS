@@ -127,7 +127,6 @@ const HallOfFame = () => {
                   src={item.winnerPhoto}
                   alt={`Winner of Contest ${item.contestNo}`}
                   name={item.winnerName}
-                  subtitle={`Winner of ${item.contestName}`}
                   contestNo={item.contestNo}
                   contestName={item.contestName}
                 />

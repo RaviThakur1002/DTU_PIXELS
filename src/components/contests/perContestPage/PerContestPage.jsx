@@ -248,21 +248,24 @@ function PerContestPage() {
         return (
           <div>
             <p className="font-semibold">Contest Starts In:</p>
-            <Countdown targetDate={contestStartTime} />
+            <Countdown targetDate={contestStartTime} /><br />
+            <p>Please Register to take part in the Contest.</p>
           </div>
         );
       case 'votingStart':
         return (
           <div>
             <p className="font-semibold">Voting Starts In:</p>
-            <Countdown targetDate={votingStartTime} />
+            <Countdown targetDate={votingStartTime} /><br />
+            <p>Contestants should Upload their Entries</p>
           </div>
         );
       case 'contestEnd':
         return (
           <div>
             <p className="font-semibold">Contest Ends In:</p>
-            <Countdown targetDate={contestEndTime} />
+            <Countdown targetDate={contestEndTime} /><br />
+            <p>Voting has started. Please feel free to vote.</p>
           </div>
         );
       case 'ended':
@@ -340,6 +343,10 @@ function PerContestPage() {
           <p className="text-gray-700">
             <span className="font-semibold">Contest Starts:</span>{" "}
             {formatDateTime(contestStartTime)}
+          </p>
+          <p className="text-gray-700">
+            <span className="font-semibold">Voting Starts:</span>{" "}
+            {formatDateTime(votingStartTime)}
           </p>
           <p className="text-gray-700">
             <span className="font-semibold">Contest Ends:</span>{" "}
