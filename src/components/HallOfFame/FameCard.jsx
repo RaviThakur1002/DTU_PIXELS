@@ -30,6 +30,18 @@ const FameCard = ({ src, alt, name, subtitle, contestNo, contestName }) => {
     };
   }, [isPopupOpen, closePopup]);
 
+  useEffect(() => {
+    if (isPopupOpen) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, [isPopupOpen]);
+
   return (
     <>
       <div 
@@ -55,7 +67,6 @@ const FameCard = ({ src, alt, name, subtitle, contestNo, contestName }) => {
         <div className="absolute bottom-4 left-4 text-left">
           <h1 className="text-lg font-semibold text-white">{contestName}</h1>
           <p className="text-sm text-gray-300">{name}</p>
-          <p className="text-xs text-gray-400">{subtitle}</p>
         </div>
       </div>
 
@@ -83,11 +94,6 @@ const FameCard = ({ src, alt, name, subtitle, contestNo, contestName }) => {
                 alt={alt}
                 className="max-w-full max-h-[70vh] object-contain"
               />
-              <div className="absolute bottom-0 left-0 right-0 block bg-black bg-opacity-50 text-white p-4 transition-opacity duration-300">
-                <h2 className="text-2xl font-bold">{name}</h2>
-                <p className="text-lg">{subtitle}</p>
-                <p className="text-sm mt-2">{contestName} - Contest #{contestNo}</p>
-              </div>
               <motion.button
                 className="absolute top-2 right-2 text-white text-xl bg-black bg-opacity-50 w-10 h-10 rounded-full flex items-center justify-center hover:bg-opacity-75 transition-colors duration-300"
                 onClick={closePopup}
