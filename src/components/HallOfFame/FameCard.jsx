@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMedal, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { motion, AnimatePresence } from "framer-motion";
+import medalImage from '../../assets/medal.png';
 
 const FameCard = ({ src, alt, name, subtitle, contestNo, contestName }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -37,13 +38,20 @@ const FameCard = ({ src, alt, name, subtitle, contestNo, contestName }) => {
         onClick={openPopup}
       >
         <div className="absolute top-2 left-2 z-20">
-          <span className="bg-red-500 text-white px-2 py-1 text-xs font-bold rounded-full transform rotate-12">
+          <span className="bg-red-600 text-white px-2 py-1 text-xs font-bold rounded-full transform rotate-12">
             Contest#{contestNo}
           </span>
         </div>
-        <div className="absolute top-2 right-2 z-20">
-          <div className="bg-white rounded-full p-1">
-            <FontAwesomeIcon icon={faMedal} className="text-yellow-500" />
+        <div className="absolute top-0 right-0 z-20">
+          <div 
+            className="rounded-full p-2 shadow-lg transform hover:scale-110 transition-transform duration-300"
+            style={{ transform: 'perspective(1000px) rotateY(-15deg)' }}
+          >
+            <img 
+              src={medalImage} 
+              alt="Winner's Medal"
+              className="w-10 h-10"
+            />
           </div>
         </div>
         <img
@@ -52,10 +60,13 @@ const FameCard = ({ src, alt, name, subtitle, contestNo, contestName }) => {
           className="z-0 h-full w-full object-cover transition duration-300 ease-in-out hover:opacity-90"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
-        <div className="absolute bottom-4 left-4 text-left">
-          <h1 className="text-lg font-semibold text-white">{contestName}</h1>
-          <p className="text-sm text-gray-300">{name}</p>
-          <p className="text-xs text-gray-400">{subtitle}</p>
+        <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center">
+          <p className="text-lg font-bold text-white text-center">{name}</p>
+          <p
+            className="bg-gradient-to-r from-blue-500 to-teal-600 text-white text-sm font-semibold px-3 py-1 rounded-md shadow-lg backdrop-blur-sm"
+          >
+            Winner of {contestName}
+          </p>
         </div>
       </div>
 
@@ -63,7 +74,7 @@ const FameCard = ({ src, alt, name, subtitle, contestNo, contestName }) => {
         {isPopupOpen && (
           <motion.div
             ref={popupRef}
-            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 backdrop-filter backdrop-blur-sm"
+            className="fixed inset-0 bg-gray-800 bg-opacity-70 flex items-center justify-center z-50 backdrop-filter backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -83,13 +94,14 @@ const FameCard = ({ src, alt, name, subtitle, contestNo, contestName }) => {
                 alt={alt}
                 className="max-w-full max-h-[70vh] object-contain"
               />
-              <div className="absolute bottom-0 left-0 right-0 block bg-black bg-opacity-50 text-white p-4 transition-opacity duration-300">
-                <h2 className="text-2xl font-bold">{name}</h2>
-                <p className="text-lg">{subtitle}</p>
-                <p className="text-sm mt-2">{contestName} - Contest #{contestNo}</p>
+              <div className="absolute bottom-2 left-2 right-0">
+                <span className="inline-block bg-gradient-to-r from-blue-400 to-teal-500 text-white px-3 py-2 rounded-full transition-opacity duration-300">
+                  <h2 className="text-xl font-bold text-left">{` 🏆 ${name}`}</h2>
+                </span>
               </div>
+
               <motion.button
-                className="absolute top-2 right-2 text-white text-xl bg-black bg-opacity-50 w-10 h-10 rounded-full flex items-center justify-center hover:bg-opacity-75 transition-colors duration-300"
+                className="absolute top-2 right-2 text-white text-xl bg-red-600 bg-opacity-70 w-10 h-10 rounded-full flex items-center justify-center hover:bg-opacity-75 transition-colors duration-300"
                 onClick={closePopup}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -105,3 +117,4 @@ const FameCard = ({ src, alt, name, subtitle, contestNo, contestName }) => {
 };
 
 export default FameCard;
+
