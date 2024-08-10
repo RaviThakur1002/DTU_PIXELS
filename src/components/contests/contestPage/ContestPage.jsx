@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Contest from './Contest';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrophy } from '@fortawesome/free-solid-svg-icons';
@@ -11,10 +11,19 @@ const contestsPerPage = 4;
 const ContestPage = () => {
   const { allContestData } = useContest();
   const [pastPage, setPastPage] = useState(1);
+  const [currentTime, setCurrentTime] = useState(new Date().getTime());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date().getTime());
+    }, 60000); // Update every minute
+
+    return () => clearInterval(timer);
+  }, []);
 
   const { currentContests, pastContests } = useMemo(() => {
     if (!allContestData) return { currentContests: [], pastContests: [] };
-    const currentTime = new Date().getTime();
+
     return allContestData.reduce((acc, contest) => {
       const contestEndTime = new Date(`${contest.contestEndDate} ${contest.contestEndTime}`).getTime();
       if (currentTime <= contestEndTime) {
@@ -24,7 +33,7 @@ const ContestPage = () => {
       }
       return acc;
     }, { currentContests: [], pastContests: [] });
-  }, [allContestData]);
+  }, [allContestData, currentTime]);
 
   const getPastContests = () => {
     const indexOfLast = pastPage * contestsPerPage;
@@ -34,7 +43,7 @@ const ContestPage = () => {
 
   const paginatePast = (pageNumber) => setPastPage(pageNumber);
 
-  if (!allContestData) {
+  if (!allContestData || allContestData.length === 0) {
     return <p className="text-center text-gray-500 text-xl">No contests available.</p>;
   }
 
@@ -47,7 +56,6 @@ const ContestPage = () => {
           <p className="text-lg text-gray-300">Showcase your photography skills!</p>
         </div>
       </div>
-
       <div className="container mx-auto p-4">
         <section className="mt-5 mb-12">
           <div className="bg-gray-100 text-gray-800 py-2 px-4 rounded-lg inline-block mb-6">
@@ -61,7 +69,6 @@ const ContestPage = () => {
             ))}
           </div>
         </section>
-
         <section>
           <div className="bg-gray-100 text-gray-800 py-2 px-4 rounded-lg inline-block mb-6">
             <h2 className="text-2xl font-semibold">Past Contests</h2>
