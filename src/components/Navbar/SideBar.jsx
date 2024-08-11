@@ -18,7 +18,7 @@ const Sidebar = ({
     position: "fixed",
     top: 0,
     right: isSidebarOpen ? "0" : "-100%",
-    width: "85%",
+    width: "70%",
     maxWidth: "320px",
     height: "100vh",
     backgroundColor: "#111827",
