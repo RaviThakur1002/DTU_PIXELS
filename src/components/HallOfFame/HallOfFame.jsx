@@ -42,6 +42,11 @@ const HallOfFame = () => {
     }
   }, [allGalleryData]);
 
+  useEffect(() => {
+    // Scroll to top when currentPage changes
+    window.scrollTo(0, 0);
+  }, [currentPage]);
+
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -52,7 +57,7 @@ const HallOfFame = () => {
   const totalPages = Math.ceil(hallOfFameData.length / ITEMS_PER_PAGE);
 
   if (isLoading) {
-    return <LoadingSpinner quote={"Loading Winners Data"} />
+    return <LoadingSpinner quote={"Loading Winners Data"} />;
   }
 
   if (error) {
