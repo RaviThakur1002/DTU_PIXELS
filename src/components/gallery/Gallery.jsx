@@ -102,6 +102,10 @@ const Gallery = ({ userName = null }) => {
     }
   }, [allGalleryData, userName, setUserGalleryData]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const galleryData = userName ? userGalleryData : allGalleryData;
 
   const { currentPosts, totalPosts } = useMemo(() => {
