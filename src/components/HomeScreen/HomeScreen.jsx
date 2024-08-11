@@ -50,40 +50,22 @@ const HomeScreen = () => {
                 className="text-orange-500 font-semibold mb-2"
                 variants={fadeInUp}
               >
-                READY TO INSPIRE YOU
+                UNLEASH YOUR CREATIVITY
               </motion.p>
               <motion.h1 
                 className="text-4xl md:text-5xl font-bold leading-tight mb-4"
                 variants={fadeInUp}
               >
-                The best platform for every photography enthusiast.
+                Discover the Ultimate Photography Experience.
               </motion.h1>
               <motion.p 
                 className="text-gray-400 mb-6"
                 variants={fadeInUp}
               >
-                Our open, creative, and competitive approach helps us showcase talent
-                and align your perspective with the world of visual storytelling.
+                Join a vibrant community where your passion meets creativity. 
+                Show off your skills, connect with fellow enthusiasts, and 
+                elevate your craft to new heights.
               </motion.p>
-              <motion.div 
-                className="flex space-x-4"
-                variants={fadeInUp}
-              >
-                <motion.button 
-                  className="bg-orange-500 text-white px-6 py-2 rounded-full hover:bg-orange-600 transition duration-300"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Enter Contest
-                </motion.button>
-                <motion.button 
-                  className="bg-gray-800 text-white px-6 py-2 rounded-full border border-gray-700 hover:bg-gray-700 transition duration-300"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Learn More
-                </motion.button>
-              </motion.div>
             </motion.div>
             <motion.div 
               className="md:w-1/2"
@@ -134,3 +116,4 @@ const HomeScreen = () => {
 };
 
 export default HomeScreen;
+

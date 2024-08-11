@@ -13,7 +13,7 @@ function Card({ entry, onClick }) {
 
   return (
     <motion.div
-      className="w-full h-64 sm:h-72 md:h-80 lg:h-96 mb-4 mt-5"
+      className="w-full h-64 sm:h-72 md:h-80 lg:h-96 mb-4 mt-5 border-2 border-orange-400 rounded-lg shadow-lg"
       whileHover={{ scale: 1.05 }}
       transition={{ duration: 0.3 }}
     >
@@ -24,11 +24,11 @@ function Card({ entry, onClick }) {
       >
         {/* Front Side */}
         <motion.div
-          className="w-full h-full cursor-pointer"
+          className="w-full h-full cursor-pointer rounded-lg"
           onClick={onClick}
           whileHover={{ boxShadow: "0 10px 20px rgba(0,0,0,0.2)" }}
         >
-          <div className="relative h-full w-full rounded-lg overflow-hidden shadow-lg">
+          <div className="relative h-full w-full rounded-lg overflow-hidden">
             <img
               src={entry.photoUrl}
               alt={entry.userName}
@@ -66,10 +66,10 @@ function Card({ entry, onClick }) {
         
         {/* Back Side */}
         <motion.div
-          className="w-full h-full cursor-pointer"
+          className="w-full h-full cursor-pointer rounded-lg"
           whileHover={{ boxShadow: "0 10px 20px rgba(0,0,0,0.2)" }}
         >
-          <div className="relative h-full w-full rounded-lg overflow-hidden shadow-lg bg-gradient-to-br from-blue-100 to-purple-100 flex flex-col justify-center items-center p-6">
+          <div className="relative h-full w-full rounded-lg overflow-hidden bg-gradient-to-br from-blue-100 to-purple-100 flex flex-col justify-center items-center p-6">
             <div className="text-center mb-4">
               <svg
                 className="w-10 h-10 text-gray-400 mb-4 mx-auto"
@@ -97,3 +97,4 @@ function Card({ entry, onClick }) {
 }
 
 export default Card;
+

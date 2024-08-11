@@ -6,19 +6,19 @@ const contact = [
     icon: <FiMail />,
     title: 'Have a question?',
     subtitle: 'We are here to help you.',
-    description: 'Email us at abc@gmail.com',
+    description: 'Email us at support@dtupixels.com',
   },
   {
     icon: <FiMapPin />,
     title: 'Current Location',
     subtitle: 'New Delhi, India',
-    description: 'DTU',
+    description: 'DTU Campus, Main Building',
   },
 ];
 
 const Contact = () => {
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
   }
 
   return (
@@ -27,10 +27,10 @@ const Contact = () => {
         {/* Section title */}
         <div className="flex flex-col items-center text-center mb-12">
           <h2 className='py-4 relative font-bold text-white text-4xl mb-4'>
-            Contact Us
+            Get in Touch
           </h2>
           <p className='text-gray-400'>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Consectetur repellendus iste libero aspernatur eum doloribus molestiae tempore corporis iure reiciendis ea perspiciatis, repellat officia recusandae totam? At voluptatum consectetur alias sapiente sit officiis sequi.
+            We’re here to answer any questions you may have. Whether you need support or just want to say hello, don’t hesitate to reach out. Your feedback is important to us and we look forward to connecting with you.
           </p>
         </div>
         <div className="flex flex-col lg:gap-x-8 lg:flex-row">
@@ -53,7 +53,7 @@ const Contact = () => {
             })}
           </div>
           {/* Form */}
-          <form className='space-y-8 w-full max-w-[780px]' action="">
+          <form className='space-y-8 w-full max-w-[780px]' onSubmit={handleSubmit}>
             <div className='flex gap-8'>
               <input 
                 className='bg-gray-700 text-white h-15 py-3 px-6 w-full text-base rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-sm' 
@@ -75,7 +75,7 @@ const Contact = () => {
               className='bg-gray-700 text-white h-15 py-3 px-6 w-full text-base rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-sm'
               placeholder='Your message'
             ></textarea>
-            <button className='bg-orange-500 text-white py-3 px-6 rounded-lg hover:bg-orange-600 transition duration-300' onClick={(e) => handleSubmit(e)}>
+            <button className='bg-orange-500 text-white py-3 px-6 rounded-lg hover:bg-orange-600 transition duration-300' type="submit">
               Send Message
             </button>
           </form>
@@ -86,3 +86,4 @@ const Contact = () => {
 }
 
 export default Contact;
+
