@@ -1,8 +1,11 @@
 import { getDatabase, ref, get } from 'firebase/database';
 import React, { useEffect, useState } from 'react';
+import Pagination from '../../gallery/Pagination';
 
 function Standings({ contestId }) {
   const [submissions, setSubmissions] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage] = useState(10); 
 
   useEffect(() => {
     const fetchSubmissions = async () => {
@@ -22,6 +25,11 @@ function Standings({ contestId }) {
     fetchSubmissions();
   }, [contestId]);
 
+  // Get current submissions
+  const indexOfLastSubmission = currentPage * postsPerPage;
+  const indexOfFirstSubmission = indexOfLastSubmission - postsPerPage;
+  const currentSubmissions = submissions.slice(indexOfFirstSubmission, indexOfLastSubmission);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Contest Standings</h2>
@@ -35,12 +43,12 @@ function Standings({ contestId }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {submissions.map((submission, index) => (
+            {currentSubmissions.map((submission, index) => (
               <tr key={submission.submissionId} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                 <td className="w-1/3 px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center justify-center">
-                    <span className={`inline-flex items-center justify-center h-8 w-8 rounded-full ${getRankStyle(index)}`}>
-                      {index + 1}
+                    <span className={`inline-flex items-center justify-center h-8 w-8 rounded-full ${getRankStyle(indexOfFirstSubmission + index)}`}>
+                      {indexOfFirstSubmission + index + 1}
                     </span>
                   </div>
                 </td>
@@ -57,6 +65,15 @@ function Standings({ contestId }) {
       </div>
       {submissions.length === 0 && (
         <p className="text-center text-gray-500 mt-4">No submissions found.</p>
+      )}
+      
+      {submissions.length > postsPerPage && (
+        <Pagination
+          totalPosts={submissions.length}
+          postsPerPage={postsPerPage}
+          setCurrentPage={setCurrentPage}
+          currentPage={currentPage}
+        />
       )}
     </div>
   );

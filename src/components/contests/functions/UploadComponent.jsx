@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import UploadService from "../../../firebase/services/UplaodService.js"
+import React, { useState, useEffect } from "react";
+import UploadService from "../../../firebase/services/UplaodService.js";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import app from "../../../config/conf.js";
 
@@ -15,15 +15,17 @@ const styles = `
 `;
 
 const UploadComponent = () => {
+  // console.log(onUploadSuccess);
   const [previewImage, setPreviewImage] = useState(null);
   const [uploadFile, setUploadFile] = useState(null);
-  const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState('');
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
-  const [quote, setQuote] = useState('');
+  const [quote, setQuote] = useState("");
   const [user, setUser] = useState(null);
-  const [fileError, setFileError] = useState('');
+  const [fileError, setFileError] = useState("");
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -43,35 +45,38 @@ const UploadComponent = () => {
     setMessage(msg);
     setMessageType(type);
     setTimeout(() => {
-      setMessage('');
-      setMessageType('');
+      setMessage("");
+      setMessageType("");
     }, 3000);
   };
 
   const handleFileChange = (event) => {
     if (!user) {
-      setMessageWithTimer('Please log in to upload a photo.', 'error');
+      setMessageWithTimer("Please log in to upload a photo.", "error");
       return;
     }
 
-  const file = event.target.files[0];
-  if (file) {
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-    if (!allowedTypes.includes(file.type)) {
-      setMessageWithTimer('Only JPEG, JPG, and PNG files are allowed.', 'error');
-      setFileError('Only JPEG, JPG, and PNG files are allowed.');
-      return;
-    }
+    const file = event.target.files[0];
+    if (file) {
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+      if (!allowedTypes.includes(file.type)) {
+        setMessageWithTimer(
+          "Only JPEG, JPG, and PNG files are allowed.",
+          "error",
+        );
+        setFileError("Only JPEG, JPG, and PNG files are allowed.");
+        return;
+      }
 
       // Check file size (20MB = 20 * 1024 * 1024 bytes)
-    const maxSize = 20 * 1024 * 1024;
-    if (file.size > maxSize) {
-      setMessageWithTimer('File size should not exceed 20MB.', 'error');
-      setFileError('File size should not exceed 20MB.');
-      return;
-    }
+      const maxSize = 20 * 1024 * 1024;
+      if (file.size > maxSize) {
+        setMessageWithTimer("File size should not exceed 20MB.", "error");
+        setFileError("File size should not exceed 20MB.");
+        return;
+      }
 
-      setFileError('');
+      setFileError("");
       setUploadFile(file);
       setPreviewImage(URL.createObjectURL(file));
     }
@@ -84,7 +89,7 @@ const UploadComponent = () => {
 
   const handleUpload = async () => {
     if (!user) {
-      setMessageWithTimer('Please log in to upload a photo.', 'error');
+      setMessageWithTimer("Please log in to upload a photo.", "error");
       return;
     }
 
@@ -97,54 +102,68 @@ const UploadComponent = () => {
           quote,
           (progress) => {
             setUploadProgress(progress);
-          }
+          },
         );
-        console.log('Upload result:', result);
         setPreviewImage(null);
         setUploadFile(null);
-        setQuote('');
-        setMessageWithTimer('Your photo and quote have been successfully uploaded!', 'success');
+        setQuote("");
+        setMessageWithTimer(
+          "Your photo and quote have been successfully uploaded!",
+          "success",
+        );
+        setHasSubmitted(true);
       } catch (error) {
         console.error("Error uploading image:", error);
         if (error.message.includes("already submitted")) {
-          setMessageWithTimer('You have already uploaded a photo for this contest.', 'error');
+          setMessageWithTimer(
+            "You have already uploaded a photo for this contest.",
+            "error",
+          );
         } else {
-          setMessageWithTimer(error.message || 'There was an error uploading your submission. Please try again.', 'error');
+          setMessageWithTimer(
+            error.message ||
+              "There was an error uploading your submission. Please try again.",
+            "error",
+          );
         }
       } finally {
         setIsUploading(false);
         setUploadProgress(0);
       }
     } else {
-      setMessageWithTimer('Please select a file and enter a quote.', 'error');
+      setMessageWithTimer("Please select a file and enter a quote.", "error");
     }
   };
 
   const handleCancel = () => {
     setPreviewImage(null);
     setUploadFile(null);
-    setQuote('');
-    setMessageWithTimer('Upload cancelled.', 'info');
+    setQuote("");
+    setMessageWithTimer("Upload cancelled.", "info");
   };
 
   return (
     <div className="mb-4 flex flex-col items-center w-full max-w-2xl mx-auto px-4">
       <style>{styles}</style>
-      
+
       {/* Message display */}
       {message && (
-        <div className={`fixed top-4 right-0 mb-4 p-3 rounded-l-lg w-64 ${
-          messageType === 'success' 
-            ? 'bg-gradient-to-r from-green-600 to-green-800 text-white' 
-            : messageType === 'error'
-            ? 'bg-gradient-to-r from-red-600 to-red-800 text-white'
-            : 'bg-gradient-to-r from-blue-500 to-blue-700 text-white'
-        } border border-solid ${
-          messageType === 'success' ? 'border-green-500' : 
-          messageType === 'error' ? 'border-red-500' : 'border-blue-400'
-        } text-center transition-all duration-300 ease-in-out transform translate-x-0 shadow-md z-50`}
+        <div
+          className={`fixed top-4 right-0 mb-4 p-3 rounded-l-lg w-64 ${
+            messageType === "success"
+              ? "bg-gradient-to-r from-green-600 to-green-800 text-white"
+              : messageType === "error"
+                ? "bg-gradient-to-r from-red-600 to-red-800 text-white"
+                : "bg-gradient-to-r from-blue-500 to-blue-700 text-white"
+          } border border-solid ${
+            messageType === "success"
+              ? "border-green-500"
+              : messageType === "error"
+                ? "border-red-500"
+                : "border-blue-400"
+          } text-center transition-all duration-300 ease-in-out transform translate-x-0 shadow-md z-50`}
           style={{
-            animation: `${message ? 'slideIn' : 'slideOut'} 0.3s ease-in-out forwards`
+            animation: `${message ? "slideIn" : "slideOut"} 0.3s ease-in-out forwards`,
           }}
         >
           <p className="font-semibold">{message}</p>
@@ -152,25 +171,49 @@ const UploadComponent = () => {
       )}
 
       {/* File input */}
-      <label className="inline-block mb-6 cursor-pointer bg-white border-2 border-gray-800 text-gray-800 py-2 px-3 rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 text-center font-semibold text-sm flex items-center justify-center space-x-2 min-w-[180px]">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-        <span>Upload Photo</span>
-        <input type="file" onChange={handleFileChange} accept="image/jpeg,image/jpg,image/png" className="hidden" />
-      </label>
-
-      {fileError && (
-        <p className="text-red-500 mt-2">{fileError}</p>
+      {hasSubmitted ? (
+        <div>
+          <p>You have submitted successfully.</p>
+        </div>
+      ) : (
+        <label className="inline-block mb-6 cursor-pointer bg-white border-2 border-gray-800 text-gray-800 py-2 px-3 rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 text-center font-semibold text-sm flex items-center justify-center space-x-2 min-w-[180px]">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+          <span>Upload Photo</span>
+          <input
+            type="file"
+            onChange={handleFileChange}
+            accept="image/jpeg,image/jpg,image/png"
+            className="hidden"
+          />
+        </label>
       )}
+
+      {fileError && <p className="text-red-500 mt-2">{fileError}</p>}
 
       {/* Image preview, quote input, and upload/cancel buttons */}
       {previewImage && (
         <div className="w-full mt-4 flex flex-col items-center">
           <div className="w-full max-w-md mb-6">
-            <img src={previewImage} alt="Preview" className="w-full h-auto rounded-lg shadow-xl" />
+            <img
+              src={previewImage}
+              alt="Preview"
+              className="w-full h-auto rounded-lg shadow-xl"
+            />
           </div>
-          
+
           {/* Quote input */}
           <div className="w-full mb-6 relative">
             <textarea
@@ -188,13 +231,13 @@ const UploadComponent = () => {
 
           {!isUploading && (
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full justify-center">
-              <button 
+              <button
                 onClick={handleUpload}
                 className="bg-gradient-to-r from-gray-800 to-black text-white py-2 px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 shadow-lg hover:shadow-xl font-bold text-base w-full sm:w-auto"
               >
                 Submit Entry
               </button>
-              <button 
+              <button
                 onClick={handleCancel}
                 className="bg-gradient-to-r from-gray-200 to-gray-400 text-gray-800 py-2 px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50 shadow-lg hover:shadow-xl font-bold text-base w-full sm:w-auto"
               >
@@ -209,12 +252,14 @@ const UploadComponent = () => {
       {isUploading && (
         <div className="w-full mt-6">
           <div className="bg-gray-200 rounded-full h-4 overflow-hidden">
-            <div 
+            <div
               className="bg-gradient-to-r from-gray-600 to-gray-800 h-4 rounded-full transition-all duration-300 ease-out"
               style={{ width: `${uploadProgress}%` }}
             ></div>
           </div>
-          <p className="text-center mt-2 font-semibold text-gray-700 text-lg">{Math.round(uploadProgress)}% Uploaded</p>
+          <p className="text-center mt-2 font-semibold text-gray-700 text-lg">
+            {Math.round(uploadProgress)}% Uploaded
+          </p>
         </div>
       )}
     </div>
