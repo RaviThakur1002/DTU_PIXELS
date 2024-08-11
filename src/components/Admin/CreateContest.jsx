@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ContestServiceInstance from "../../firebase/contestServices/ContestService";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -35,6 +35,7 @@ export const CreateContest = () => {
     contestEndTime: null,
     theme: "",
   });
+  const modalRef = useRef(null);
 
   const setMessageWithTimer = (msg, type) => {
     setMessage(msg);
@@ -44,6 +45,17 @@ export const CreateContest = () => {
       setMessageType("");
     }, 3000);
   };
+
+  const handleClickOutside = (e) => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      closeModal();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const now = dayjs();
@@ -178,7 +190,7 @@ export const CreateContest = () => {
       <Modal isOpen={isOpen} onClose={closeModal}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <style>{styles}</style>
-          <div className="relative bg-white rounded-lg shadow-xl w-full max-w-lg mx-auto overflow-y-auto max-h-[90vh] md:max-h-[80vh]">
+          <div ref = {modalRef} className="relative bg-white rounded-lg shadow-xl w-full max-w-lg mx-auto overflow-y-auto max-h-[90vh] md:max-h-[80vh]">
             {/* Header */}
             <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-4 md:p-6 rounded-t-lg relative">
               <h2 className="text-2xl font-bold text-white">
@@ -223,6 +235,7 @@ export const CreateContest = () => {
                   className="grid grid-cols-1 md:grid-cols-2 gap-4"
                 >
                   <DatePicker
+                    ref = {modalRef}
                     label={`${label} Date`}
                     value={formData[dateKey]}
                     onChange={(newValue) => handleChange(dateKey, newValue)}
@@ -231,6 +244,7 @@ export const CreateContest = () => {
                     }}
                   />
                   <TimePicker
+                    ref = {modalRef}
                     label={`${label} Time`}
                     value={formData[timeKey]}
                     onChange={(newValue) => handleChange(timeKey, newValue)}
