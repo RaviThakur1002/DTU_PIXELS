@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import FameCard from './FameCard';
 import './HallOfFame.css'; 
-import LoadingSpinner from '../Utilities/LoadingSpinner';
+import LoadingSpinner from '../LoadingSpinner';
 import { useGallery } from '../contexts/GalleryContext';
-import Pagination from '../../components/Utilities/Pagination';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -17,10 +16,10 @@ const HallOfFame = () => {
       const winners = [];
 
       const contestWinners = allGalleryData.reduce((acc, image) => {
-        const { contestId, userName, photoUrl, likeCount, contestTheme } = image;
+        const { contestId, userName, photoUrl, likeCount } = image;
 
         if (!acc[contestId] || acc[contestId].likeCount < likeCount) {
-          acc[contestId] = { contestId, userName, photoUrl, likeCount, contestTheme };
+          acc[contestId] = { contestId, userName, photoUrl, likeCount };
         }
         
         return acc;
@@ -47,9 +46,14 @@ const HallOfFame = () => {
     window.scrollTo(0, 0);
   }, [currentPage]);
 
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
   const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
   const currentItems = hallOfFameData.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(hallOfFameData.length / ITEMS_PER_PAGE);
 
   if (isLoading) {
     return <LoadingSpinner quote={"Loading Winners Data"} />;
@@ -61,7 +65,7 @@ const HallOfFame = () => {
         <p className="text-red-500 mb-4">{error}</p>
         <button 
           onClick={() => fetchContests()}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-orange-400 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded"
         >
           Retry
         </button>
@@ -72,15 +76,16 @@ const HallOfFame = () => {
   return (
     <div className="bg-pattern min-h-screen p-4 flex flex-col">
       <div className="flex justify-center items-center min-h-[200px] mb-4">
-        <h1 className="text-center text-4xl font-bold py-4 px-6 border-4 border-yellow-500 bg-white bg-opacity-90 text-gray-600 rounded-lg shadow-lg w-full max-w-6xl">
+        <h1 className="text-center text-4xl font-bold py-4 px-6 border-2 border-orange-400 bg-[#111827] bg-opacity-90 text-orange-400 rounded-lg shadow-lg w-full max-w-6xl">
           Hall of Fame
         </h1>
       </div>
+      
       <div className="flex-1 flex flex-col items-center">
-        <div className="bg-white bg-opacity-80 p-4 rounded-lg border-4 border-yellow-500 shadow-lg w-full max-w-6xl">
-          <div className="flex flex-wrap justify-between">
+        <div className="bg-[#111827] bg-opacity-90 p-4 rounded-lg border-2 border-orange-400 shadow-lg w-full max-w-6xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {currentItems.map((item) => (
-              <div key={item.id} className="w-1/3 p-4">
+              <div key={item.id} className="w-full">
                 <FameCard
                   src={item.winnerPhoto}
                   alt={`Winner of Contest ${item.contestNo}`}
@@ -94,13 +99,17 @@ const HallOfFame = () => {
           {hallOfFameData.length === 0 && (
             <p className="text-center text-gray-500 mt-4">No contest data available.</p>
           )}
-          <Pagination
-            totalPosts={hallOfFameData.length}
-            postsPerPage={ITEMS_PER_PAGE}
-            setCurrentPage={setCurrentPage}
-            currentPage={currentPage}
-            activeColor="yellow"
-          />
+          <div className="mt-8 flex justify-center space-x-2 flex-wrap">
+            {[...Array(totalPages).keys()].map((page) => (
+              <button
+                key={page + 1}
+                className={`py-2 px-4 border rounded mb-2 ${currentPage === page + 1 ? 'bg-orange-400 text-white border-orange-400' : 'bg-white text-[#1f2927] border-[#1f2927]'} hover:bg-orange-200 transition`}
+                onClick={() => handlePageChange(page + 1)}
+              >
+                {page + 1}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>
