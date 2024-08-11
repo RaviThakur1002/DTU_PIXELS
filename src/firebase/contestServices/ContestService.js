@@ -1,10 +1,8 @@
 import {
   getDatabase,
   ref,
-  push,
   set,
   get,
-  onValue,
   runTransaction,
 } from "firebase/database";
 import app from "../../config/conf.js";
@@ -17,8 +15,8 @@ class ContestService {
   }
 
   async createContest(contestData) {
+    let newContestId;
     try {
-      let newContestId;
       await runTransaction(this.highestIdRef, (currentHighestId) => {
         if (currentHighestId === null) {
           newContestId = 1;
@@ -35,6 +33,12 @@ class ContestService {
       return newContestId;
     } catch (error) {
       console.error("Error creating contest: ", error.message);
+      await runTransaction(this.highestIdRef, (currentHighestId) => {
+        if (currentHighestId === newContestId) {
+          return currentHighestId - 1;
+        }
+        return currentHighestId;
+      });
       throw error;
     }
   }
