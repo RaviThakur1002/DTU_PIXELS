@@ -48,34 +48,32 @@ function ContestActions({
   useEffect(() => {
     const auth = getAuth();
     const uid = auth.currentUser ? auth.currentUser.uid : null;
-    
+
     const checkUserSubmission = async (contestId, uid) => {
       const db = getDatabase();
-      const userRef = ref(
-        db,
-        `users/${uid}/contests/${contestId}/hasSubmitted`,
-      );
+      const userRef = ref(db, `users/${uid}/contests/${contestId}/hasSubmitted`);
       const snapshot = await get(userRef);
       return snapshot.exists();
     };
 
     if (isRegistered && uid) {
-      setLoading(true); 
+      setLoading(true);
 
-      checkUserSubmission(contestId, uid).then((submitted) => {
-        setHasSubmitted(submitted);
-        setLoading(false);
-      }).catch((error) => {
-          console.error("Error checking user submission:", error);
+      checkUserSubmission(contestId, uid)
+        .then((submitted) => {
+          setHasSubmitted(submitted);
           setLoading(false);
         })
+        .catch((error) => {
+          console.error("Error checking user submission:", error);
+          setLoading(false);
+        });
     } else {
       setLoading(false);
     }
   }, [isRegistered, contestId]);
 
   useEffect(() => {
-
     const intervalId = setInterval(() => {
       setCurrentTime(new Date());
     }, 30000);
@@ -91,10 +89,7 @@ function ContestActions({
 
       if (user) {
         try {
-          const userContestRef = ref(
-            db,
-            `users/${user.uid}/contests/${contestId}`,
-          );
+          const userContestRef = ref(db, `users/${user.uid}/contests/${contestId}`);
           const snapshot = await get(userContestRef);
           setIsRegistered(snapshot.exists() && snapshot.val().isRegistered);
         } catch (error) {
@@ -113,10 +108,7 @@ function ContestActions({
 
     if (user) {
       try {
-        const userContestRef = ref(
-          db,
-          `users/${user.uid}/contests/${contestId}`,
-        );
+        const userContestRef = ref(db, `users/${user.uid}/contests/${contestId}`);
         await update(userContestRef, { isRegistered: !isRegistered });
         setIsRegistered(!isRegistered);
         isRegistered
@@ -134,7 +126,7 @@ function ContestActions({
   }
 
   return (
-    <section className="bg-white shadow-md rounded-lg overflow-hidden">
+    <section className="bg-gray-800 text-white shadow-md rounded-lg overflow-hidden">
       <style>{styles}</style>
 
       {message && (
@@ -143,14 +135,14 @@ function ContestActions({
             messageType === "success"
               ? "bg-gradient-to-r from-green-600 to-green-800 text-white"
               : messageType === "error"
-                ? "bg-gradient-to-r from-red-600 to-red-800 text-white"
-                : "bg-gradient-to-r from-blue-500 to-blue-700 text-white"
+              ? "bg-gradient-to-r from-red-600 to-red-800 text-white"
+              : "bg-gradient-to-r from-orange-500 to-orange-700 text-white"
           } border border-solid ${
             messageType === "success"
               ? "border-green-500"
               : messageType === "error"
-                ? "border-red-500"
-                : "border-blue-400"
+              ? "border-red-500"
+              : "border-orange-400"
           } text-center transition-all duration-300 ease-in-out transform translate-x-0 shadow-md z-50`}
           style={{
             animation: `${message ? "slideIn" : "slideOut"} 0.3s ease-in-out forwards`,
@@ -160,54 +152,54 @@ function ContestActions({
         </div>
       )}
 
-      <h2 className="text-2xl font-semibold text-white bg-blue-600 p-4">
+      <h2 className="text-2xl font-semibold text-white bg-orange-500 p-4">
         Contest Actions
       </h2>
       <div className="p-6">
         {currentTime < registrationEndTime && !isRegistered && (
           <div>
-            <h3 className="text-xl font-semibold text-gray-700 mb-4">
+            <h3 className="text-xl font-semibold text-white mb-4">
               Register for the Contest
             </h3>
             <button
               onClick={handleRegistration}
-              className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+              className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded transition duration-300"
             >
               Register Now
             </button>
           </div>
         )}
-        {currentTime >= contestStartTime &&
-          currentTime < votingStartTime &&
-          (isRegistered ? (
+        {currentTime >= contestStartTime && currentTime < votingStartTime && (
+          isRegistered ? (
             !hasSubmitted ? (
               <div>
-                <h3 className="text-xl font-semibold text-gray-700 mb-4">
+                <h3 className="text-xl font-semibold text-white mb-4">
                   Submit Your Entry
                 </h3>
                 <UploadComponent />
               </div>
             ) : (
               <div>
-                <p>You have submitted successfully.</p>
+                <p className="text-white">You have submitted successfully.</p>
               </div>
             )
           ) : (
-            <p className="text-red-500 italic">
+            <p className="text-orange-500 italic">
               Registration is closed. Please wait for voting to start.
             </p>
-          ))}
+          )
+        )}
         {currentTime >= votingStartTime && currentTime < contestEndTime && (
           <ContestVoting contestId={contestId} />
         )}
         {isRegistered && currentTime < contestStartTime && (
           <div>
-            <h3 className="text-xl font-semibold text-gray-700 mb-4">
+            <h3 className="text-xl font-semibold text-white mb-4">
               Unregister for the Contest
             </h3>
             <button
               onClick={handleRegistration}
-              className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+              className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-300"
             >
               Unregister
             </button>
@@ -219,13 +211,13 @@ function ContestActions({
             <div className="mb-4 flex justify-center space-x-4">
               <button
                 onClick={() => toggleView("voting")}
-                className={`text-blue-500 font-bold py-2 px-4 ${!showStandings ? "border-b-2 border-blue-500" : ""}`}
+                className={`text-orange-500 font-bold py-2 px-4 ${!showStandings ? "border-b-2 border-orange-500" : ""}`}
               >
                 Voting
               </button>
               <button
                 onClick={() => toggleView("standings")}
-                className={`text-blue-500 font-bold py-2 px-4 ${showStandings ? "border-b-2 border-blue-500" : ""}`}
+                className={`text-orange-500 font-bold py-2 px-4 ${showStandings ? "border-b-2 border-orange-500" : ""}`}
               >
                 Standings
               </button>
@@ -246,3 +238,4 @@ function ContestActions({
 }
 
 export default ContestActions;
+

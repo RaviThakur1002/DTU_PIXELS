@@ -31,20 +31,20 @@ function Standings({ contestId }) {
   const currentSubmissions = submissions.slice(indexOfFirstSubmission, indexOfLastSubmission);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Contest Standings</h2>
-      <div className="overflow-x-auto bg-white rounded-lg shadow">
+    <div className="container mx-auto px-4 py-8 bg-gray-900 text-white">
+      <h2 className="text-3xl font-bold text-center mb-6">Contest Standings</h2>
+      <div className="overflow-x-auto bg-gray-800 rounded-lg shadow">
         <table className="min-w-full table-fixed">
-          <thead className="bg-gray-50">
+          <thead className="bg-gray-700">
             <tr>
-              <th className="w-1/3 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
-              <th className="w-1/3 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-              <th className="w-1/3 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Likes</th>
+              <th className="w-1/3 px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Rank</th>
+              <th className="w-1/3 px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">User</th>
+              <th className="w-1/3 px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Likes</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-700">
             {currentSubmissions.map((submission, index) => (
-              <tr key={submission.submissionId} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+              <tr key={submission.submissionId} className={index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'}>
                 <td className="w-1/3 px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center justify-center">
                     <span className={`inline-flex items-center justify-center h-8 w-8 rounded-full ${getRankStyle(indexOfFirstSubmission + index)}`}>
@@ -53,10 +53,10 @@ function Standings({ contestId }) {
                   </div>
                 </td>
                 <td className="w-1/3 px-6 py-4 whitespace-nowrap text-center">
-                  <div className="text-sm font-medium text-gray-900">{submission.userName}</div>
+                  <div className="text-sm font-medium text-gray-300">{submission.userName}</div>
                 </td>
                 <td className="w-1/3 px-6 py-4 whitespace-nowrap text-center">
-                  <div className="text-sm text-gray-900">{submission.voteCount}</div>
+                  <div className="text-sm text-gray-300">{submission.voteCount}</div>
                 </td>
               </tr>
             ))}
@@ -82,14 +82,15 @@ function Standings({ contestId }) {
 function getRankStyle(index) {
   switch (index) {
     case 0:
-      return 'bg-yellow-400 text-white font-bold';
+      return 'bg-yellow-500 text-white font-bold';
     case 1:
-      return 'bg-gray-300 text-gray-800 font-bold';
+      return 'bg-gray-600 text-gray-200 font-bold';
     case 2:
       return 'bg-yellow-600 text-white font-bold';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-gray-700 text-gray-300';
   }
 }
 
 export default Standings;
+
