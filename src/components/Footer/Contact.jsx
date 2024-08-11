@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { FiMail, FiMapPin } from 'react-icons/fi';
+import emailjs from '@emailjs/browser';
+import { toast, ToastContainer } from 'react-toastify';
 
 const contact = [
   {
@@ -17,14 +19,33 @@ const contact = [
 ];
 
 const Contact = () => {
-  const handleSubmit = (e) => {
-    e.preventDefault()
-  }
+  const form = useRef();
+
+  const sendEmail = (e) => {
+    e.preventDefault();
+
+    emailjs
+      .sendForm(
+        'service_bbwir1j', // Service ID
+        'template_rw8ygi2', // Template ID
+        form.current,
+        'qbFlDONXQS_YRLKmo' // Public key 
+      )
+      .then(
+        () => {
+          toast.success('Message sent successfully!');
+          form.current.reset(); // Clear the form fields
+        },
+        (error) => {
+          toast.error('Failed to send the message.');
+          console.log('FAILED...', error.text);
+        }
+      );
+  };
 
   return (
     <section className='py-12' style={{ backgroundColor: '#031320' }} id='contact'>
       <div className='container mx-auto p-6 bg-gray-900 rounded-lg shadow-lg'>
-        {/* Section title */}
         <div className="flex flex-col items-center text-center mb-12">
           <h2 className='py-4 relative font-bold text-white text-4xl mb-4'>
             Contact Us
@@ -34,7 +55,6 @@ const Contact = () => {
           </p>
         </div>
         <div className="flex flex-col lg:gap-x-8 lg:flex-row">
-          {/* Info */}
           <div className='flex flex-1 flex-col items-start px-6 space-y-8 mb-12 lg:mb-0 lg:pt-2'>
             {contact.map((item, index) => {
               const { icon, title, subtitle, description } = item;
@@ -53,34 +73,42 @@ const Contact = () => {
             })}
           </div>
           {/* Form */}
-          <form className='space-y-8 w-full max-w-[780px]' action="">
+          <form ref={form} onSubmit={sendEmail} className='space-y-8 w-full max-w-[780px]'>
             <div className='flex gap-8'>
               <input 
                 className='bg-gray-800 border border-gray-700 text-white h-15 py-3 px-6 w-full text-base rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent shadow-sm' 
                 type="text" 
-                placeholder='Your name' 
+                placeholder='Your name'
+                name="user_name" 
               />
               <input 
                 className='bg-gray-800 border border-gray-700 text-white h-15 py-3 px-6 w-full text-base rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent shadow-sm'
                 type="email" 
                 placeholder='Your email' 
+                name="user_email"
               />
             </div>
             <input 
               type="text" 
               className='bg-gray-800 border border-gray-700 text-white h-15 py-3 px-6 w-full text-base rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent shadow-sm' 
               placeholder='Subject' 
+              name="subject"
             />
             <textarea
               className='bg-gray-800 border border-gray-700 text-white h-15 py-3 px-6 w-full text-base rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent shadow-sm'
               placeholder='Your message'
+              name="message"
             ></textarea>
-            <button className='bg-white text-gray-900 py-3 px-6 rounded-lg hover:bg-gray-200 transition duration-300' onClick={(e) => handleSubmit(e)}>
+            <button 
+              className='bg-white text-gray-900 py-3 px-6 rounded-lg hover:bg-gray-200 transition duration-300' 
+              type="submit"
+            >
               Send Message
             </button>
           </form>
         </div>
       </div>
+      <ToastContainer />
     </section>
   )
 }
