@@ -170,7 +170,7 @@ export const CreateContest = () => {
     <>
       <button
         onClick={openModal}
-        className="flex w-full border-none items-center gap-3 px-4 py-3 text-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-all duration-200"
+        className="flex border-none outline-none items-center gap-3 px-4 py-3 text-md font-medium text-white hover:bg-gray-600 hover:text-orange-500 rounded-md transition-all duration-200 w-full text-left"
       >
         <ChevronRight className="h-5 w-5" />
         Create Contest
@@ -281,8 +281,8 @@ export const CreateContest = () => {
                 messageType === "success"
                   ? "bg-green-500"
                   : messageType === "error"
-                  ? "bg-red-500"
-                  : "bg-blue-500"
+                    ? "bg-red-500"
+                    : "bg-blue-500"
               } text-white text-center shadow-lg z-50`}
               style={{
                 animation: `${message ? "slideIn" : "slideOut"} 0.3s ease-in-out forwards`,
