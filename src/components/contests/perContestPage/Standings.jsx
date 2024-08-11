@@ -1,6 +1,6 @@
 import { getDatabase, ref, get } from 'firebase/database';
 import React, { useEffect, useState } from 'react';
-import Pagination from '../../gallery/Pagination';
+import Pagination from '../../Utilities/Pagination';
 
 function Standings({ contestId }) {
   const [submissions, setSubmissions] = useState([]);

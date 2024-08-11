@@ -2,7 +2,7 @@ import { get, set, getDatabase, ref, update } from "firebase/database";
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import UplaodService from "../../../firebase/services/UplaodService";
-import LoadingSpinner from "../../LoadingSpinner";
+import LoadingSpinner from "../../Utilities/LoadingSpinner";
 import Countdown from "./Countdown";
 import RemoveContest from "./RemoveContest";
 import ContestActions from "./ContestActions";

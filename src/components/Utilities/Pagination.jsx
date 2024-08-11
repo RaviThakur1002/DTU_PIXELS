@@ -1,6 +1,6 @@
 import React from "react";
 
-const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage }) => {
+const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage, activeColor }) => {
   const totalPages = Math.ceil(totalPosts / postsPerPage);
   const maxVisibleButtons = 5;
 
@@ -15,6 +15,10 @@ const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage }) =
   };
 
   const pageNumbers = getPageNumbers();
+
+  const activeButtonClass = activeColor 
+    ? `bg-${activeColor}-500 text-white` 
+    : "bg-orange-500 text-white";
 
   return (
     <nav className="flex items-center justify-center mt-8">
@@ -47,7 +51,7 @@ const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage }) =
               onClick={() => setCurrentPage(number)}
               className={`px-3 py-2 rounded-md ${
                 currentPage === number
-                  ? "bg-orange-500 text-white"
+                  ? activeButtonClass
                   : "bg-gray-800 border border-gray-700 text-gray-300 hover:bg-gray-700"
               }`}
             >

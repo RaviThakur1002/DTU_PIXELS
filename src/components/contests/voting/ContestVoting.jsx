@@ -8,7 +8,7 @@ import VoteCard from "./VoteCard.jsx";
 import VotePopup from "./VotePopup.jsx";
 import MessagePopup from "./MessagePopup.jsx";
 import "./ContestVoting.css";
-import Pagination from "../../gallery/Pagination.jsx"
+import Pagination from "../../Utilities/Pagination.jsx"
 
 const ContestVoting = () => {
     const [entries, setEntries] = useState([]);

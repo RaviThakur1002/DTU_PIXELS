@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import LoadingSpinner from "../../LoadingSpinner";
+import LoadingSpinner from "../../Utilities/LoadingSpinner";
 import ContestVoting from "../voting/ContestVoting";
 import UploadComponent from "../functions/UploadComponent";
 import Standings from "./Standings";

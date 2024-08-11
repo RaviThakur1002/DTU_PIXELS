@@ -3,7 +3,7 @@ import { getAuth } from 'firebase/auth';
 import { getDatabase, ref, onValue, off } from 'firebase/database';
 import roleService from '../../../firebase/roleAssigning/RoleService';
 import ContestPage from '../contestPage/ContestPage';
-import LoadingSpinner from '../../LoadingSpinner.jsx';
+import LoadingSpinner from '../../Utilities/LoadingSpinner.jsx';
 import { useContest } from '../../contexts/ContestContext';
 import app from '../../../config/conf.js';
 

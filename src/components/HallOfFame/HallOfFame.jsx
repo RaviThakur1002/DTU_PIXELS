@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import FameCard from './FameCard';
 import './HallOfFame.css'; 
-import LoadingSpinner from '../LoadingSpinner';
+import LoadingSpinner from '../Utilities/LoadingSpinner';
 import { useGallery } from '../contexts/GalleryContext';
+import Pagination from '../../components/Utilities/Pagination';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -16,10 +17,10 @@ const HallOfFame = () => {
       const winners = [];
 
       const contestWinners = allGalleryData.reduce((acc, image) => {
-        const { contestId, userName, photoUrl, likeCount } = image;
+        const { contestId, userName, photoUrl, likeCount, contestTheme } = image;
 
         if (!acc[contestId] || acc[contestId].likeCount < likeCount) {
-          acc[contestId] = { contestId, userName, photoUrl, likeCount };
+          acc[contestId] = { contestId, userName, photoUrl, likeCount, contestTheme };
         }
         
         return acc;
@@ -43,18 +44,12 @@ const HallOfFame = () => {
   }, [allGalleryData]);
 
   useEffect(() => {
-    // Scroll to top when currentPage changes
     window.scrollTo(0, 0);
   }, [currentPage]);
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
 
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
   const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
   const currentItems = hallOfFameData.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(hallOfFameData.length / ITEMS_PER_PAGE);
 
   if (isLoading) {
     return <LoadingSpinner quote={"Loading Winners Data"} />;
@@ -99,17 +94,13 @@ const HallOfFame = () => {
           {hallOfFameData.length === 0 && (
             <p className="text-center text-gray-500 mt-4">No contest data available.</p>
           )}
-          <div className="mt-8 flex justify-center space-x-2">
-            {[...Array(totalPages).keys()].map((page) => (
-              <button
-                key={page + 1}
-                className={`py-2 px-4 border rounded ${currentPage === page + 1 ? 'bg-yellow-500 text-white border-yellow-500' : 'bg-white text-gray-700 border-gray-300'} hover:bg-blue-200 transition`}
-                onClick={() => handlePageChange(page + 1)}
-              >
-                {page + 1}
-              </button>
-            ))}
-          </div>
+          <Pagination
+            totalPosts={hallOfFameData.length}
+            postsPerPage={ITEMS_PER_PAGE}
+            setCurrentPage={setCurrentPage}
+            currentPage={currentPage}
+            activeColor="yellow"
+          />
         </div>
       </div>
     </div>
