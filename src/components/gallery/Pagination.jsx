@@ -2,7 +2,7 @@ import React from "react";
 
 const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage }) => {
   const totalPages = Math.ceil(totalPosts / postsPerPage);
-  const maxVisibleButtons = 5;
+  const maxVisibleButtons = 3;
 
   const getPageNumbers = () => {
     const halfVisible = Math.floor(maxVisibleButtons / 2);
