@@ -5,7 +5,7 @@ const GalleryContext = createContext();
 export const GalleryProvider = ({ children }) => {
   const [allGalleryData, setAllGalleryData] = useState(() => {
     const savedData = localStorage.getItem('allGalleryData');
-    return savedData ? JSON.parse(savedData) : null;
+    return savedData ? JSON.parse(savedData) : [];
   });
 
   const [userGalleryData, setUserGalleryData] = useState(null);
