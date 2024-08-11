@@ -124,14 +124,14 @@ const Gallery = ({ userName = null }) => {
 
   if (!galleryData || galleryData.length === 0) {
     return (
-      <p className="text-center text-gray-500 text-xl">
+      <p className="text-center text-gray-400 text-xl">
         No images to display. Check back after contests have ended.
       </p>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 min-h-screen gallery-container">
+    <div className="w-full mx-auto px-4 min-h-screen gallery-container bg-gray-900">
       <div className="w-full">
         <Images imageData={currentPosts} />
         <Pagination

@@ -8,11 +8,9 @@ const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage }) =
     const halfVisible = Math.floor(maxVisibleButtons / 2);
     let startPage = Math.max(currentPage - halfVisible, 1);
     let endPage = Math.min(startPage + maxVisibleButtons - 1, totalPages);
-
     if (endPage - startPage + 1 < maxVisibleButtons) {
       startPage = Math.max(endPage - maxVisibleButtons + 1, 1);
     }
-
     return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
   };
 
@@ -25,7 +23,7 @@ const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage }) =
           <button
             onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
             disabled={currentPage === 1}
-            className="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-2 rounded-md bg-gray-800 border border-gray-700 text-gray-300 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             &laquo;
           </button>
@@ -35,7 +33,7 @@ const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage }) =
             <li>
               <button
                 onClick={() => setCurrentPage(1)}
-                className="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+                className="px-3 py-2 rounded-md bg-gray-800 border border-gray-700 text-gray-300 hover:bg-gray-700"
               >
                 1
               </button>
@@ -49,8 +47,8 @@ const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage }) =
               onClick={() => setCurrentPage(number)}
               className={`px-3 py-2 rounded-md ${
                 currentPage === number
-                  ? "bg-blue-600 text-white"
-                  : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+                  ? "bg-orange-500 text-white"
+                  : "bg-gray-800 border border-gray-700 text-gray-300 hover:bg-gray-700"
               }`}
             >
               {number}
@@ -63,7 +61,7 @@ const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage }) =
             <li>
               <button
                 onClick={() => setCurrentPage(totalPages)}
-                className="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+                className="px-3 py-2 rounded-md bg-gray-800 border border-gray-700 text-gray-300 hover:bg-gray-700"
               >
                 {totalPages}
               </button>
@@ -74,7 +72,7 @@ const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage }) =
           <button
             onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
             disabled={currentPage === totalPages}
-            className="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-2 rounded-md bg-gray-800 border border-gray-700 text-gray-300 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             &raquo;
           </button>

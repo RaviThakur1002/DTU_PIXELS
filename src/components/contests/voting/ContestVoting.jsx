@@ -8,6 +8,7 @@ import VoteCard from "./VoteCard.jsx";
 import VotePopup from "./VotePopup.jsx";
 import MessagePopup from "./MessagePopup.jsx";
 import "./ContestVoting.css";
+import Pagination from "../../gallery/Pagination.jsx"
 
 const ContestVoting = () => {
     const [entries, setEntries] = useState([]);
@@ -17,6 +18,8 @@ const ContestVoting = () => {
     const [message, setMessage] = useState("");
     const [contestId, setContestId] = useState(null);
     const [contestEndDateTime, setContestEndDateTime] = useState(null);
+    const [currentPage, setCurrentPage] = useState(0);
+    const entriesPerPage = 12;
 
     useEffect(() => {
         const contestIdFromService = UploadService.contestId;
@@ -144,6 +147,17 @@ const ContestVoting = () => {
         );
     }, [entries]);
 
+   const pageCount = Math.ceil(entries.length / entriesPerPage);
+
+    const handlePageChange = ({ selected }) => {
+        setCurrentPage(selected);
+    };
+
+    const displayedEntries = entries.slice(
+        currentPage * entriesPerPage,
+        (currentPage + 1) * entriesPerPage
+    );
+
     if (!contestId) {
         return <div>Loading contest...</div>;
     }
@@ -155,7 +169,7 @@ const ContestVoting = () => {
             </h2>
 
             <div className="contest-grid grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-                {entries.map((entry) => (
+                {displayedEntries.map((entry) => (
                     <VoteCard
                         key={entry.id}
                         entry={entry}
@@ -166,6 +180,13 @@ const ContestVoting = () => {
                     />
                 ))}
             </div>
+            
+            <Pagination
+                pageCount={pageCount}
+                onPageChange={handlePageChange}
+                currentPage={currentPage}
+            />
+
             {!isContestEnded() && (
                 <button
                     className={`mt-4 px-4 py-2 rounded transition-colors duration-300 ${

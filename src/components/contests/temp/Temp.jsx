@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { NavLink } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import { getDatabase, ref, onValue, off } from 'firebase/database';
 import roleService from '../../../firebase/roleAssigning/RoleService';
@@ -43,7 +42,6 @@ function Temp() {
       setIsLoading(false);
     });
 
-    // Return a cleanup function to remove the listener
     return () => off(contestsRef, 'value', contestListener);
   }, [database, setAllContestData, setLastFetchTime]);
 
@@ -73,7 +71,7 @@ function Temp() {
   }
 
   return (
-    <div> 
+    <div className="bg-gray-900 text-white min-h-screen">
       <ContestPage />
     </div>
   );

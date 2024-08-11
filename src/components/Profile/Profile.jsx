@@ -36,15 +36,15 @@ function Profile() {
       try {
         await roleService.setRole(userId, "admin");
       } catch (error) {
-        // setMessage(`Error: ${error.message}`);
+        // Handle error
       }
     } else {
-      // setMessage('You do not have permission to add admins.');
+      // Handle lack of permission
     }
   };
 
   if (isLoading) {
-    return <div>Loading...</div>; //  Loading indicator while checking the auth state
+    return <div className="text-gray-200 text-center">Loading...</div>; // Updated for dark theme
   }
 
   if (!user) {
@@ -52,7 +52,7 @@ function Profile() {
   }
 
   return (
-    <div className="container mx-auto p-4">
+   <div className="w-full mx-auto p-4 bg-gray-900 text-white min-h-screen">
       <GalleryProvider>
         <Gallery userName={user.displayName} />
       </GalleryProvider>
@@ -61,3 +61,4 @@ function Profile() {
 }
 
 export default Profile;
+

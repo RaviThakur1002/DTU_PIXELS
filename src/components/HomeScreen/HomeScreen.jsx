@@ -1,68 +1,135 @@
-import React from 'react';
-import photographerImage from './camera.png'; // Assume we have this image
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import photographerImage from './camera.png';
 import Contact from '../Footer/Contact';
-
 import Info from './Info';
 import Gallery from './Gallery';
 
 const HomeScreen = () => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.6, ease: 'easeOut' }
+    }
+  };
+
+  const stagger = {
+    visible: {
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.1,
+      }
+    }
+  };
+
   return (
-    <>
-    <div className=" bg-gray-100 p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row items-center justify-between">
-          <div className="md:w-1/2 mb-8 md:mb-0">
-            <p className="text-indigo-600 font-semibold mb-2">READY TO INSPIRE YOU</p>
-            <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-4">
-              The best platform for every photography enthusiast.
-            </h1>
-            <p className="text-gray-600 mb-6">
-              Our open, creative, and competitive approach helps us showcase talent
-              and align your perspective with the world of visual storytelling.
-            </p>
-            <div className="flex space-x-4">
-              <button className="bg-orange-500 text-white px-6 py-2 rounded-full hover:bg-orange-600 transition duration-300">
-                Enter Contest
-              </button>
-              <button className="bg-white text-gray-800 px-6 py-2 rounded-full border border-gray-300 hover:bg-gray-100 transition duration-300">
-                Learn More
-              </button>
-            </div>
+    <motion.div
+      initial="hidden"
+      animate={isVisible ? "visible" : "hidden"}
+      variants={stagger}
+    >
+      <motion.div 
+        className="bg-gray-900 text-white p-8"
+        variants={fadeInUp}
+      >
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            <motion.div 
+              className="md:w-1/2 mb-8 md:mb-0"
+              variants={fadeInUp}
+            >
+              <motion.p 
+                className="text-orange-500 font-semibold mb-2"
+                variants={fadeInUp}
+              >
+                READY TO INSPIRE YOU
+              </motion.p>
+              <motion.h1 
+                className="text-4xl md:text-5xl font-bold leading-tight mb-4"
+                variants={fadeInUp}
+              >
+                The best platform for every photography enthusiast.
+              </motion.h1>
+              <motion.p 
+                className="text-gray-400 mb-6"
+                variants={fadeInUp}
+              >
+                Our open, creative, and competitive approach helps us showcase talent
+                and align your perspective with the world of visual storytelling.
+              </motion.p>
+              <motion.div 
+                className="flex space-x-4"
+                variants={fadeInUp}
+              >
+                <motion.button 
+                  className="bg-orange-500 text-white px-6 py-2 rounded-full hover:bg-orange-600 transition duration-300"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Enter Contest
+                </motion.button>
+                <motion.button 
+                  className="bg-gray-800 text-white px-6 py-2 rounded-full border border-gray-700 hover:bg-gray-700 transition duration-300"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Learn More
+                </motion.button>
+              </motion.div>
+            </motion.div>
+            <motion.div 
+              className="md:w-1/2"
+              variants={fadeInUp}
+            >
+              <motion.img 
+                src={photographerImage} 
+                alt="Photographer" 
+                className="w-full h-auto"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+              />
+            </motion.div>
           </div>
-          <div className="md:w-1/2">
-            <img 
-              src={photographerImage} 
-              alt="Photographer" 
-              className="w-full h-auto"
-            />
-          </div>
+          <motion.div 
+            className="mt-8 flex justify-center space-x-8"
+            variants={fadeInUp}
+          >
+            {['Contests', 'Community', 'Learning', 'Exhibition'].map((item, index) => (
+              <motion.div 
+                key={item}
+                className="flex items-center"
+                variants={fadeInUp}
+                custom={index}
+              >
+                <span className="text-orange-500 text-2xl mr-2">●</span>
+                <span>{item}</span>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
-        <div className="mt-8 flex justify-center space-x-8">
-          <div className="flex items-center">
-            <span className="text-indigo-600 text-2xl mr-2">●</span>
-            <span>Contests</span>
-          </div>
-          <div className="flex items-center">
-            <span className="text-indigo-600 text-2xl mr-2">●</span>
-            <span>Community</span>
-          </div>
-          <div className="flex items-center">
-            <span className="text-indigo-600 text-2xl mr-2">●</span>
-            <span>Learning</span>
-          </div>
-          <div className="flex items-center">
-            <span className="text-indigo-600 text-2xl mr-2">●</span>
-            <span>Exhibition</span>
-          </div>
-        </div>
-      </div>
-    </div>
+      </motion.div>
 
-
-    <Info/>
-    <Gallery />
-    <Contact />
-    </>
+      <motion.div variants={fadeInUp}>
+        <Info />
+      </motion.div>
+      
+      <motion.div variants={fadeInUp}>
+        <Gallery />
+      </motion.div>
+      
+      <motion.div variants={fadeInUp}>
+        <Contact />
+      </motion.div>
+    </motion.div>
   );
 };
 

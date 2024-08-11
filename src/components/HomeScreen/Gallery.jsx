@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useGallery } from "../contexts/GalleryContext";
 
 const SliderSection = styled.section`
-  background-color: #031320;
+  background-color: #1f2937;
   padding: 40px 0;
 `;
 
@@ -30,7 +30,7 @@ const Card = styled.div`
     box-shadow 0.3s ease;
   perspective: 1500px;
   transform-style: preserve-3d;
-  background: #031320;
+  background: #374151;
   &:hover {
     transform: scale(1.05) rotateY(10deg) rotateX(5deg) translateZ(30px);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
@@ -55,7 +55,7 @@ const Heading = styled.h2`
 
 const SubHeading = styled.p`
   font-size: 1.2rem;
-  color: #ff6b6b;
+  color: #f97316;
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 2px;

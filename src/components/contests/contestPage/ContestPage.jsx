@@ -50,15 +50,15 @@ const ContestPage = () => {
   return (
     <>
       <div className="bg-gray-800 text-white py-20">
-        <div className="container mx-auto flex flex-col items-center justify-center">
-          <FontAwesomeIcon icon={faTrophy} className="text-yellow-500 text-6xl mb-4" />
+        <div className="container mx-auto flex flex-col items-center justify-center bg-gray-800">
+          <FontAwesomeIcon icon={faTrophy} className="text-orange-500 text-6xl mb-4" />
           <h1 className="text-4xl font-bold mb-2">Contests</h1>
           <p className="text-lg text-gray-300">Showcase your photography skills!</p>
         </div>
       </div>
       <div className="container mx-auto p-4">
         <section className="mt-5 mb-12">
-          <div className="bg-gray-100 text-gray-800 py-2 px-4 rounded-lg inline-block mb-6">
+          <div className="bg-gray-800 text-gray-200 py-2 px-4 rounded-lg inline-block mb-6">
             <h2 className="text-2xl font-semibold">Current/Upcoming Contests</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -70,7 +70,7 @@ const ContestPage = () => {
           </div>
         </section>
         <section>
-          <div className="bg-gray-100 text-gray-800 py-2 px-4 rounded-lg inline-block mb-6">
+          <div className="bg-gray-800 text-gray-200 py-2 px-4 rounded-lg inline-block mb-6">
             <h2 className="text-2xl font-semibold">Past Contests</h2>
           </div>
           <div>
