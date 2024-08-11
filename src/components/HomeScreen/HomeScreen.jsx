@@ -37,7 +37,7 @@ const HomeScreen = () => {
       variants={stagger}
     >
       <motion.div 
-        className="bg-gray-900 text-white p-8"
+        className="bg-[#000000] text-white p-8"
         variants={fadeInUp}
       >
         <div className="max-w-7xl mx-auto">
@@ -47,7 +47,7 @@ const HomeScreen = () => {
               variants={fadeInUp}
             >
               <motion.p 
-                className="text-orange-500 font-semibold mb-2"
+                className="text-[#5b3dcc] font-semibold mb-2"
                 variants={fadeInUp}
               >
                 UNLEASH YOUR CREATIVITY
@@ -92,7 +92,7 @@ const HomeScreen = () => {
                 variants={fadeInUp}
                 custom={index}
               >
-                <span className="text-orange-500 text-2xl mr-2">●</span>
+                <span className="text-[#5b3dcc] text-2xl mr-2">●</span>
                 <span>{item}</span>
               </motion.div>
             ))}
