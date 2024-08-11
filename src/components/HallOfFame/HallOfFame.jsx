@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FameCard from './FameCard';
 import './HallOfFame.css'; 
-import LoadingSpinner from '../LoadingSpinner';
+import LoadingSpinner from '../../components/Utilities/LoadingSpinner';
 import { useGallery } from '../contexts/GalleryContext';
 
 const ITEMS_PER_PAGE = 6;
