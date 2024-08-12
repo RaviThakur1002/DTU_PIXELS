@@ -35,9 +35,10 @@ const HomeScreen = () => {
       initial="hidden"
       animate={isVisible ? "visible" : "hidden"}
       variants={stagger}
+      className="bg-gradient-to-b from-[#000000] via-[#171717] to-[#2c2c2e]"
     >
       <motion.div 
-        className="bg-gray-900 text-white p-8"
+        className="text-white p-8"
         variants={fadeInUp}
       >
         <div className="max-w-7xl mx-auto">
@@ -47,43 +48,24 @@ const HomeScreen = () => {
               variants={fadeInUp}
             >
               <motion.p 
-                className="text-orange-500 font-semibold mb-2"
+                className="text-[#cba6f7] text-2xl font-semibold mb-2"
                 variants={fadeInUp}
               >
-                READY TO INSPIRE YOU
+                UNLEASH YOUR CREATIVITY
               </motion.p>
               <motion.h1 
-                className="text-4xl md:text-5xl font-bold leading-tight mb-4"
+                className="text-4xl md:text-5xl font-bold leading-tight mb-8 bg-gradient-to-r from-[#6528d7] via-[#c638ab] to-[#b00bef] text-transparent bg-clip-text"
+                style={{ lineHeight: '1.2', paddingBottom: '0.2em' }}
                 variants={fadeInUp}
               >
-                The best platform for every photography enthusiast.
+                Discover the Ultimate Photography Experience.
               </motion.h1>
               <motion.p 
-                className="text-gray-400 mb-6"
+                className="text-gray-300 mb-6 text-xl"
                 variants={fadeInUp}
               >
-                Our open, creative, and competitive approach helps us showcase talent
-                and align your perspective with the world of visual storytelling.
+               Join a thriving community, unleash your creativity, connect with like-minded visionaries, and elevate your craft to new heights.
               </motion.p>
-              <motion.div 
-                className="flex space-x-4"
-                variants={fadeInUp}
-              >
-                <motion.button 
-                  className="bg-orange-500 text-white px-6 py-2 rounded-full hover:bg-orange-600 transition duration-300"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Enter Contest
-                </motion.button>
-                <motion.button 
-                  className="bg-gray-800 text-white px-6 py-2 rounded-full border border-gray-700 hover:bg-gray-700 transition duration-300"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Learn More
-                </motion.button>
-              </motion.div>
             </motion.div>
             <motion.div 
               className="md:w-1/2"
@@ -92,7 +74,7 @@ const HomeScreen = () => {
               <motion.img 
                 src={photographerImage} 
                 alt="Photographer" 
-                className="w-full h-auto"
+                className="w-full h-auto rounded-lg shadow-2xl"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -100,35 +82,42 @@ const HomeScreen = () => {
             </motion.div>
           </div>
           <motion.div 
-            className="mt-8 flex justify-center space-x-8"
+            className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4"
             variants={fadeInUp}
           >
             {['Contests', 'Community', 'Learning', 'Exhibition'].map((item, index) => (
               <motion.div 
                 key={item}
-                className="flex items-center"
+                className="flex items-center justify-center bg-[#171717] px-4 py-2 rounded-full border-2 text-center"
+                style={{ 
+                  borderColor: index % 2 === 0 ? '#6528d7' : '#b00bef' 
+                }}
                 variants={fadeInUp}
                 custom={index}
               >
-                <span className="text-orange-500 text-2xl mr-2">●</span>
-                <span>{item}</span>
+                <span 
+                  className={`text-${index % 2 === 0 ? '[#6528d7]' : '[#b00bef]'} text-2xl mr-2`}
+                >
+                  ●
+                </span>
+                <span className="text-white text-sm sm:text-base">{item}</span>
               </motion.div>
             ))}
           </motion.div>
         </div>
       </motion.div>
 
-      <motion.div variants={fadeInUp}>
+      <div>
         <Info />
-      </motion.div>
+      </div>
       
-      <motion.div variants={fadeInUp}>
+      <div>
         <Gallery />
-      </motion.div>
+      </div>
       
-      <motion.div variants={fadeInUp}>
+      <div>
         <Contact />
-      </motion.div>
+      </div>
     </motion.div>
   );
 };

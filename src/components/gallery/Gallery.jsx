@@ -2,8 +2,8 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { getDatabase, ref, get } from "firebase/database";
 import app from "../../config/conf.js";
 import Images from "./Images";
-import Pagination from "./Pagination";
-import LoadingSpinner from "../LoadingSpinner.jsx";
+import Pagination from "../Utilities/Pagination.jsx";
+import LoadingSpinner from "../Utilities/LoadingSpinner.jsx";
 import { useGallery } from "../contexts/GalleryContext.jsx";
 import './Gallery.css';
 

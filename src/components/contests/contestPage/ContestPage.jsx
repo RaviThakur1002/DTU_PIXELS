@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import Contest from './Contest';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrophy } from '@fortawesome/free-solid-svg-icons';
-import Pagination from './Pagination';
+import Pagination from '../../Utilities/Pagination';
 import { NavLink } from 'react-router-dom';
 import { useContest } from '../../contexts/ContestContext';
 
@@ -41,8 +41,6 @@ const ContestPage = () => {
     return pastContests.slice(indexOfFirst, indexOfLast);
   };
 
-  const paginatePast = (pageNumber) => setPastPage(pageNumber);
-
   if (!allContestData || allContestData.length === 0) {
     return <p className="text-center text-gray-500 text-xl">No contests available.</p>;
   }
@@ -80,14 +78,12 @@ const ContestPage = () => {
               </NavLink>
             ))}
           </div>
-          <div className="mt-6">
-            <Pagination
-              contestsPerPage={contestsPerPage}
-              totalContests={pastContests.length}
-              paginate={paginatePast}
-              currentPage={pastPage}
-            />
-          </div>
+          <Pagination
+            totalPosts={pastContests.length}
+            postsPerPage={contestsPerPage}
+            setCurrentPage={setPastPage}
+            currentPage={pastPage}
+          />
         </section>
       </div>
     </>

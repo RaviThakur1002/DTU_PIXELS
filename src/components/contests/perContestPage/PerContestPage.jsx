@@ -2,7 +2,7 @@ import { get, set, getDatabase, ref, update } from "firebase/database";
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import UplaodService from "../../../firebase/services/UplaodService";
-import LoadingSpinner from "../../LoadingSpinner";
+import LoadingSpinner from "../../Utilities/LoadingSpinner";
 import Countdown from "./Countdown";
 import RemoveContest from "./RemoveContest";
 import ContestActions from "./ContestActions";
@@ -155,7 +155,7 @@ function PerContestPage() {
 
   UplaodService.setContestId(contestId);
 
-  const formatDateTime = (date) => {
+ const formatDateTime = (date) => {
     return date.toLocaleString("en-US", {
       year: "numeric",
       month: "long",
@@ -170,43 +170,43 @@ function PerContestPage() {
       case "contestStart":
         return (
           <div>
-            <p className="font-semibold">Contest Starts In:</p>
+            <p className="font-semibold text-white">Contest Starts In:</p>
             <Countdown targetDate={contestStartTime} />
             <br />
-            <p>Please Register to take part in the Contest.</p>
+            <p className="text-gray-300">Please Register to take part in the Contest.</p>
           </div>
         );
       case "votingStart":
         return (
           <div>
-            <p className="font-semibold">Voting Starts In:</p>
+            <p className="font-semibold text-white">Voting Starts In:</p>
             <Countdown targetDate={votingStartTime} />
             <br />
-            <p>Contestants should Upload their Entries</p>
+            <p className="text-gray-300">Contestants should Upload their Entries</p>
           </div>
         );
       case "contestEnd":
         return (
           <div>
-            <p className="font-semibold">Contest Ends In:</p>
+            <p className="font-semibold text-white">Contest Ends In:</p>
             <Countdown targetDate={contestEndTime} />
             <br />
-            <p>Voting has started. Please feel free to vote.</p>
+            <p className="text-gray-300">Voting has started. Please feel free to vote.</p>
           </div>
         );
       case "ended":
-        return <p className="font-semibold">Contest has ended</p>;
+        return <p className="font-semibold text-white">Contest has ended</p>;
       default:
         return null;
     }
   };
 
   return (
-    <div className="mx-auto p-6 font-sans">
+    <div className="mx-auto p-6 font-sans bg-gray-900 text-white">
       <div className="flex justify-between">
         <button
           onClick={() => navigate("/contest")}
-          className="flex items-center text-blue-500 font-bold mb-4"
+          className="flex items-center text-orange-500 font-bold mb-4"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -227,45 +227,45 @@ function PerContestPage() {
         )}
       </div>
 
-      <h1 className="text-4xl font-bold text-gray-800 border-b-2 border-gray-300 pb-4 mb-8">
+      <h1 className="text-4xl font-bold text-white border-b-2 border-gray-700 pb-4 mb-8">
         Contest No- {contestId}, Theme- {contestData.theme}
       </h1>
 
-      <section className="mb-12 bg-white shadow-md rounded-lg overflow-hidden">
-        <h2 className="text-2xl font-semibold text-white bg-blue-600 p-4">
+      <section className="mb-12 bg-gray-800 shadow-md rounded-lg overflow-hidden">
+        <h2 className="text-2xl font-semibold text-white bg-orange-500 p-4">
           Contest Timeline
         </h2>
         <div className="p-6 space-y-2">
-          <p className="text-gray-700">
-            <span className="font-semibold">Registration Ends:</span>{" "}
+          <p className="text-gray-300">
+            <span className="font-semibold text-white">Registration Ends:</span>{" "}
             {formatDateTime(registrationEndTime)}
           </p>
-          <p className="text-gray-700">
-            <span className="font-semibold">Contest Starts:</span>{" "}
+          <p className="text-gray-300">
+            <span className="font-semibold text-white">Contest Starts:</span>{" "}
             {formatDateTime(contestStartTime)}
           </p>
-          <p className="text-gray-700">
-            <span className="font-semibold">Voting Starts:</span>{" "}
+          <p className="text-gray-300">
+            <span className="font-semibold text-white">Voting Starts:</span>{" "}
             {formatDateTime(votingStartTime)}
           </p>
-          <p className="text-gray-700">
-            <span className="font-semibold">Contest Ends:</span>{" "}
+          <p className="text-gray-300">
+            <span className="font-semibold text-white">Contest Ends:</span>{" "}
             {formatDateTime(contestEndTime)}
           </p>
-          <div className="mt-6 bg-gray-100 p-4 rounded-lg">
+          <div className="mt-6 bg-gray-700 p-4 rounded-lg">
             {renderCountdown()}
           </div>
         </div>
       </section>
 
       {currentTime < votingStartTime && (
-        <section className="mb-12 bg-white shadow-md rounded-lg overflow-hidden">
-          <h2 className="text-2xl font-semibold text-white bg-blue-600 p-4">
+        <section className="mb-12 bg-gray-800 shadow-md rounded-lg overflow-hidden">
+          <h2 className="text-2xl font-semibold text-white bg-orange-500 p-4">
             Rules
           </h2>
-          <ul className="p-6 space-y-4 list-decimal list-inside">
+          <ul className="p-6 space-y-4 list-decimal list-inside text-gray-300">
             {rules.map((rule, index) => (
-              <li key={index} className="text-gray-700">
+              <li key={index}>
                 {rule}
               </li>
             ))}

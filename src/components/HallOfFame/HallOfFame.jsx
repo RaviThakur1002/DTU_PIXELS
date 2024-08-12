@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import FameCard from './FameCard';
 import './HallOfFame.css'; 
-import LoadingSpinner from '../LoadingSpinner';
+import LoadingSpinner from '../../components/Utilities/LoadingSpinner';
 import { useGallery } from '../contexts/GalleryContext';
 
 const ITEMS_PER_PAGE = 6;
@@ -43,7 +43,6 @@ const HallOfFame = () => {
   }, [allGalleryData]);
 
   useEffect(() => {
-    // Scroll to top when currentPage changes
     window.scrollTo(0, 0);
   }, [currentPage]);
 
@@ -66,7 +65,7 @@ const HallOfFame = () => {
         <p className="text-red-500 mb-4">{error}</p>
         <button 
           onClick={() => fetchContests()}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-orange-400 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded"
         >
           Retry
         </button>
@@ -77,15 +76,16 @@ const HallOfFame = () => {
   return (
     <div className="bg-pattern min-h-screen p-4 flex flex-col">
       <div className="flex justify-center items-center min-h-[200px] mb-4">
-        <h1 className="text-center text-4xl font-bold py-4 px-6 border-4 border-yellow-500 bg-white bg-opacity-90 text-gray-600 rounded-lg shadow-lg w-full max-w-6xl">
+        <h1 className="text-center text-4xl font-bold py-4 px-6 border-2 border-orange-400 bg-[#111827] bg-opacity-90 text-orange-400 rounded-lg shadow-lg w-full max-w-6xl">
           Hall of Fame
         </h1>
       </div>
+      
       <div className="flex-1 flex flex-col items-center">
-        <div className="bg-white bg-opacity-80 p-4 rounded-lg border-4 border-yellow-500 shadow-lg w-full max-w-6xl">
-          <div className="flex flex-wrap justify-between">
+        <div className="bg-[#111827] bg-opacity-90 p-4 rounded-lg border-2 border-orange-400 shadow-lg w-full max-w-6xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {currentItems.map((item) => (
-              <div key={item.id} className="w-1/3 p-4">
+              <div key={item.id} className="w-full">
                 <FameCard
                   src={item.winnerPhoto}
                   alt={`Winner of Contest ${item.contestNo}`}
@@ -99,11 +99,11 @@ const HallOfFame = () => {
           {hallOfFameData.length === 0 && (
             <p className="text-center text-gray-500 mt-4">No contest data available.</p>
           )}
-          <div className="mt-8 flex justify-center space-x-2">
+          <div className="mt-8 flex justify-center space-x-2 flex-wrap">
             {[...Array(totalPages).keys()].map((page) => (
               <button
                 key={page + 1}
-                className={`py-2 px-4 border rounded ${currentPage === page + 1 ? 'bg-yellow-500 text-white border-yellow-500' : 'bg-white text-gray-700 border-gray-300'} hover:bg-blue-200 transition`}
+                className={`py-2 px-4 border rounded mb-2 ${currentPage === page + 1 ? 'bg-orange-400 text-white border-orange-400' : 'bg-white text-[#1f2927] border-[#1f2927]'} hover:bg-orange-200 transition`}
                 onClick={() => handlePageChange(page + 1)}
               >
                 {page + 1}

@@ -119,7 +119,7 @@ const Images = ({ imageData }) => {
             onClick={closePopup}
           >
             <motion.div
-              className="relative sm:max-w-xl md:max-w-2xl lg:max-w-3xl max-h-[90vh] w-90vw overflow-hidden rounded-lg"
+              className="relative sm:max-w-xl md:max-w-2xl lg:max-w-3xl max-h-[90vh] w-90vw overflow-hidden rounded-lg border-2 border-orange-400"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -129,7 +129,7 @@ const Images = ({ imageData }) => {
               <img
                 src={imageData[currentIndex].photoUrl}
                 alt={`Image ${currentIndex + 1}`}
-                 className="w-full h-auto max-h-[80vh] object-contain"
+                className="w-full h-auto max-h-[80vh] object-contain"
               />
               <div className="absolute bottom-1 left-1">
                 <div className="inline-block bg-black bg-opacity-50 text-white px-4 py-2 rounded-full transition-opacity duration-300">
@@ -158,3 +158,4 @@ const Images = ({ imageData }) => {
 };
 
 export default Images;
+
