@@ -4,7 +4,7 @@ import { FaTimes } from "react-icons/fa";
 
 const Article = ({ id, photoUrl, userName, quote, onClick }) => {
   return (
-    <div className="p-2 rounded-3xl shadow-md bg-[#171717]">
+    <div className="p-2 rounded-3xl shadow-md bg-gradient-to-r from-[#43133A] to-[#5C01BB]">
       <article key={id} className="rounded-3xl">
         <img
           src={photoUrl}
