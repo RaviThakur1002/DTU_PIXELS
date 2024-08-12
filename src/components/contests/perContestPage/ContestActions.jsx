@@ -126,23 +126,23 @@ function ContestActions({
   }
 
   return (
-    <section className="bg-gray-800 text-white shadow-md rounded-lg overflow-hidden">
+   <section className="bg-gradient-to-b from-[#000000] via-[#171717] to-[#2c2c2e] text-white shadow-md rounded-lg overflow-hidden">
       <style>{styles}</style>
 
       {message && (
         <div
           className={`fixed top-4 right-0 mb-4 p-3 rounded-l-lg w-64 ${
             messageType === "success"
-              ? "bg-gradient-to-r from-green-600 to-green-800 text-white"
+              ? "bg-gradient-to-r from-[#6528d7] to-[#c638ab] text-white"
               : messageType === "error"
-              ? "bg-gradient-to-r from-red-600 to-red-800 text-white"
-              : "bg-gradient-to-r from-orange-500 to-orange-700 text-white"
+              ? "bg-gradient-to-r from-[#b00bef] to-[#c638ab] text-white"
+              : "bg-gradient-to-r from-[#cba6f7] to-[#c638ab] text-white"
           } border border-solid ${
             messageType === "success"
-              ? "border-green-500"
+              ? "border-[#6528d7]"
               : messageType === "error"
-              ? "border-red-500"
-              : "border-orange-400"
+              ? "border-[#b00bef]"
+              : "border-[#cba6f7]"
           } text-center transition-all duration-300 ease-in-out transform translate-x-0 shadow-md z-50`}
           style={{
             animation: `${message ? "slideIn" : "slideOut"} 0.3s ease-in-out forwards`,
@@ -152,7 +152,7 @@ function ContestActions({
         </div>
       )}
 
-      <h2 className="text-2xl font-semibold text-white bg-orange-500 p-4">
+      <h2 className="text-2xl font-semibold text-white bg-[#7c2ccd] p-4">
         Contest Actions
       </h2>
       <div className="p-6">
@@ -161,12 +161,12 @@ function ContestActions({
             <h3 className="text-xl font-semibold text-white mb-4">
               Register for the Contest
             </h3>
-            <button
-              onClick={handleRegistration}
-              className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded transition duration-300"
-            >
-              Register Now
-            </button>
+           <button
+          onClick={handleRegistration}
+          className="bg-gradient-to-r from-[#6528d7] to-[#b00bef] hover:from-[#5a23c0] hover:to-[#9f0ad5] text-white font-bold py-2 px-4 rounded transition duration-300"
+        >
+          Register Now
+        </button>
           </div>
         )}
         {currentTime >= contestStartTime && currentTime < votingStartTime && (
