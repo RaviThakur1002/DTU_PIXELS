@@ -96,7 +96,7 @@ const HomeScreen = () => {
       initial="hidden"
       animate={isVisible ? "visible" : "hidden"}
       variants={stagger}
-      className="bg-gradient-to-b from-[#000000] via-[#171717] to-[#2c2c2e] relative"
+      className="bg-[#000000] relative"
     >
      
       <CanvasEffect />
