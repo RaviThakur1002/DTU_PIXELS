@@ -1,7 +1,28 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import Card from "./Card";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaTimes } from "react-icons/fa";
+
+const Article = ({ id, photoUrl, userName, quote, onClick }) => {
+  return (
+    <div className="p-2 rounded-3xl shadow-md bg-[#171717]">
+      <article key={id} className="rounded-3xl">
+        <img
+          src={photoUrl}
+          alt={userName}
+          className="h-52 object-fit object-cover w-full lg:h-80 rounded-3xl cursor-pointer"
+          onClick={onClick}
+        />
+        <div className="p-5 pb-0 flex flex-col md:flex-row items-start md:items-center justify-between">
+          <article className="flex items-center justify-start">
+            <ul>
+              <li className="text-[#cba6f7] font-bold">{userName}</li>
+            </ul>
+          </article>
+        </div>
+      </article>
+    </div>
+  );
+};
 
 const Images = ({ imageData }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -90,18 +111,15 @@ const Images = ({ imageData }) => {
 
   return (
     <>
-      <div
-        className="grid gap-4 mt-2 justify-center"
-        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))" }}
-      >
+      <div className="grid grid-cols-1 gap-7 md:grid-cols-2 xl:grid-cols-3 pb-10 lg:container">
         {imageData.map((pic, index) => (
-          <Card
+          <Article
             key={pic.id}
-            entry={{
-              photoUrl: pic.photoUrl,
-              userName: pic.userName,
-              quote: pic.quote,
-            }}
+            id={pic.id}
+            photoUrl={pic.photoUrl}
+            userName={pic.userName}
+            quote={pic.quote}
+            contestTheme={pic.contestTheme}
             onClick={() => openPopup(index)}
           />
         ))}
@@ -119,7 +137,7 @@ const Images = ({ imageData }) => {
             onClick={closePopup}
           >
             <motion.div
-              className="relative sm:max-w-xl md:max-w-2xl lg:max-w-3xl max-h-[90vh] w-90vw overflow-hidden rounded-lg border-2 border-orange-400"
+              className="relative sm:max-w-xl md:max-w-2xl lg:max-w-3xl max-h-[90vh] w-90vw overflow-hidden rounded-lg "
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -131,10 +149,10 @@ const Images = ({ imageData }) => {
                 alt={`Image ${currentIndex + 1}`}
                 className="w-full h-auto max-h-[80vh] object-contain"
               />
-              <div className="absolute bottom-1 left-1">
+              <div className="absolute bottom-1 left-1 px-3 py-2">
                 <div className="inline-block bg-black bg-opacity-50 text-white px-4 py-2 rounded-full transition-opacity duration-300">
                   <h2 className="text-xl font-bold leading-none">
-                    {imageData[currentIndex].userName}
+                    {imageData[currentIndex].quote}
                   </h2>
                 </div>
               </div>
@@ -158,4 +176,3 @@ const Images = ({ imageData }) => {
 };
 
 export default Images;
-
