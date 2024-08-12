@@ -1,13 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ContestServiceInstance from "../../firebase/contestServices/ContestService";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 import Modal from "./Modal";
 import { ChevronRight, X } from "lucide-react";
+import DateTimePicker from "./DateTimePiker";
 
 const styles = `
   @keyframes slideIn {
@@ -35,6 +33,7 @@ export const CreateContest = () => {
     contestEndTime: null,
     theme: "",
   });
+  const modalRef = useRef(null);
 
   const setMessageWithTimer = (msg, type) => {
     setMessage(msg);
@@ -45,6 +44,7 @@ export const CreateContest = () => {
     }, 3000);
   };
 
+  
   useEffect(() => {
     const now = dayjs();
     const registrationEnd = now.add(3, "day").startOf("day");
@@ -166,11 +166,11 @@ export const CreateContest = () => {
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
 
-  return (
+return (
     <>
       <button
         onClick={openModal}
-        className="flex border-none outline-none items-center gap-3 px-4 py-3 text-md font-medium text-white hover:bg-gray-600 hover:text-orange-500 rounded-md transition-all duration-200 w-full text-left"
+        className="flex border-none outline-none items-center gap-3 px-4 py-3 text-md font-medium hover:bg-gray-600 hover:text-fuchsia-500 rounded-md transition-all duration-200 w-full text-left"
       >
         <ChevronRight className="h-5 w-5" />
         Create Contest
@@ -178,9 +178,12 @@ export const CreateContest = () => {
       <Modal isOpen={isOpen} onClose={closeModal}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <style>{styles}</style>
-          <div className="relative bg-white rounded-lg shadow-xl w-full max-w-lg mx-auto overflow-y-auto max-h-[90vh] md:max-h-[80vh]">
+          <div
+            ref={modalRef}
+            className="relative bg-gradient-to-b from-[#000000] via-[#171717] to-[#2c2c2e] rounded-lg shadow-xl w-full max-w-lg mx-auto overflow-y-auto max-h-[90vh] md:max-h-[80vh] text-white"
+          >
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-4 md:p-6 rounded-t-lg relative">
+            <div className="bg-gradient-to-r from-[#6528d7] via-[#c638ab] to-[#b00bef] p-4 md:p-6 rounded-t-lg relative">
               <h2 className="text-2xl font-bold text-white">
                 Create New Contest
               </h2>
@@ -188,7 +191,7 @@ export const CreateContest = () => {
               {/* Close button */}
               <button
                 onClick={closeModal}
-                className="absolute top-3 right-3 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-full p-1 md:p-2"
+                className="absolute top-3 right-3 mt-2 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-full p-1 md:p-2"
               >
                 <X className="h-5 w-5 text-white" />
               </button>
@@ -217,39 +220,22 @@ export const CreateContest = () => {
                   dateKey: "contestEndDate",
                   timeKey: "contestEndTime",
                 },
-              ].map(({ label, dateKey, timeKey }) => (
-                <div
+              ].map(({ label, dateKey, timeKey }, index) => (
+                <DateTimePicker
                   key={label}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                >
-                  <DatePicker
-                    label={`${label} Date`}
-                    value={formData[dateKey]}
-                    onChange={(newValue) => handleChange(dateKey, newValue)}
-                    slotProps={{
-                      textField: { fullWidth: true, variant: "outlined" },
-                    }}
-                  />
-                  <TimePicker
-                    label={`${label} Time`}
-                    value={formData[timeKey]}
-                    onChange={(newValue) => handleChange(timeKey, newValue)}
-                    slotProps={{
-                      textField: { fullWidth: true, variant: "outlined" },
-                    }}
-                    viewRenderers={{
-                      hours: renderTimeViewClock,
-                      minutes: renderTimeViewClock,
-                      seconds: renderTimeViewClock,
-                    }}
-                  />
-                </div>
+                  label={label}
+                  dateValue={formData[dateKey]}
+                  timeValue={formData[timeKey]}
+                  onDateChange={(newValue) => handleChange(dateKey, newValue)}
+                  onTimeChange={(newValue) => handleChange(timeKey, newValue)}
+                  index={index}
+                />
               ))}
 
               <div className="space-y-2">
                 <label
                   htmlFor="theme"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium text-[#cba6f7]"
                 >
                   Theme:
                 </label>
@@ -260,7 +246,7 @@ export const CreateContest = () => {
                   value={formData.theme}
                   onChange={(e) => handleChange("theme", e.target.value)}
                   required
-                  className="mt-1 px-3 py-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  className="mt-1 px-3 py-2 block w-full rounded-md bg-[#171717] border-[#6528d7] text-white focus:border-[#b00bef] focus:ring focus:ring-[#b00bef] focus:ring-opacity-50"
                 />
               </div>
 

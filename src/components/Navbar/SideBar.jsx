@@ -21,7 +21,7 @@ const Sidebar = ({
     width: "70%",
     maxWidth: "320px",
     height: "100vh",
-    backgroundColor: "#111827",
+    backgroundColor: "#171717",
     boxShadow: "-2px 0 10px rgba(0,0,0,0.1)",
     transition: "right 0.3s ease-in-out, opacity 0.3s ease-in-out",
     zIndex: 1000,
@@ -60,9 +60,9 @@ const Sidebar = ({
 
       {/* User profile section */}
       {user && (
-        <div className="mb-6 p-4 bg-gray-800 rounded-lg shadow-sm">
+        <div className="mb-6 p-4 bg-[#1f1f1f] rounded-lg shadow-lg">
           <img
-            className="rounded-full w-20 h-20 mb-3 mx-auto border-2 border-orange-500"
+            className="rounded-full w-20 h-20 mb-3 mx-auto border-2 border-[#c638ab]"
             src={user.photoURL}
             alt="User profile"
           />
@@ -70,7 +70,7 @@ const Sidebar = ({
             {user.displayName}
           </h3>
           {isAdmin && (
-            <span className="block text-sm font-semibold text-orange-500 text-center mb-2">
+            <span className="block text-sm font-semibold text-purple-400 text-center mb-2">
               Admin
             </span>
           )}
@@ -84,7 +84,7 @@ const Sidebar = ({
           <NavLink
             key={item.name}
             to={item.href}
-            className="flex items-center gap-3 px-4 py-3 text-md font-medium text-white hover:bg-gray-500 hover:text-orange-500 rounded-md transition-all duration-200"
+            className="flex items-center gap-3 px-4 py-3 text-md font-medium text-white hover:bg-gray-600 hover:text-fuchsia-500 rounded-md transition-all duration-200"
             onClick={toggleSidebar}
           >
             <ChevronRight className="h-5 w-5" />
@@ -95,7 +95,7 @@ const Sidebar = ({
           <>
             <CreateContest />
             <button
-              className="flex border-none outline-none items-center gap-3 px-4 py-3 text-md font-medium text-white hover:bg-gray-600 hover:text-orange-500 rounded-md transition-all duration-200 w-full text-left"
+              className="flex border-none outline-none items-center gap-3 px-4 py-3 text-md font-medium text-white hover:bg-gray-600 hover:text-fuchsia-500 rounded-md transition-all duration-200 w-full text-left"
               onClick={() => {
                 setIsPromotionPopupOpen(true);
                 toggleSidebar();
@@ -135,7 +135,8 @@ const Sidebar = ({
           </button>
         ) : (
           <button
-            className="flex items-center justify-center px-3 py-2 bg-orange-500 text-white border border-orange-600 rounded-md shadow-sm hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors duration-300"
+            className={`flex items-center justify-center mt-1 px-3 py-2 
+              border border-[#c638ab] rounded-md shadow-sm hover:bg-gray-200  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 transition-colors duration-300`}
             onClick={() => {
               authService.googleSignIn();
               toggleSidebar();

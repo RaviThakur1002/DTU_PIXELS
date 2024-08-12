@@ -88,16 +88,18 @@ const Navbar = () => {
   }
 
   return (
-    <div className={ `sticky z-50 top-0 w-full p-1 ${isFloating ? "bg-transparent" : "bg-gray-900"}` }>
+    <div
+      className={`sticky z-50 top-0 w-full p-1 ${isFloating ? "bg-transparent" : "bg-black"}`}
+    >
       <div
-        className={`mx-auto flex justify-between max-w-7xl transition-all duration-300 ${
-          isFloating
-            ? "bg-white text-gray-900 rounded-full shadow-lg mt-2 px-8 py-1 border-2 border-orange-400"
-            : "bg-gray-900 text-white px-2"
-        }`}
+        className={`mx-auto flex justify-between max-w-7xl transition-all duration-300 ${isFloating
+            ? "bg-white text-gray-900 rounded-full shadow-lg mt-2 px-8 py-1 border-2 border-[#c638ab]"
+            : "bg-black text-white px-2"
+          }`}
       >
         {/* Logo and brand name */}
-        <div className="inline-flex items-center space-x-2">
+
+        <div className="inline-flex  items-center space-x-2">
           <span>
             <svg
               width="30"
@@ -114,7 +116,7 @@ const Navbar = () => {
           </span>
           <NavLink to={"/"}>
             <span
-              className={`font-bold ${isFloating ? "text-gray-900" : "text-white"}`}
+              className={`font-bold bg-gradient-to-r from-[#6528d7] via-[#c638ab] to-[#b00bef] text-transparent bg-clip-text `}
             >
               DTU PIXELS
             </span>
@@ -129,18 +131,17 @@ const Navbar = () => {
                 <NavLink
                   to={item.href}
                   className={({ isActive }) =>
-                    `inline-flex items-center text-md font-semibold ${
-                      isActive
-                        ? "text-orange-500"
-                        : isFloating
-                          ? "text-gray-900"
-                          : "text-white"
-                    } hover:text-orange-300 py-2`
+                    `inline-flex items-center text-md font-semibold ${isActive
+                      ? "text-fuchsia-600"
+                      : isFloating
+                        ? "text-gray-900"
+                        : "text-white"
+                    } hover:text-purple-600 py-2`
                   }
                 >
                   <span className="relative">
                     {item.name}
-                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-300 group-hover:w-full"></span>
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-600 transition-all duration-300 group-hover:w-full"></span>
                   </span>
                 </NavLink>
               </li>
@@ -154,29 +155,28 @@ const Navbar = () => {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className={`flex items-center focus:outline-none gap-2 p-1 ${
-                  isFloating ? "text-gray-900" : "text-white"
-                }`}
+                className={`flex items-center focus:outline-none gap-2 p-1 ${isFloating ? "text-gray-900" : "text-white"
+                  }`}
               >
                 <img
                   className="rounded-full w-10 h-10"
                   src={user.photoURL}
                   alt="User profile"
                 />
-                <ChevronDown className={ `h-4 w-4 ml-1 ${isFloating ? "text-black": "text-white"}`  }/>
+                <ChevronDown
+                  className={`h-4 w-4 ml-1 ${isFloating ? "text-black" : "text-white"}`}
+                />
               </button>
               {dropdownOpen && (
                 <div
-                  className={`absolute z-50 right-0 mt-2 w-48 rounded-md shadow-xl py-1 ${
-                    isFloating ? "bg-gray-700" : "bg-gray-700"
-                  }`}
+                  className={`absolute z-50 right-0 mt-2 w-48 rounded-md shadow-xl py-1 bg-gray-800`}
                 >
                   <div className="px-4 py-3 border-gray-700 flex flex-col items-center justify-center">
                     <h3 className="text-md font-bold text-white mb-1">
                       {user.displayName}
                     </h3>
                     {isAdmin && (
-                      <span className="text-xs font-semibold text-orange-500">
+                      <span className="text-xs font-semibold text-purple-400">
                         Admin
                       </span>
                     )}
@@ -188,7 +188,7 @@ const Navbar = () => {
                     <>
                       <CreateContest />
                       <button
-                        className="flex border-none outline-none items-center gap-3 px-4 py-3 text-md font-medium text-white hover:bg-gray-600 hover:text-orange-500 rounded-md transition-all duration-200 w-full text-left"
+                        className="flex border-none outline-none items-center gap-3 px-4 py-3 text-md font-medium text-white hover:bg-gray-600 hover:text-fuchsia-500 rounded-md transition-all duration-200 w-full text-left"
                         onClick={() => {
                           setIsPromotionPopupOpen(true);
                           toggleSidebar();
@@ -220,11 +220,8 @@ const Navbar = () => {
             </div>
           ) : (
             <button
-              className={`flex items-center justify-center px-3 py-2 ${
-                isFloating
-                  ? "bg-orange-500 text-white"
-                  : "bg-white text-gray-900"
-              } border border-orange-600 rounded-md shadow-sm hover:bg-orange-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors duration-300`}
+              className={`flex items-center justify-center mt-1 px-3 py-2 ${isFloating ? "text-black" : "bg-white text-gray-900"
+                } border border-[#c638ab] rounded-md shadow-sm hover:bg-gray-200  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 transition-colors duration-300`}
               onClick={authService.googleSignIn}
             >
               <svg
@@ -257,9 +254,8 @@ const Navbar = () => {
         <div className="lg:hidden">
           <Menu
             onClick={toggleSidebar}
-            className={`h-6 w-6 cursor-pointer ${
-              isFloating ? "text-gray-900" : "text-white"
-            }`}
+            className={`h-6 w-6 mt-1 cursor-pointer ${isFloating ? "text-gray-900" : "text-white"
+              }`}
           />
         </div>
 
