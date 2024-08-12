@@ -1,7 +1,7 @@
 import React from 'react';
 import { Oval } from 'react-loader-spinner';
 
-const LoadingSpinner = ({ quote = "ruko jara sabar karo 😘" }) => {
+const LoadingSpinner = ({ quote = "Whispering to the pixels 💜" }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-[#171717] bg-opacity-100 z-50">
       <div className="flex flex-col items-center">

@@ -203,29 +203,29 @@ function PerContestPage() {
 
   return (
     <div className="mx-auto p-6 font-sans bg-gradient-to-b from-[#080808] to-[#171717] text-white">
-      <div className="flex justify-between">
-        <button
-          onClick={() => navigate("/contest")}
-          className="flex items-center text-[#cba6f7]  font-bold mb-4"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 mr-2"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M7.707 14.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L4.414 9H17a1 1 0 110 2H4.414l3.293 3.293a1 1 0 010 1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Go Back to Contests
-        </button>
-        {currentTime > contestEndTime ? null : (
-          <RemoveContest contestId={contestId} />
-        )}
-      </div>
+  <div className="flex justify-between">
+  <button
+    onClick={() => navigate("/contest")}
+    className="flex items-center text-[#cba6f7] font-bold mb-4 bg-[#1e1e2e] rounded-full px-4 py-2 hover:bg-[#313244] transition-colors duration-200"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-5 w-5 mr-2"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+    Go Back to Contests
+  </button>
+  {currentTime > contestEndTime ? null : (
+    <RemoveContest contestId={contestId} />
+  )}
+</div>
 
    <h1 className="text-4xl font-bold text-[#cba6f7] border-b-2 border-[#6528d7] pb-4 mb-8 bg-gradient-to-r from-[#6528d7] via-[#c638ab] to-[#b00bef] text-transparent bg-clip-text">
         Contest No- {contestId}, Theme- {contestData.theme}

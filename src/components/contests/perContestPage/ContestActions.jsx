@@ -211,13 +211,13 @@ function ContestActions({
             <div className="mb-4 flex justify-center space-x-4">
               <button
                 onClick={() => toggleView("voting")}
-                className={`text-orange-500 font-bold py-2 px-4 ${!showStandings ? "border-b-2 border-orange-500" : ""}`}
+                className={`text-[#cba6f7] font-bold py-2 px-4 ${!showStandings ? "border-b-2 border-[#c638ab]" : ""}`}
               >
                 Voting
               </button>
               <button
                 onClick={() => toggleView("standings")}
-                className={`text-orange-500 font-bold py-2 px-4 ${showStandings ? "border-b-2 border-orange-500" : ""}`}
+                className={`text-[#cba6f7] font-bold py-2 px-4 ${showStandings ? "border-b-2 border-[#c638ab]" : ""}`}
               >
                 Standings
               </button>
