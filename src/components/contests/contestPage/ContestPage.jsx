@@ -54,6 +54,7 @@ const ContestPage = () => {
           <p className="text-lg text-gray-300">Showcase your photography skills!</p>
         </div>
       </div>
+      
       <div className="container mx-auto p-4">
         <section className="mt-5 mb-12">
           <div className="bg-[#171717] text-[#cba6f7] py-2 px-4 rounded-lg inline-block mb-6">

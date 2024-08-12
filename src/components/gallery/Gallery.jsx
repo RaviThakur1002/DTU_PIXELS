@@ -131,10 +131,19 @@ const Gallery = ({ userName = null }) => {
   }
 
   return (
-    <div className="w-full mx-auto px-4 min-h-screen gallery-container bg-gray-900">
-      <div className="w-full">
+    <>
+    <div className="bg-gradient-to-b from-[#000000] to-[#171717] text-white py-10">
+      <div className="container mx-auto flex flex-col items-center justify-center">
+        {/* <FontAwesomeIcon icon={faTrophy} className="text-[#cba6f7] text-8xl mb-4" /> */}
+        <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-[#6528d7] via-[#c638ab] to-[#b00bef] text-transparent bg-clip-text">Gallery</h1>
+        <p className="text-lg text-gray-300">Explore our curated collection of captivating images!</p>
+      </div>
+    </div>
+
+    <div className="w-full mx-auto px-12 min-h-screen gallery-container bg-[#000000] flex justify-center items-start pt-10">
+      <div className="w-full max-w-6xl m-1">
         <Images imageData={currentPosts} />
-        <Pagination
+        <Pagination 
           totalPosts={totalPosts}
           postsPerPage={postPerPage}
           setCurrentPage={setCurrentPage}
@@ -142,6 +151,7 @@ const Gallery = ({ userName = null }) => {
         />
       </div>
     </div>
+  </>
   );
 };
 

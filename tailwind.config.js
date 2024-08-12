@@ -13,6 +13,10 @@ export default {
         brown:{
           700: '#4E3B2F'
         },
+        primary: '#000000',
+        purpleAccent: '#5b3dcc',
+        shade1: '#171717',
+        shade2: '#2c2c2e',
       },
       transitionProperty: {
         'height': 'height',
