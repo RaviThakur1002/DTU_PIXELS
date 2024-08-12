@@ -93,7 +93,7 @@ const Navbar = () => {
     >
       <div
         className={`mx-auto flex justify-between max-w-7xl transition-all duration-300 ${isFloating
-            ? "bg-white text-gray-900 rounded-full shadow-lg mt-2 px-8 py-1 border-2 border-[#c638ab]"
+            ? "bg-[#181818] text-white rounded-full shadow-lg mt-2 px-8 py-1 border-2 border-[#c638ab]"
             : "bg-black text-white px-2"
           }`}
       >
@@ -133,9 +133,7 @@ const Navbar = () => {
                   className={({ isActive }) =>
                     `inline-flex items-center text-md font-semibold ${isActive
                       ? "text-fuchsia-600"
-                      : isFloating
-                        ? "text-gray-900"
-                        : "text-white"
+                      : "text-white"
                     } hover:text-purple-600 py-2`
                   }
                 >
@@ -164,12 +162,12 @@ const Navbar = () => {
                   alt="User profile"
                 />
                 <ChevronDown
-                  className={`h-4 w-4 ml-1 ${isFloating ? "text-black" : "text-white"}`}
+                  className={`h-4 w-4 ml-1 text-white`}
                 />
               </button>
               {dropdownOpen && (
                 <div
-                  className={`absolute z-50 right-0 mt-2 w-48 rounded-md shadow-xl py-1 bg-gray-800`}
+                  className={`absolute z-50 right-0 mt-2 w-48 rounded-md shadow-xl py-1 bg-[#1f1f1f]`}
                 >
                   <div className="px-4 py-3 border-gray-700 flex flex-col items-center justify-center">
                     <h3 className="text-md font-bold text-white mb-1">
@@ -182,7 +180,6 @@ const Navbar = () => {
                     )}
                   </div>
                   <CopyUID className="border-t border-gray-700 my-1" />{" "}
-                  {/* Changed border color */}
                   <div className="border-t border-gray-700 my-1"></div>
                   {isAdmin && (
                     <>
@@ -254,8 +251,7 @@ const Navbar = () => {
         <div className="lg:hidden">
           <Menu
             onClick={toggleSidebar}
-            className={`h-6 w-6 mt-1 cursor-pointer ${isFloating ? "text-gray-900" : "text-white"
-              }`}
+            className={`h-6 w-6 mt-1 cursor-pointer text-white`}
           />
         </div>
 
