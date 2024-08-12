@@ -32,14 +32,14 @@ function AdminPromotionPopup({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center px-4">
-      <div className="relative mx-auto p-8 border w-full max-w-md shadow-lg rounded-lg bg-white">
-        <h3 className="text-2xl font-semibold text-gray-900 mb-6">Promote User to Admin</h3>
+      <div className="relative mx-auto p-8 border w-full max-w-md shadow-lg rounded-lg bg-[#171717]">
+        <h3 className="text-2xl font-semibold text-[#cba6f7] mb-6">Promote User to Admin</h3>
         <form onSubmit={handleSubmit}>
           <input
             type="text"
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
-            className="shadow-sm appearance-none border rounded-md w-full py-3 px-4 text-gray-700 mb-2 leading-tight focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-150 ease-in-out"
+            className="shadow-sm appearance-none border rounded-md w-full py-3 px-4 text-white bg-[#2c2c2e] border-[#6528d7] focus:outline-none focus:ring-2 focus:ring-[#b00bef] transition duration-150 ease-in-out"
             placeholder="Enter User ID"
           />
           {error && (
@@ -49,13 +49,13 @@ function AdminPromotionPopup({ isOpen, onClose }) {
             <button
               type="button"
               onClick={onClose}
-              className="w-full sm:w-auto px-6 py-3 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 transition duration-150 ease-in-out"
+              className="w-full sm:w-auto px-6 py-3 bg-[#2c2c2e] text-[#cba6f7] border border-[#6528d7] rounded-md hover:bg-[#6528d7] focus:outline-none focus:ring-2 focus:ring-[#b00bef] transition duration-150 ease-in-out"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="w-full sm:w-auto px-6 py-3 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600 transition duration-150 ease-in-out"
+              className="w-full sm:w-auto px-6 py-3 bg-[#b00bef] text-white rounded-md hover:bg-[#6528d7] focus:outline-none focus:ring-2 focus:ring-[#c638ab] transition duration-150 ease-in-out"
             >
               Promote
             </button>
