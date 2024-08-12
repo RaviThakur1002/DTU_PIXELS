@@ -202,11 +202,11 @@ function PerContestPage() {
   };
 
   return (
-    <div className="mx-auto p-6 font-sans bg-gray-900 text-white">
+    <div className="mx-auto p-6 font-sans bg-gradient-to-b from-[#080808] to-[#171717] text-white">
       <div className="flex justify-between">
         <button
           onClick={() => navigate("/contest")}
-          className="flex items-center text-orange-500 font-bold mb-4"
+          className="flex items-center text-[#cba6f7]  font-bold mb-4"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -227,12 +227,12 @@ function PerContestPage() {
         )}
       </div>
 
-      <h1 className="text-4xl font-bold text-white border-b-2 border-gray-700 pb-4 mb-8">
+   <h1 className="text-4xl font-bold text-[#cba6f7] border-b-2 border-[#6528d7] pb-4 mb-8 bg-gradient-to-r from-[#6528d7] via-[#c638ab] to-[#b00bef] text-transparent bg-clip-text">
         Contest No- {contestId}, Theme- {contestData.theme}
       </h1>
 
-      <section className="mb-12 bg-gray-800 shadow-md rounded-lg overflow-hidden">
-        <h2 className="text-2xl font-semibold text-white bg-orange-500 p-4">
+        <section className="mb-12 bg-[#171717] shadow-md rounded-lg overflow-hidden">
+        <h2 className="text-2xl font-semibold text-white bg-[#7c2ccd] p-4">
           Contest Timeline
         </h2>
         <div className="p-6 space-y-2">
@@ -252,15 +252,15 @@ function PerContestPage() {
             <span className="font-semibold text-white">Contest Ends:</span>{" "}
             {formatDateTime(contestEndTime)}
           </p>
-          <div className="mt-6 bg-gray-700 p-4 rounded-lg">
+          <div className="mt-6 bg-[#2c2c2e] p-4 rounded-lg">
             {renderCountdown()}
           </div>
         </div>
       </section>
 
       {currentTime < votingStartTime && (
-        <section className="mb-12 bg-gray-800 shadow-md rounded-lg overflow-hidden">
-          <h2 className="text-2xl font-semibold text-white bg-orange-500 p-4">
+        <section className="mb-12 bg-[#171717] shadow-md rounded-lg overflow-hidden">
+          <h2 className="text-2xl font-semibold text-white bg-[#7c2ccd]  p-4">
             Rules
           </h2>
           <ul className="p-6 space-y-4 list-decimal list-inside text-gray-300">

@@ -28,7 +28,6 @@ function Temp() {
           ...contest,
         }));
 
-        // Sort contests by start date
         processedData.sort((a, b) => new Date(a.contestStartDate) - new Date(b.contestStartDate));
 
         setAllContestData(processedData);
@@ -71,7 +70,7 @@ function Temp() {
   }
 
   return (
-    <div className="bg-gray-900 text-white min-h-screen">
+    <div className="bg-gradient-to-b from-[#0D0D0D] to-[#171717] text-white min-h-screen">
       <ContestPage />
     </div>
   );

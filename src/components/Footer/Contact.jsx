@@ -28,7 +28,7 @@ const Contact = () => {
         <div className='bg-[#171717] p-6 rounded-lg shadow-lg'>
           {/* Section title */}
           <div className="flex flex-col items-center text-center mb-12">
-            <h2 className='py-4 font-bold text-4xl mb-4 text-[#dc8add]'>
+            <h2 className='py-4 font-bold text-4xl mb-4 text-[#c638ab]'>
               Get in Touch
             </h2>
            <p className='text-gray-300 text-lg'>
@@ -42,7 +42,7 @@ const Contact = () => {
               {contact.map((item, index) => {
                 const { icon, title, subtitle, description } = item;
                 return (
-                  <div className='flex flex-col lg:flex-row gap-x-4 bg-[#2c2c2e] p-4 rounded-lg shadow-md shadow-black/50' key={index}>
+                  <div className='flex flex-col lg:flex-row gap-x-4 bg-[#171717] p-4 rounded-lg' key={index}>
                     <div className='rounded-sm w-14 h-14 flex items-center justify-center mt-2 mb-4 lg:mb-0 text-2xl text-[#6528d7]'>
                       {icon}
                     </div>
@@ -79,7 +79,7 @@ const Contact = () => {
                 placeholder='Your message'
                 rows="4"
               ></textarea>
-              <button className='bg-[#9f0ad6] text-white py-3 px-6 rounded-lg hover:bg-[#b00bef] transition duration-300 w-full sm:w-auto' type="submit">
+              <button className='bg-[#6428d5] text-white py-3 px-6 rounded-lg hover:bg-[#bb36a1] transition duration-300 w-full sm:w-auto' type="submit">
                 Send Message
               </button>
             </form>
