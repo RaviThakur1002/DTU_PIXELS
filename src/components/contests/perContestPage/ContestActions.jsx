@@ -184,7 +184,7 @@ function ContestActions({
               </div>
             )
           ) : (
-            <p className="text-orange-500 italic">
+            <p className="text-[#cba6f7] italic font-bold">
               Registration is closed. Please wait for voting to start.
             </p>
           )

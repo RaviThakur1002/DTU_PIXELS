@@ -1,30 +1,75 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaTimes } from "react-icons/fa";
+import { FaSync, FaTimes } from "react-icons/fa";
+import "./Gallery.css";
 
-const Article = ({ id, photoUrl, userName, quote, onClick }) => {
+const Article = ({ id, photoUrl, userName, quote, onClick, isProfile }) => {
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  const handleFlip = (e) => {
+    e.stopPropagation();
+    setIsFlipped(!isFlipped);
+  };
+
   return (
-    <div className="p-2 rounded-3xl shadow-md bg-gradient-to-r from-[#43133A] to-[#5C01BB]">
-      <article key={id} className="rounded-3xl">
-        <img
-          src={photoUrl}
-          alt={userName}
-          className="h-52 object-fit object-cover w-full lg:h-80 rounded-3xl cursor-pointer"
-          onClick={onClick}
-        />
-        <div className="p-5 pb-0 flex flex-col md:flex-row items-start md:items-center justify-between">
+    <div className="p-2 rounded-xl shadow-md bg-[#101010] border border-[#525252]">
+      <div className="relative w-full h-52 lg:h-80 perspective-1000">
+        <motion.div
+          className="w-full h-full preserve-3d"
+          animate={{ rotateY: isFlipped ? 180 : 0 }}
+          transition={{ 
+            duration: 0.5,
+            ease: "linear"
+          }}
+        >
+          {/* Front of the card */}
+          <div className="absolute w-full h-full backface-hidden">
+            <img
+              src={photoUrl}
+              alt={userName}
+              className="h-full w-full object-cover rounded-xl cursor-pointer"
+              onClick={onClick}
+            />
+          </div>
+
+          {/* Back of the card */}
+          <div className="absolute w-full h-full backface-hidden rotate-y-180 bg-black flex items-center justify-center p-4 rounded-xl">
+            <div className="text-center mb-4">
+              <svg
+                className="w-8 h-8 text-[#cba6f7] mb-4 mx-auto"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+              </svg>
+              <p className="text-[#cba6f7] italic text-lg font-fira-sans">"{quote}"</p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Flip button */}
+        <button
+          className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all duration-300 z-10"
+          onClick={handleFlip}
+        >
+          <FaSync />
+        </button>
+      </div>
+
+      <div className="p-5 pb-0 flex flex-col md:flex-row items-start md:items-center justify-between">
+        {!isProfile && (
           <article className="flex items-center justify-start">
             <ul>
               <li className="text-[#cba6f7] font-bold">{userName}</li>
             </ul>
           </article>
-        </div>
-      </article>
+        )}
+      </div>
     </div>
   );
 };
 
-const Images = ({ imageData }) => {
+const Images = ({ imageData, isProfile, gridColumns }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const popupRef = useRef(null);
@@ -45,7 +90,7 @@ const Images = ({ imageData }) => {
 
   const prevImage = useCallback(() => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + imageData.length) % imageData.length,
+      (prevIndex) => (prevIndex - 1 + imageData.length) % imageData.length
     );
   }, [imageData.length]);
 
@@ -111,7 +156,11 @@ const Images = ({ imageData }) => {
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-7 md:grid-cols-2 xl:grid-cols-3 pb-10 lg:container">
+ <div className={`grid grid-cols-1 gap-7 ${
+        gridColumns === 2 ? 'md:grid-cols-2' : 
+        gridColumns === 3 ? 'md:grid-cols-2 xl:grid-cols-3' :
+        ''
+      } pb-10 lg:container`}>
         {imageData.map((pic, index) => (
           <Article
             key={pic.id}
@@ -121,6 +170,7 @@ const Images = ({ imageData }) => {
             quote={pic.quote}
             contestTheme={pic.contestTheme}
             onClick={() => openPopup(index)}
+            isProfile={isProfile}
           />
         ))}
       </div>
@@ -137,7 +187,7 @@ const Images = ({ imageData }) => {
             onClick={closePopup}
           >
             <motion.div
-              className="relative sm:max-w-xl md:max-w-2xl lg:max-w-3xl max-h-[90vh] w-90vw overflow-hidden rounded-lg "
+              className="relative sm:max-w-xl md:max-w-2xl lg:max-w-3xl max-h-[90vh] w-90vw overflow-hidden rounded-lg"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -149,13 +199,6 @@ const Images = ({ imageData }) => {
                 alt={`Image ${currentIndex + 1}`}
                 className="w-full h-auto max-h-[80vh] object-contain"
               />
-              <div className="absolute bottom-1 left-1 px-3 py-2">
-                <div className="inline-block bg-black bg-opacity-50 text-white px-4 py-2 rounded-full transition-opacity duration-300">
-                  <h2 className="text-xl font-bold leading-none">
-                    {imageData[currentIndex].quote}
-                  </h2>
-                </div>
-              </div>
               <motion.button
                 className="absolute top-2 right-2 text-white bg-black bg-opacity-50 w-9 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center hover:bg-opacity-75 transition-all duration-300 shadow-lg"
                 onClick={closePopup}

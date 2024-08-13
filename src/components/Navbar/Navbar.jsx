@@ -93,7 +93,7 @@ const Navbar = () => {
     >
       <div
         className={`mx-auto flex justify-between max-w-7xl transition-all duration-300 ${isFloating
-            ? "bg-[#181818] text-white rounded-full shadow-lg mt-2 px-8 py-1 border-2 border-[#c638ab]"
+            ? "bg-[#000000] text-white rounded-full shadow-lg mt-2 px-8 py-1 border-2 border-[#cba6f7]"
             : "bg-black text-white px-2"
           }`}
       >
