@@ -1,5 +1,6 @@
 /* Add this to your main CSS file or a separate CSS module */
 
+
 .gallery-container {
   margin-top: 0; /* Default margin for larger screens */
 }
@@ -36,3 +37,5 @@
 .font-fira-sans {
   font-family: 'Fira Sans', sans-serif;
 }
+
+
