@@ -16,6 +16,7 @@ import HomeScreen from './components/HomeScreen/HomeScreen.jsx'
 
 const App = () => {
   return (
+    <div className="flex flex-col min-h-screen">
     <Router>
       <GalleryProvider>
         <ContestProvider>
@@ -35,6 +36,7 @@ const App = () => {
         </ContestProvider>
       </GalleryProvider>
     </Router>
+    </div>
   );
 };
 

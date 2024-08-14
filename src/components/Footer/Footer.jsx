@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className="bg-[#000000] text-white py-8 mt-auto">
+    <footer className="bg-[#000000] text-white py-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
@@ -37,9 +37,6 @@ const Footer = () => {
           </div>
         </div>
         <div className="mt-8 text-center text-gray-500 border-t border-[#2c2c2e] pt-4">
-          Made with &#128151; by The PRS.
-        </div>
-        <div className="mt-8 text-center text-gray-500 pt-1">
           &copy; 2024 DTU Pixels. All rights reserved.
         </div>
       </div>
