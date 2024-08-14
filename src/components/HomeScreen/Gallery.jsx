@@ -10,12 +10,13 @@ const SliderSection = styled.section`
 const SliderContainer = styled.div`
   width: 100%;
   overflow: hidden;
-  padding: 10px 0; `;
+  padding: 10px 0;
+`;
 
 const SliderTrack = styled.div`
   display: flex;
   transition: transform 0.5s ease;
-  padding: 30px 0; 
+  padding: 30px 0;
 `;
 
 const Card = styled.div`
@@ -25,15 +26,14 @@ const Card = styled.div`
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+  transition: all 0.3s ease;
   perspective: 1500px;
   transform-style: preserve-3d;
   background: #2c2c2e;
-  position: relative; 
+  position: relative;
+
   &:hover {
-    z-index: 1; 
+    z-index: 1;
     transform: scale(1.05) translateY(-30px) translateZ(20px);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
   }
@@ -61,10 +61,9 @@ const SubHeading = styled.p`
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 2px;
-margin-top: 10px;
+  margin-top: 10px;
   margin-bottom: 10px;
 `;
-
 
 const Gallery = () => {
   const { allGalleryData } = useGallery();

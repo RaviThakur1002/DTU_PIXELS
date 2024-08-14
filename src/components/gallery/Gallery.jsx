@@ -34,18 +34,19 @@ const Gallery = ({ userName = null, isProfile = false }) => {
     funnyQuotes[Math.floor(Math.random() * funnyQuotes.length)],
   [funnyQuotes]);
 
-    const getGridColumns = useCallback(() => {
-    const width = window.innerWidth;
-    if (width >= 1280) return 3; // xl breakpoint
-    if (width >= 768) return 2; // md breakpoint
-    return 1;
-  }, []);
+const getGridColumns = useCallback(() => {
+  const width = window.innerWidth;
+  if (width >= 1280) return 4;
+  if (width >= 768) return 3;
+  if (width >= 500) return 2;
+  return 1; 
+}, []);
 
-  const updateGridAndPosts = useCallback(() => {
-    const columns = getGridColumns();
-    setGridColumns(columns);
-    setPostPerPage(columns === 1 ? 10 : columns * 4);
-  }, [getGridColumns]);
+const updateGridAndPosts = useCallback(() => {
+  const columns = getGridColumns();
+  setGridColumns(columns);
+   setPostPerPage(columns === 1 ? 5 : columns * 4);
+}, [getGridColumns]);
 
   useEffect(() => {
     updateGridAndPosts();
@@ -152,7 +153,7 @@ const Gallery = ({ userName = null, isProfile = false }) => {
 
   return (
     <>
-      <div className="bg-black rounded-lg"> 
+      <div className="bg-black "> 
 
 
       <div className="bg-gradient-to-b from-[#000000] to-[#171717] rounded-lg py-10">

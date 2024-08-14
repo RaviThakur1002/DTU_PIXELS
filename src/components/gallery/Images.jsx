@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaSync, FaTimes } from "react-icons/fa";
 import "./Gallery.css";
 
-const Article = ({ id, photoUrl, userName, quote, onClick, isProfile }) => {
+const Article = ({ id, photoUrl, userName, quote, onClick, isProfile, gridColumns }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleFlip = (e) => {
@@ -11,16 +11,20 @@ const Article = ({ id, photoUrl, userName, quote, onClick, isProfile }) => {
     setIsFlipped(!isFlipped);
   };
 
+  const aspectRatioClass = 
+    gridColumns === 1 ? 'aspect-[12/13]' :
+    gridColumns === 2 ? 'aspect-[5/5]' :
+    gridColumns === 3 ? 'aspect-[6/6]' :
+    gridColumns === 4 ? 'aspect-[3/3]' :
+    'aspect-[5/6]'; // Default fallback
+
   return (
     <div className="p-2 rounded-xl shadow-md bg-[#101010] border border-[#525252]">
-      <div className="relative w-full h-52 lg:h-80 perspective-1000">
+      <div className={`relative w-full ${aspectRatioClass} perspective-1000`}>
         <motion.div
           className="w-full h-full preserve-3d"
           animate={{ rotateY: isFlipped ? 180 : 0 }}
-          transition={{ 
-            duration: 0.5,
-            ease: "linear"
-          }}
+          transition={{ duration: 0.5, ease: "linear" }}
         >
           {/* Front of the card */}
           <div className="absolute w-full h-full backface-hidden">
@@ -33,34 +37,34 @@ const Article = ({ id, photoUrl, userName, quote, onClick, isProfile }) => {
           </div>
 
           {/* Back of the card */}
-          <div className="absolute w-full h-full backface-hidden rotate-y-180 bg-black flex items-center justify-center p-4 rounded-xl">
-            <div className="text-center mb-4">
+          <div className="absolute w-full h-full backface-hidden rotate-y-180 bg-black flex flex-col items-center justify-center p-2 sm:p-4 rounded-xl">
+            <div className="text-center w-full">
               <svg
-                className="w-8 h-8 text-[#cba6f7] mb-4 mx-auto"
+                className="w-6 h-6 sm:w-8 sm:h-8 text-[#4C1A75] mb-2 sm:mb-4 mx-auto"
                 fill="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
               </svg>
-              <p className="text-[#cba6f7] italic text-lg font-fira-sans">"{quote}"</p>
+              <p className="text-[#CC3DAB] italic text-xs sm:text-sm md:text-base lg:text-lg font-fira-sans line-clamp-4 sm:line-clamp-6">"{quote}"</p>
             </div>
           </div>
         </motion.div>
 
         {/* Flip button */}
         <button
-          className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all duration-300 z-10"
+          className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 bg-black bg-opacity-50 text-white p-1 sm:p-2 rounded-full hover:bg-opacity-75 transition-all duration-300 z-10"
           onClick={handleFlip}
         >
-          <FaSync />
+          <FaSync className="text-xs sm:text-sm md:text-base" />
         </button>
       </div>
 
-      <div className="p-5 pb-0 flex flex-col md:flex-row items-start md:items-center justify-between">
+      <div className="p-2 sm:p-5 pb-0 flex flex-col md:flex-row items-start md:items-center justify-between">
         {!isProfile && (
           <article className="flex items-center justify-start">
             <ul>
-              <li className="text-[#cba6f7] font-bold">{userName}</li>
+              <li className="text-[#cba6f7] font-bold text-xs sm:text-sm md:text-base">{userName}</li>
             </ul>
           </article>
         )}
@@ -156,10 +160,11 @@ const Images = ({ imageData, isProfile, gridColumns }) => {
 
   return (
     <>
- <div className={`grid grid-cols-1 gap-7 ${
-        gridColumns === 2 ? 'md:grid-cols-2' : 
-        gridColumns === 3 ? 'md:grid-cols-2 xl:grid-cols-3' :
-        ''
+      <div className={`grid gap-4 ${
+        gridColumns === 1 ? 'grid-cols-1' :
+        gridColumns === 2 ? 'grid-cols-2' : 
+        gridColumns === 3 ? 'grid-cols-3' :
+        'grid-cols-4'
       } pb-10 lg:container`}>
         {imageData.map((pic, index) => (
           <Article
@@ -171,6 +176,7 @@ const Images = ({ imageData, isProfile, gridColumns }) => {
             contestTheme={pic.contestTheme}
             onClick={() => openPopup(index)}
             isProfile={isProfile}
+            gridColumns={gridColumns}
           />
         ))}
       </div>

@@ -6,7 +6,7 @@ const Info = () => {
     <div className="bg-[#000000] text-white py-16 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <span className="bg-[#2c2c2e] text-lg font-semibold px-3 py-1 rounded-full uppercase tracking-wide text-[#c061cb]">
+          <span className="bg-[#000000] text-lg font-semibold px-3 py-1 rounded-full uppercase tracking-wide text-[#6327d2]">
             What We Do
           </span>
           <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6 text-[#cba6f7]">
