@@ -15,7 +15,6 @@ const styles = `
 `;
 
 const UploadComponent = () => {
-  // console.log(onUploadSuccess);
   const [previewImage, setPreviewImage] = useState(null);
   const [uploadFile, setUploadFile] = useState(null);
   const [message, setMessage] = useState("");
@@ -68,7 +67,6 @@ const UploadComponent = () => {
         return;
       }
 
-      // Check file size (20MB = 20 * 1024 * 1024 bytes)
       const maxSize = 20 * 1024 * 1024;
       if (file.size > maxSize) {
         setMessageWithTimer("File size should not exceed 20MB.", "error");
@@ -143,24 +141,23 @@ const UploadComponent = () => {
   };
 
   return (
-    <div className="mb-4 flex flex-col items-center w-full max-w-2xl mx-auto px-4">
+    <div className="mb-4 flex flex-col items-center w-full max-w-2xl mx-auto px-4 text-white">
       <style>{styles}</style>
 
-      {/* Message display */}
       {message && (
         <div
           className={`fixed top-4 right-0 mb-4 p-3 rounded-l-lg w-64 ${
             messageType === "success"
-              ? "bg-gradient-to-r from-green-600 to-green-800 text-white"
+              ? "bg-gradient-to-r from-[#6528d7] to-[#b00bef]"
               : messageType === "error"
-                ? "bg-gradient-to-r from-red-600 to-red-800 text-white"
-                : "bg-gradient-to-r from-blue-500 to-blue-700 text-white"
-          } border border-solid ${
+                ? "bg-gradient-to-r from-red-600 to-red-800"
+                : "bg-gradient-to-r from-[#6528d7] to-[#b00bef]"
+          } text-white border border-solid ${
             messageType === "success"
-              ? "border-green-500"
+              ? "border-[#b00bef]"
               : messageType === "error"
                 ? "border-red-500"
-                : "border-blue-400"
+                : "border-[#b00bef]"
           } text-center transition-all duration-300 ease-in-out transform translate-x-0 shadow-md z-50`}
           style={{
             animation: `${message ? "slideIn" : "slideOut"} 0.3s ease-in-out forwards`,
@@ -170,13 +167,12 @@ const UploadComponent = () => {
         </div>
       )}
 
-      {/* File input */}
       {hasSubmitted ? (
         <div>
           <p>You have submitted successfully.</p>
         </div>
       ) : (
-        <label className="inline-block mb-6 cursor-pointer bg-white border-2 border-gray-800 text-gray-800 py-2 px-3 rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 text-center font-semibold text-sm flex items-center justify-center space-x-2 min-w-[180px]">
+        <label className="inline-block mb-6 cursor-pointer bg-[#171717] border-2 border-[#6528d7] text-white py-2 px-3 rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 text-center font-semibold text-sm flex items-center justify-center space-x-2 min-w-[180px]">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-4 w-4"
@@ -203,7 +199,6 @@ const UploadComponent = () => {
 
       {fileError && <p className="text-red-500 mt-2">{fileError}</p>}
 
-      {/* Image preview, quote input, and upload/cancel buttons */}
       {previewImage && (
         <div className="w-full mt-4 flex flex-col items-center">
           <div className="w-full max-w-md mb-6">
@@ -214,13 +209,12 @@ const UploadComponent = () => {
             />
           </div>
 
-          {/* Quote input */}
           <div className="w-full mb-6 relative">
             <textarea
               value={quote}
               onChange={handleQuoteChange}
               placeholder="Enter your inspiring quote here..."
-              className="w-full p-4 border-2 border-gray-300 rounded-lg focus:border-gray-500 focus:ring focus:ring-gray-200 focus:ring-opacity-50 transition duration-300 ease-in-out resize-none text-gray-700 text-lg"
+              className="w-full p-4 border-2 border-[#6528d7] rounded-lg focus:border-[#b00bef] focus:ring focus:ring-[#b00bef] focus:ring-opacity-50 transition duration-300 ease-in-out resize-none text-gray-200 text-lg bg-[#171717]"
               rows="4"
               maxLength={150}
             />
@@ -233,13 +227,13 @@ const UploadComponent = () => {
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full justify-center">
               <button
                 onClick={handleUpload}
-                className="bg-gradient-to-r from-gray-800 to-black text-white py-2 px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 shadow-lg hover:shadow-xl font-bold text-base w-full sm:w-auto"
+                className="bg-gradient-to-r from-[#6528d7] to-[#b00bef] text-white py-2 px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#b00bef] focus:ring-opacity-50 shadow-lg hover:shadow-xl font-bold text-base w-full sm:w-auto"
               >
                 Submit Entry
               </button>
               <button
                 onClick={handleCancel}
-                className="bg-gradient-to-r from-gray-200 to-gray-400 text-gray-800 py-2 px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50 shadow-lg hover:shadow-xl font-bold text-base w-full sm:w-auto"
+                className="bg-gradient-to-r from-gray-700 to-gray-900 text-white py-2 px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 shadow-lg hover:shadow-xl font-bold text-base w-full sm:w-auto"
               >
                 Cancel
               </button>
@@ -248,16 +242,15 @@ const UploadComponent = () => {
         </div>
       )}
 
-      {/* Upload progress bar */}
       {isUploading && (
         <div className="w-full mt-6">
-          <div className="bg-gray-200 rounded-full h-4 overflow-hidden">
+          <div className="bg-gray-700 rounded-full h-4 overflow-hidden">
             <div
-              className="bg-gradient-to-r from-gray-600 to-gray-800 h-4 rounded-full transition-all duration-300 ease-out"
+              className="bg-gradient-to-r from-[#6528d7] to-[#b00bef] h-4 rounded-full transition-all duration-300 ease-out"
               style={{ width: `${uploadProgress}%` }}
             ></div>
           </div>
-          <p className="text-center mt-2 font-semibold text-gray-700 text-lg">
+          <p className="text-center mt-2 font-semibold text-gray-300 text-lg">
             {Math.round(uploadProgress)}% Uploaded
           </p>
         </div>
