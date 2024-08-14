@@ -24,7 +24,13 @@ const ContestPage = () => {
   const { currentContests, pastContests } = useMemo(() => {
     if (!allContestData) return { currentContests: [], pastContests: [] };
 
-    return allContestData.reduce((acc, contest) => {
+    const sortedContests = allContestData.sort((a, b) => {
+      const endTimeA = new Date(`${a.contestEndDate} ${a.contestEndTime}`).getTime();
+      const endTimeB = new Date(`${b.contestEndDate} ${b.contestEndTime}`).getTime();
+      return endTimeB - endTimeA;
+    });
+
+    return sortedContests.reduce((acc, contest) => {
       const contestEndTime = new Date(`${contest.contestEndDate} ${contest.contestEndTime}`).getTime();
       if (currentTime <= contestEndTime) {
         acc.currentContests.push(contest);
