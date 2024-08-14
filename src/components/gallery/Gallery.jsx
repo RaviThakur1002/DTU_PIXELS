@@ -134,7 +134,6 @@ const Gallery = ({ userName = null }) => {
     <>
     <div className="bg-gradient-to-b from-[#000000] to-[#171717] text-white py-10">
       <div className="container mx-auto flex flex-col items-center justify-center">
-        {/* <FontAwesomeIcon icon={faTrophy} className="text-[#cba6f7] text-8xl mb-4" /> */}
         <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-[#6528d7] via-[#c638ab] to-[#b00bef] text-transparent bg-clip-text">Gallery</h1>
         <p className="text-lg text-gray-300">Explore our curated collection of captivating images!</p>
       </div>
