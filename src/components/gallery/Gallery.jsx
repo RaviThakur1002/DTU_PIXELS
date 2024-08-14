@@ -7,7 +7,7 @@ import LoadingSpinner from "../Utilities/LoadingSpinner.jsx";
 import { useGallery } from "../contexts/GalleryContext.jsx";
 import './Gallery.css';
 
-const Gallery = ({ userName = null }) => {
+const Gallery = ({ userName = null, isProfile = false }) => {
   const { 
     allGalleryData, 
     setAllGalleryData, 
@@ -18,7 +18,8 @@ const Gallery = ({ userName = null }) => {
   } = useGallery();
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const postPerPage = 10;
+  const [gridColumns, setGridColumns] = useState(1);
+  const [postPerPage, setPostPerPage] = useState(10);
   const database = getDatabase(app);
 
   const funnyQuotes = useMemo(() => [
@@ -32,6 +33,26 @@ const Gallery = ({ userName = null }) => {
   const randomQuote = useMemo(() => 
     funnyQuotes[Math.floor(Math.random() * funnyQuotes.length)],
   [funnyQuotes]);
+
+const getGridColumns = useCallback(() => {
+  const width = window.innerWidth;
+  if (width >= 1280) return 4;
+  if (width >= 768) return 3;
+  if (width >= 500) return 2;
+  return 1; 
+}, []);
+
+const updateGridAndPosts = useCallback(() => {
+  const columns = getGridColumns();
+  setGridColumns(columns);
+   setPostPerPage(columns === 1 ? 5 : columns * 4);
+}, [getGridColumns]);
+
+  useEffect(() => {
+    updateGridAndPosts();
+    window.addEventListener('resize', updateGridAndPosts);
+    return () => window.removeEventListener('resize', updateGridAndPosts);
+  }, [updateGridAndPosts]);
 
   const fetchImages = useCallback(async () => {
     console.log("Fetching images");
@@ -108,7 +129,7 @@ const Gallery = ({ userName = null }) => {
 
   const galleryData = userName ? userGalleryData : allGalleryData;
 
-  const { currentPosts, totalPosts } = useMemo(() => {
+ const { currentPosts, totalPosts } = useMemo(() => {
     if (!galleryData) return { currentPosts: [], totalPosts: 0 };
     const lastPostIndex = currentPage * postPerPage;
     const firstPostIndex = lastPostIndex - postPerPage;
@@ -132,25 +153,31 @@ const Gallery = ({ userName = null }) => {
 
   return (
     <>
-    <div className="bg-gradient-to-b from-[#000000] to-[#171717] text-white py-10">
-      <div className="container mx-auto flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-[#6528d7] via-[#c638ab] to-[#b00bef] text-transparent bg-clip-text">Gallery</h1>
-        <p className="text-lg text-gray-300">Explore our curated collection of captivating images!</p>
-      </div>
-    </div>
+      <div className="bg-black "> 
 
-    <div className="w-full mx-auto px-12 min-h-screen gallery-container bg-[#000000] flex justify-center items-start pt-10">
-      <div className="w-full max-w-6xl m-1">
-        <Images imageData={currentPosts} />
-        <Pagination 
-          totalPosts={totalPosts}
-          postsPerPage={postPerPage}
-          setCurrentPage={setCurrentPage}
-          currentPage={currentPage}
-        />
+
+      <div className="bg-gradient-to-b from-[#000000] to-[#171717] rounded-lg py-10">
+        <div className="container mx-auto flex flex-col items-center justify-center">
+          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-[#6528d7] via-[#c638ab] to-[#b00bef] text-transparent bg-clip-text">
+            {isProfile ? "My Submissions" : "Gallery"}
+          </h1>
+         
+        </div>
       </div>
-    </div>
-  </>
+
+      <div className="w-full mx-auto px-12 min-h-screen gallery-container bg-[#000000] flex justify-center items-start pt-10">
+        <div className="w-full max-w-6xl m-1">
+          <Images imageData={currentPosts} isProfile={isProfile} gridColumns={gridColumns} />
+          <Pagination 
+            totalPosts={totalPosts}
+            postsPerPage={postPerPage}
+            setCurrentPage={setCurrentPage}
+            currentPage={currentPage}
+          />
+        </div>
+      </div>
+      </div>
+    </>
   );
 };
 
