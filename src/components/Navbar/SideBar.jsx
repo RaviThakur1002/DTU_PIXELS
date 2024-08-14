@@ -30,7 +30,7 @@ const Sidebar = ({
   };
 
   return (
-    <div style={sidebarStyle} className="lg:hidden p-5 flex flex-col">
+    <div style={sidebarStyle} className="lg:hidden p-5 pb-0 flex flex-col">
       {/* Sidebar header */}
       <div className="flex items-center justify-between mb-6">
         <div className="inline-flex items-center space-x-2">
