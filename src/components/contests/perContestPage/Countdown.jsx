@@ -26,16 +26,17 @@ export function Countdown({ targetDate }) {
     }, 1000);
 
     return () => clearTimeout(timer);
-  });
+  }, [targetDate]);
 
-  const timerComponents = Object.keys(timeLeft).map(interval => {
-    if (!timeLeft[interval]) {
-      return null;
+  const timerComponents = [];
+
+  Object.keys(timeLeft).forEach((interval, index) => {
+    if (index > 0) {
+      timerComponents.push(<span key={`${interval}-colon`}> : </span>);
     }
-
-    return (
+    timerComponents.push(
       <span key={interval}>
-        {(interval === "seconds" ? timeLeft[interval] : timeLeft[interval].toString() + " : ")}
+        {timeLeft[interval].toString().padStart(2, '0')}
       </span>
     );
   });
