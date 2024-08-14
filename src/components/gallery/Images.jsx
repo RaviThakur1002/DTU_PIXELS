@@ -1,22 +1,43 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect, useRef, memo, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaSync, FaTimes } from "react-icons/fa";
+import { useInView } from "react-intersection-observer";
 import "./Gallery.css";
 
-const Article = ({ id, photoUrl, userName, quote, onClick, isProfile, gridColumns }) => {
+const LazyImage = memo(({ src, alt, className, onClick }) => {
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    rootMargin: '200px 0px',
+  });
+
+  return (
+    <div ref={ref} className={className}>
+      {inView ? (
+        <img src={src} alt={alt} className={className} onClick={onClick} />
+      ) : (
+        <div className={`${className} bg-gray-200 animate-pulse`} />
+      )}
+    </div>
+  );
+});
+
+const Article = memo(({ id, photoUrl, userName, quote, onClick, isProfile, gridColumns }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
-  const handleFlip = (e) => {
+  const handleFlip = useCallback((e) => {
     e.stopPropagation();
-    setIsFlipped(!isFlipped);
-  };
+    setIsFlipped(prev => !prev);
+  }, []);
 
-  const aspectRatioClass = 
-    gridColumns === 1 ? 'aspect-[12/13]' :
-    gridColumns === 2 ? 'aspect-[5/5]' :
-    gridColumns === 3 ? 'aspect-[6/6]' :
-    gridColumns === 4 ? 'aspect-[3/3]' :
-    'aspect-[5/6]'; // Default fallback
+  const aspectRatioClass = useMemo(() => {
+    switch(gridColumns) {
+      case 1: return 'aspect-[12/13]';
+      case 2: return 'aspect-[5/5]';
+      case 3: return 'aspect-[6/6]';
+      case 4: return 'aspect-[3/3]';
+      default: return 'aspect-[5/6]';
+    }
+  }, [gridColumns]);
 
   return (
     <div className="p-2 rounded-xl shadow-md bg-[#101010] border border-[#525252]">
@@ -26,16 +47,14 @@ const Article = ({ id, photoUrl, userName, quote, onClick, isProfile, gridColumn
           animate={{ rotateY: isFlipped ? 180 : 0 }}
           transition={{ duration: 0.5, ease: "linear" }}
         >
-          {/* Front of the card */}
           <div className="absolute w-full h-full backface-hidden">
-            <img
+            <LazyImage
               src={photoUrl}
               alt={userName}
               className="h-full w-full object-cover rounded-xl cursor-pointer"
               onClick={onClick}
             />
           </div>
-
           {/* Back of the card */}
           <div className="absolute w-full h-full backface-hidden rotate-y-180 bg-black flex flex-col items-center justify-center p-2 sm:p-4 rounded-xl">
             <div className="text-center w-full">
@@ -50,8 +69,6 @@ const Article = ({ id, photoUrl, userName, quote, onClick, isProfile, gridColumn
             </div>
           </div>
         </motion.div>
-
-        {/* Flip button */}
         <button
           className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 bg-black bg-opacity-50 text-white p-1 sm:p-2 rounded-full hover:bg-opacity-75 transition-all duration-300 z-10"
           onClick={handleFlip}
@@ -59,21 +76,20 @@ const Article = ({ id, photoUrl, userName, quote, onClick, isProfile, gridColumn
           <FaSync className="text-xs sm:text-sm md:text-base" />
         </button>
       </div>
-
-      <div className="p-2 sm:p-5 pb-0 flex flex-col md:flex-row items-start md:items-center justify-between">
-        {!isProfile && (
+      {!isProfile && (
+        <div className="p-2 sm:p-5 pb-0">
           <article className="flex items-center justify-start">
             <ul>
               <li className="text-[#cba6f7] font-bold text-xs sm:text-sm md:text-base">{userName}</li>
             </ul>
           </article>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
-};
+});
 
-const Images = ({ imageData, isProfile, gridColumns }) => {
+const Images = memo(({ imageData, isProfile, gridColumns }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const popupRef = useRef(null);
@@ -158,14 +174,19 @@ const Images = ({ imageData, isProfile, gridColumns }) => {
     };
   }, [isPopupOpen, nextImage, prevImage]);
 
+  const gridClass = useMemo(() => {
+    switch(gridColumns) {
+      case 1: return 'grid-cols-1';
+      case 2: return 'grid-cols-2';
+      case 3: return 'grid-cols-3';
+      case 4: return 'grid-cols-4';
+      default: return 'grid-cols-1';
+    }
+  }, [gridColumns]);
+
   return (
     <>
-      <div className={`grid gap-4 ${
-        gridColumns === 1 ? 'grid-cols-1' :
-        gridColumns === 2 ? 'grid-cols-2' : 
-        gridColumns === 3 ? 'grid-cols-3' :
-        'grid-cols-4'
-      } pb-10 lg:container`}>
+      <div className={`grid gap-4 ${gridClass} pb-10 lg:container`}>
         {imageData.map((pic, index) => (
           <Article
             key={pic.id}
@@ -200,7 +221,7 @@ const Images = ({ imageData, isProfile, gridColumns }) => {
               transition={{ duration: 0.3 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <img
+              <LazyImage
                 src={imageData[currentIndex].photoUrl}
                 alt={`Image ${currentIndex + 1}`}
                 className="w-full h-auto max-h-[80vh] object-contain"
@@ -222,6 +243,6 @@ const Images = ({ imageData, isProfile, gridColumns }) => {
       </AnimatePresence>
     </>
   );
-};
+});
 
 export default Images;

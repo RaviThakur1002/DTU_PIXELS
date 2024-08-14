@@ -1,26 +1,24 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { getDatabase, ref, get } from "firebase/database";
-import app from "../../config/conf.js";
-import Images from "./Images";
+import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense } from "react";
 import Pagination from "../Utilities/Pagination.jsx";
 import LoadingSpinner from "../Utilities/LoadingSpinner.jsx";
 import { useGallery } from "../contexts/GalleryContext.jsx";
 import './Gallery.css';
 
+const Images = lazy(() => import("./Images"));
+
 const Gallery = ({ userName = null, isProfile = false }) => {
   const { 
     allGalleryData, 
-    setAllGalleryData, 
     userGalleryData, 
     setUserGalleryData,
     lastFetchTime, 
-    setLastFetchTime 
+    isDataLoaded,
+    fetchImages
   } = useGallery();
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [gridColumns, setGridColumns] = useState(1);
   const [postPerPage, setPostPerPage] = useState(10);
-  const database = getDatabase(app);
 
   const funnyQuotes = useMemo(() => [
     "Loading images faster than a cat can knock a glass off a table...",
@@ -34,19 +32,19 @@ const Gallery = ({ userName = null, isProfile = false }) => {
     funnyQuotes[Math.floor(Math.random() * funnyQuotes.length)],
   [funnyQuotes]);
 
-const getGridColumns = useCallback(() => {
-  const width = window.innerWidth;
-  if (width >= 1280) return 4;
-  if (width >= 768) return 3;
-  if (width >= 500) return 2;
-  return 1; 
-}, []);
+  const getGridColumns = useCallback(() => {
+    const width = window.innerWidth;
+    if (width >= 1280) return 4;
+    if (width >= 768) return 3;
+    if (width >= 500) return 2;
+    return 1; 
+  }, []);
 
-const updateGridAndPosts = useCallback(() => {
-  const columns = getGridColumns();
-  setGridColumns(columns);
-   setPostPerPage(columns === 1 ? 5 : columns * 4);
-}, [getGridColumns]);
+  const updateGridAndPosts = useCallback(() => {
+    const columns = getGridColumns();
+    setGridColumns(columns);
+    setPostPerPage(columns === 1 ? 5 : columns * 4);
+  }, [getGridColumns]);
 
   useEffect(() => {
     updateGridAndPosts();
@@ -54,65 +52,22 @@ const updateGridAndPosts = useCallback(() => {
     return () => window.removeEventListener('resize', updateGridAndPosts);
   }, [updateGridAndPosts]);
 
-  const fetchImages = useCallback(async () => {
-    console.log("Fetching images");
-    setIsLoading(true);
-    try {
-      const contestsRef = ref(database, "contests");
-      const snapshot = await get(contestsRef);
-      const allImages = [];
-      const currentTime = new Date().getTime();
-      const contestsData = snapshot.val();
-
-      for (const contestId in contestsData) {
-        const contestData = contestsData[contestId];
-        const contestEndTime = new Date(
-          `${contestData.contestEndDate} ${contestData.contestEndTime}`
-        ).getTime();
-
-        if (currentTime > contestEndTime) {
-          const entriesRef = ref(database, `contests/${contestId}/entries`);
-          const entriesSnapshot = await get(entriesRef);
-
-          entriesSnapshot.forEach((entrySnapshot) => {
-            const entry = entrySnapshot.val();
-            allImages.push({
-              id: entrySnapshot.key,
-              contestId: contestId,
-              contestTheme: contestData.theme,
-              photoUrl: entry.photoUrl,
-              userName: entry.userName,
-              quote: entry.quote,
-              timestamp: entry.timestamp,
-            });
-          });
-        }
-      }
-      const sortedImages = allImages.sort((a, b) => b.timestamp - a.timestamp);
-      console.log("Fetched and sorted images:", sortedImages);
-      setAllGalleryData(sortedImages);
-      setLastFetchTime(new Date().toISOString());
-    } catch (error) {
-      console.error("Error fetching images:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [database, setAllGalleryData, setLastFetchTime]);
-
   useEffect(() => {
-    const checkAndFetchImages = () => {
-      const currentTime = new Date().getTime();
-      const fetchTimeThreshold = 60 * 60 * 1000; // 1 hour in milliseconds
+    const checkAndFetchImages = async () => {
+      if (!isDataLoaded) return;
 
-      if (!lastFetchTime || !allGalleryData || (currentTime - new Date(lastFetchTime).getTime() > fetchTimeThreshold)) {
-        fetchImages();
-      } else {
-        console.log("Using cached gallery data");
+      const currentTime = new Date().getTime();
+      const fetchTimeThreshold = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+      if (!lastFetchTime || (currentTime - new Date(lastFetchTime).getTime() > fetchTimeThreshold)) {
+        setIsLoading(true);
+        await fetchImages();
+        setIsLoading(false);
       }
     };
 
     checkAndFetchImages();
-  }, [fetchImages, lastFetchTime, allGalleryData]);
+  }, [isDataLoaded, lastFetchTime, fetchImages]);
 
   useEffect(() => {
     if (allGalleryData && userName) {
@@ -123,13 +78,9 @@ const updateGridAndPosts = useCallback(() => {
     }
   }, [allGalleryData, userName, setUserGalleryData]);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   const galleryData = userName ? userGalleryData : allGalleryData;
 
- const { currentPosts, totalPosts } = useMemo(() => {
+  const { currentPosts, totalPosts } = useMemo(() => {
     if (!galleryData) return { currentPosts: [], totalPosts: 0 };
     const lastPostIndex = currentPage * postPerPage;
     const firstPostIndex = lastPostIndex - postPerPage;
@@ -143,6 +94,10 @@ const updateGridAndPosts = useCallback(() => {
     return <LoadingSpinner quote={randomQuote} />;
   }
 
+  if (!isDataLoaded) {
+    return <LoadingSpinner quote="Initializing gallery..." />;
+  }
+
   if (!galleryData || galleryData.length === 0) {
     return (
       <p className="text-center text-gray-400 text-xl">
@@ -152,22 +107,20 @@ const updateGridAndPosts = useCallback(() => {
   }
 
   return (
-    <>
-      <div className="bg-black "> 
-
-
+    <div className="bg-black">
       <div className="bg-gradient-to-b from-[#000000] to-[#171717] rounded-lg py-10">
         <div className="container mx-auto flex flex-col items-center justify-center">
           <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-[#6528d7] via-[#c638ab] to-[#b00bef] text-transparent bg-clip-text">
             {isProfile ? "My Submissions" : "Gallery"}
           </h1>
-         
         </div>
       </div>
 
       <div className="w-full mx-auto px-12 min-h-screen gallery-container bg-[#000000] flex justify-center items-start pt-10">
         <div className="w-full max-w-6xl m-1">
-          <Images imageData={currentPosts} isProfile={isProfile} gridColumns={gridColumns} />
+          <Suspense fallback={<LoadingSpinner quote={randomQuote} />}>
+            <Images imageData={currentPosts} isProfile={isProfile} gridColumns={gridColumns} />
+          </Suspense>
           <Pagination 
             totalPosts={totalPosts}
             postsPerPage={postPerPage}
@@ -176,8 +129,7 @@ const updateGridAndPosts = useCallback(() => {
           />
         </div>
       </div>
-      </div>
-    </>
+    </div>
   );
 };
 
