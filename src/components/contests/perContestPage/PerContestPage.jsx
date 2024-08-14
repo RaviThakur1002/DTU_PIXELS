@@ -6,6 +6,7 @@ import LoadingSpinner from "../../Utilities/LoadingSpinner";
 import Countdown from "./Countdown";
 import RemoveContest from "./RemoveContest";
 import ContestActions from "./ContestActions";
+import { ChevronUp, ChevronDown } from "lucide-react";
 
 function PerContestPage() {
   const { contestId } = useParams();
@@ -16,7 +17,6 @@ function PerContestPage() {
   const [error, setError] = useState(null);
   const [currentStage, setCurrentStage] = useState(null);
   const [showRules, setShowRules] = useState(false);
-  const [activeTab, setActiveTab] = useState("timeline");
 
   const rules = [
     "Eligibility: Each participant can submit only one entry per contest.",
@@ -239,60 +239,41 @@ function PerContestPage() {
         Contest No- {contestId}, Theme- {contestData.theme}
       </h1>
 
-      <div className="mb-4 flex  justify-evenly">
-        <button
-          className={`py-2 px-4 ${activeTab === "timeline" ? "border-b-2 border-[#cba6f7] text-[#cba6f7]" : "text-gray-400"}`}
-          onClick={() => setActiveTab("timeline")}
-        >
-          Timeline
-        </button>
-        <button
-          className={`py-2 px-4 ${activeTab === "rules" ? "border-b-2 border-[#cba6f7] text-[#cba6f7]" : "text-gray-400"}`}
-          onClick={() => setActiveTab("rules")}
-        >
-          Rules
-        </button>
-      </div>
-
-      {activeTab === "timeline" && (
-        <section className="mb-12 bg-[#171717] shadow-md rounded-lg overflow-hidden">
-          <h2 className="text-2xl font-semibold text-white bg-[#7c2ccd] p-4">
-            Contest Timeline
-          </h2>
-          <div className="p-6 space-y-2">
-            <p className="text-gray-300">
-              <span className="font-semibold text-white">
-                Registration Ends:
-              </span>{" "}
-              {formatDateTime(registrationEndTime)}
-            </p>
-            <p className="text-gray-300">
-              <span className="font-semibold text-white">Contest Starts:</span>{" "}
-              {formatDateTime(contestStartTime)}
-            </p>
-            <p className="text-gray-300">
-              <span className="font-semibold text-white">Voting Starts:</span>{" "}
-              {formatDateTime(votingStartTime)}
-            </p>
-            <p className="text-gray-300">
-              <span className="font-semibold text-white">Contest Ends:</span>{" "}
-              {formatDateTime(contestEndTime)}
-            </p>
-            <div className="mt-6 bg-[#2c2c2e] p-4 rounded-lg">
-              {renderCountdown()}
-            </div>
+      <section className="mb-12 bg-[#171717] shadow-md rounded-lg overflow-hidden">
+        <h2 className="text-2xl font-semibold text-white bg-[#7c2ccd] p-4">
+          Contest Timeline
+        </h2>
+        <div className="p-6 space-y-2">
+          <p className="text-gray-300">
+            <span className="font-semibold text-white">Registration Ends:</span>{" "}
+            {formatDateTime(registrationEndTime)}
+          </p>
+          <p className="text-gray-300">
+            <span className="font-semibold text-white">Contest Starts:</span>{" "}
+            {formatDateTime(contestStartTime)}
+          </p>
+          <p className="text-gray-300">
+            <span className="font-semibold text-white">Voting Starts:</span>{" "}
+            {formatDateTime(votingStartTime)}
+          </p>
+          <p className="text-gray-300">
+            <span className="font-semibold text-white">Contest Ends:</span>{" "}
+            {formatDateTime(contestEndTime)}
+          </p>
+          <div className="mt-6 bg-[#2c2c2e] p-4 rounded-lg">
+            {renderCountdown()}
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
-{activeTab === 'rules' && currentTime < votingStartTime && (
+      {currentTime < votingStartTime && (
         <section className="mb-12 bg-[#171717] shadow-md rounded-lg overflow-hidden">
-          <h2 
+          <h2
             className="text-2xl font-semibold text-white bg-[#7c2ccd] p-4 cursor-pointer flex justify-between items-center"
             onClick={() => setShowRules(!showRules)}
           >
             Rules
-            <span>{showRules ? '▲' : '▼'}</span>
+            {showRules ? <ChevronUp className="border border-white rounded-full p-1 h-9 w-9 hover:text-gray-400" /> : <ChevronDown className="border border-white rounded-full p-1 h-9 w-9 hover:text-gray-400" />}
           </h2>
           {showRules && (
             <div className="relative">
