@@ -37,6 +37,9 @@ const Footer = () => {
           </div>
         </div>
         <div className="mt-8 text-center text-gray-500 border-t border-[#2c2c2e] pt-4">
+          Made with &#128151; by The PRS.
+        </div>
+        <div className="mt-8 text-center text-gray-500 pt-1">
           &copy; 2024 DTU Pixels. All rights reserved.
         </div>
       </div>
