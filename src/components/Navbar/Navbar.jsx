@@ -124,7 +124,7 @@ const Navbar = () => {
         </div>
 
         {/* Desktop menu */}
-        <div className="hidden grow items-start lg:flex pt-1">
+        <div className="hidden grow items-start lg:flex ">
           <ul className="ml-12 inline-flex space-x-8">
             {menuItems.map((item) => (
               <li key={item.name} className="relative group">
@@ -157,7 +157,7 @@ const Navbar = () => {
                   }`}
               >
                 <img
-                  className="rounded-full w-10 h-10"
+                  className="rounded-full w-8 h-8"
                   src={user.photoURL}
                   alt="User profile"
                 />

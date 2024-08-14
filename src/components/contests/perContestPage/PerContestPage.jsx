@@ -155,7 +155,7 @@ function PerContestPage() {
 
   UplaodService.setContestId(contestId);
 
- const formatDateTime = (date) => {
+  const formatDateTime = (date) => {
     return date.toLocaleString("en-US", {
       year: "numeric",
       month: "long",
@@ -173,7 +173,9 @@ function PerContestPage() {
             <p className="font-semibold text-white">Contest Starts In:</p>
             <Countdown targetDate={contestStartTime} />
             <br />
-            <p className="text-gray-300">Please Register to take part in the Contest.</p>
+            <p className="text-gray-300">
+              Please Register to take part in the Contest.
+            </p>
           </div>
         );
       case "votingStart":
@@ -182,7 +184,9 @@ function PerContestPage() {
             <p className="font-semibold text-white">Voting Starts In:</p>
             <Countdown targetDate={votingStartTime} />
             <br />
-            <p className="text-gray-300">Contestants should Upload their Entries</p>
+            <p className="text-gray-300">
+              Contestants should Upload their Entries
+            </p>
           </div>
         );
       case "contestEnd":
@@ -191,7 +195,9 @@ function PerContestPage() {
             <p className="font-semibold text-white">Contest Ends In:</p>
             <Countdown targetDate={contestEndTime} />
             <br />
-            <p className="text-gray-300">Voting has started. Please feel free to vote.</p>
+            <p className="text-gray-300">
+              Voting has started. Please feel free to vote.
+            </p>
           </div>
         );
       case "ended":
@@ -265,9 +271,7 @@ function PerContestPage() {
           </h2>
           <ul className="p-6 space-y-4 list-decimal list-inside text-gray-300">
             {rules.map((rule, index) => (
-              <li key={index}>
-                {rule}
-              </li>
+              <li key={index}>{rule}</li>
             ))}
           </ul>
         </section>
