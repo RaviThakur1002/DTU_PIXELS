@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useGallery } from '../contexts/GalleryContext';
 import { NavLink } from 'react-router-dom';
+import LoadingSpinner from '../Utilities/LoadingSpinner';
 
 const HallOfFame = () => {
   const { allGalleryData, isLoading, error } = useGallery();
   const [hallOfFameData, setHallOfFameData] = useState([]);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
 
   useEffect(() => {
     if (allGalleryData) {
@@ -38,8 +40,23 @@ const HallOfFame = () => {
     }
   }, [allGalleryData]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  useEffect(() => {
+    if (hallOfFameData.length > 0) {
+      const imagePromises = hallOfFameData.map((winner) => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.src = winner.winnerPhoto;
+          img.onload = resolve;
+          img.onerror = resolve; // Resolve on error to prevent the loader from being stuck
+        });
+      });
+
+      Promise.all(imagePromises).then(() => setImagesLoaded(true));
+    }
+  }, [hallOfFameData]);
+
+  if (isLoading || !imagesLoaded) {
+    return <LoadingSpinner />;
   }
 
   if (error) {
