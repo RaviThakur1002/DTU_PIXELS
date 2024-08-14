@@ -1,9 +1,70 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import photographerImage from './camera.png';
 import Contact from '../Footer/Contact';
 import Info from './Info';
 import Gallery from './Gallery';
+
+const CanvasEffect = () => {
+  const canvasRef = useRef(null);
+  const contextRef = useRef(null);
+  const particlesRef = useRef([]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    const context = canvas.getContext('2d');
+    contextRef.current = context;
+
+    const resizeHandler = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    window.addEventListener('resize', resizeHandler);
+
+    // Create particles
+    for (let i = 0; i < 50; i++) {
+      particlesRef.current.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 2 + 1,
+        color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.5)`,
+        speedX: Math.random() * 3 - 1.5,
+        speedY: Math.random() * 3 - 1.5
+      });
+    }
+
+    const animate = () => {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      
+      particlesRef.current.forEach(particle => {
+        particle.x += particle.speedX;
+        particle.y += particle.speedY;
+
+        if (particle.x < 0 || particle.x > canvas.width) particle.speedX *= -1;
+        if (particle.y < 0 || particle.y > canvas.height) particle.speedY *= -1;
+
+        context.beginPath();
+        context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+        context.fillStyle = particle.color;
+        context.fill();
+      });
+
+      requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', resizeHandler);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} style={{ position: 'fixed', top: 0, left: 0, pointerEvents: 'none' }} />;
+};
 
 const HomeScreen = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -35,10 +96,12 @@ const HomeScreen = () => {
       initial="hidden"
       animate={isVisible ? "visible" : "hidden"}
       variants={stagger}
-      className="bg-gradient-to-b from-[#000000] via-[#171717] to-[#2c2c2e]"
+      className="bg-[#000000] relative"
     >
+     
+      <CanvasEffect />
       <motion.div 
-        className="text-white p-8"
+        className="text-white p-8 relative z-10"
         variants={fadeInUp}
       >
         <div className="max-w-7xl mx-auto">
@@ -106,16 +169,20 @@ const HomeScreen = () => {
           </motion.div>
         </div>
       </motion.div>
-
-      <div>
-        <Info />
+      {/* Placeholder for Info component */}
+      <div className="relative z-10">
+       <Info />
       </div>
       
-      <div>
-        <Gallery />
+      {/* Placeholder for Gallery component */}
+      <div className="relative z-10">
+       
+       <Gallery />
       </div>
       
-      <div>
+      {/* Placeholder for Contact component */}
+      <div className="relative z-10">
+       
         <Contact />
       </div>
     </motion.div>

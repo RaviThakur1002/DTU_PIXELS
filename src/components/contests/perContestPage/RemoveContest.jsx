@@ -99,7 +99,12 @@ function RemoveContest({ contestId }) {
         </div>
       )}
 
-      <button className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full" onClick={() => handleClick()}>Remove Contest</button>
+      <button 
+  className="bg-gradient-to-r from-[#b00bef] to-[#6528d7] hover:from-[#c638ab] hover:to-[#5a23c0] text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out"
+  onClick={() => handleClick()}
+>
+  Remove Contest
+</button>
     </div>
   );
 }

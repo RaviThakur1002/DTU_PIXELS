@@ -10,17 +10,17 @@ const SliderSection = styled.section`
 const SliderContainer = styled.div`
   width: 100%;
   overflow: hidden;
-  padding: 20px 0;
-`;
+  padding: 10px 0; `;
 
 const SliderTrack = styled.div`
   display: flex;
   transition: transform 0.5s ease;
+  padding: 30px 0; 
 `;
 
 const Card = styled.div`
   flex: 0 0 250px;
-  height: 350px;
+  height: 250px;
   margin: 0 10px;
   border-radius: 10px;
   overflow: hidden;
@@ -31,8 +31,10 @@ const Card = styled.div`
   perspective: 1500px;
   transform-style: preserve-3d;
   background: #2c2c2e;
+  position: relative; 
   &:hover {
-    transform: scale(1.05) rotateY(10deg) rotateX(5deg) translateZ(30px);
+    z-index: 1; 
+    transform: scale(1.05) translateY(-30px) translateZ(20px);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
   }
 `;
@@ -59,7 +61,8 @@ const SubHeading = styled.p`
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 2px;
-  margin-bottom: 30px;
+margin-top: 10px;
+  margin-bottom: 10px;
 `;
 
 

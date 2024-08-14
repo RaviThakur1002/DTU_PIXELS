@@ -31,18 +31,18 @@ function Standings({ contestId }) {
   const currentSubmissions = submissions.slice(indexOfFirstSubmission, indexOfLastSubmission);
 
   return (
-    <div className="container mx-auto px-4 py-8 bg-gray-900 text-white">
-      <h2 className="text-3xl font-bold text-center mb-6">Contest Standings</h2>
-      <div className="overflow-x-auto bg-gray-800 rounded-lg shadow">
+    <div className="container mx-auto px-4 py-8 bg-gradient-to-b from-[#000000] via-[#171717] to-[#2c2c2e] text-white">
+      <h2 className="text-3xl font-bold text-center mb-6 bg-gradient-to-r from-[#6528d7] via-[#c638ab] to-[#b00bef] text-transparent bg-clip-text">Contest Standings</h2>
+      <div className="overflow-x-auto bg-[#171717] rounded-lg shadow">
         <table className="min-w-full table-fixed">
-          <thead className="bg-gray-700">
+          <thead className="bg-[#2c2c2e]">
             <tr>
-              <th className="w-1/3 px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Rank</th>
-              <th className="w-1/3 px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">User</th>
-              <th className="w-1/3 px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Likes</th>
+              <th className="w-1/3 px-6 py-3 text-center text-xs font-medium text-[#cba6f7] uppercase tracking-wider">Rank</th>
+              <th className="w-1/3 px-6 py-3 text-center text-xs font-medium text-[#cba6f7] uppercase tracking-wider">User</th>
+              <th className="w-1/3 px-6 py-3 text-center text-xs font-medium text-[#cba6f7] uppercase tracking-wider">Likes</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-700">
+         <tbody className="divide-y divide-[#2c2c2e]">
             {currentSubmissions.map((submission, index) => (
               <tr key={submission.submissionId} className={index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'}>
                 <td className="w-1/3 px-6 py-4 whitespace-nowrap">
@@ -63,8 +63,8 @@ function Standings({ contestId }) {
           </tbody>
         </table>
       </div>
-      {submissions.length === 0 && (
-        <p className="text-center text-gray-500 mt-4">No submissions found.</p>
+{submissions.length === 0 && (
+        <p className="text-center text-[#cba6f7] mt-4">No submissions found.</p>
       )}
       
       {submissions.length > postsPerPage && (
@@ -82,13 +82,13 @@ function Standings({ contestId }) {
 function getRankStyle(index) {
   switch (index) {
     case 0:
-      return 'bg-yellow-500 text-white font-bold';
+      return 'bg-[#b00bef] text-white font-bold';
     case 1:
-      return 'bg-gray-600 text-gray-200 font-bold';
+      return 'bg-[#c638ab] text-white font-bold';
     case 2:
-      return 'bg-yellow-600 text-white font-bold';
+      return 'bg-[#6528d7] text-white font-bold';
     default:
-      return 'bg-gray-700 text-gray-300';
+      return 'bg-[#2c2c2e] text-gray-300';
   }
 }
 

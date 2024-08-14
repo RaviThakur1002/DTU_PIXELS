@@ -52,9 +52,9 @@ function Profile() {
   }
 
   return (
-   <div className="w-full mx-auto p-4 bg-gray-900 text-white min-h-screen">
+   <div className="w-full mx-auto p-4 bg-[#101010] text-white min-h-screen">
       <GalleryProvider>
-        <Gallery userName={user.displayName} />
+        <Gallery userName={user.displayName} isProfile={true} />
       </GalleryProvider>
     </div>
   );
