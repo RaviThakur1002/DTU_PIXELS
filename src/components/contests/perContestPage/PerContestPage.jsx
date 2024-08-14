@@ -15,6 +15,8 @@ function PerContestPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentStage, setCurrentStage] = useState(null);
+  const [showRules, setShowRules] = useState(false);
+  const [activeTab, setActiveTab] = useState("timeline");
 
   const rules = [
     "Eligibility: Each participant can submit only one entry per contest.",
@@ -158,7 +160,7 @@ function PerContestPage() {
   const formatDateTime = (date) => {
     return date.toLocaleString("en-US", {
       year: "numeric",
-      month: "long",
+      month: "numeric",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
@@ -209,71 +211,96 @@ function PerContestPage() {
 
   return (
     <div className="mx-auto p-6 font-sans bg-gradient-to-b from-[#080808] to-[#171717] text-white">
-  <div className="flex justify-between">
-  <button
-    onClick={() => navigate("/contest")}
-    className="flex items-center text-[#cba6f7] font-bold mb-4 bg-[#1e1e2e] rounded-full px-4 py-2 hover:bg-[#313244] transition-colors duration-200"
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-5 w-5 mr-2"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M15 18l-6-6 6-6" />
-    </svg>
-    Go Back to Contests
-  </button>
-  {currentTime > contestEndTime ? null : (
-    <RemoveContest contestId={contestId} />
-  )}
-</div>
+      <div className="flex justify-between">
+        <button
+          onClick={() => navigate("/contest")}
+          className="flex items-center text-[#cba6f7] font-bold mb-4 bg-[#1e1e2e] rounded-full px-4 py-2 hover:bg-[#313244] transition-colors duration-200"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 mr-2"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+          Go Back to Contests
+        </button>
+        {currentTime > contestEndTime ? null : (
+          <RemoveContest contestId={contestId} />
+        )}
+      </div>
 
-   <h1 className="text-4xl font-bold text-[#cba6f7] border-b-2 border-[#6528d7] pb-4 mb-8 bg-gradient-to-r from-[#6528d7] via-[#c638ab] to-[#b00bef] text-transparent bg-clip-text">
+      <h1 className="text-4xl font-bold text-[#cba6f7] border-b-2 border-[#6528d7] pb-4 mb-8 bg-gradient-to-r from-[#6528d7] via-[#c638ab] to-[#b00bef] text-transparent bg-clip-text">
         Contest No- {contestId}, Theme- {contestData.theme}
       </h1>
 
-        <section className="mb-12 bg-[#171717] shadow-md rounded-lg overflow-hidden">
-        <h2 className="text-2xl font-semibold text-white bg-[#7c2ccd] p-4">
-          Contest Timeline
-        </h2>
-        <div className="p-6 space-y-2">
-          <p className="text-gray-300">
-            <span className="font-semibold text-white">Registration Ends:</span>{" "}
-            {formatDateTime(registrationEndTime)}
-          </p>
-          <p className="text-gray-300">
-            <span className="font-semibold text-white">Contest Starts:</span>{" "}
-            {formatDateTime(contestStartTime)}
-          </p>
-          <p className="text-gray-300">
-            <span className="font-semibold text-white">Voting Starts:</span>{" "}
-            {formatDateTime(votingStartTime)}
-          </p>
-          <p className="text-gray-300">
-            <span className="font-semibold text-white">Contest Ends:</span>{" "}
-            {formatDateTime(contestEndTime)}
-          </p>
-          <div className="mt-6 bg-[#2c2c2e] p-4 rounded-lg">
-            {renderCountdown()}
-          </div>
-        </div>
-      </section>
+      <div className="mb-4 flex  justify-evenly">
+        <button
+          className={`py-2 px-4 ${activeTab === "timeline" ? "border-b-2 border-[#cba6f7] text-[#cba6f7]" : "text-gray-400"}`}
+          onClick={() => setActiveTab("timeline")}
+        >
+          Timeline
+        </button>
+        <button
+          className={`py-2 px-4 ${activeTab === "rules" ? "border-b-2 border-[#cba6f7] text-[#cba6f7]" : "text-gray-400"}`}
+          onClick={() => setActiveTab("rules")}
+        >
+          Rules
+        </button>
+      </div>
 
-      {currentTime < votingStartTime && (
+      {activeTab === "timeline" && (
         <section className="mb-12 bg-[#171717] shadow-md rounded-lg overflow-hidden">
-          <h2 className="text-2xl font-semibold text-white bg-[#7c2ccd]  p-4">
-            Rules
+          <h2 className="text-2xl font-semibold text-white bg-[#7c2ccd] p-4">
+            Contest Timeline
           </h2>
-          <ul className="p-6 space-y-4 list-decimal list-inside text-gray-300">
-            {rules.map((rule, index) => (
-              <li key={index}>{rule}</li>
-            ))}
-          </ul>
+          <div className="p-6 space-y-2">
+            <p className="text-gray-300">
+              <span className="font-semibold text-white">
+                Registration Ends:
+              </span>{" "}
+              {formatDateTime(registrationEndTime)}
+            </p>
+            <p className="text-gray-300">
+              <span className="font-semibold text-white">Contest Starts:</span>{" "}
+              {formatDateTime(contestStartTime)}
+            </p>
+            <p className="text-gray-300">
+              <span className="font-semibold text-white">Voting Starts:</span>{" "}
+              {formatDateTime(votingStartTime)}
+            </p>
+            <p className="text-gray-300">
+              <span className="font-semibold text-white">Contest Ends:</span>{" "}
+              {formatDateTime(contestEndTime)}
+            </p>
+            <div className="mt-6 bg-[#2c2c2e] p-4 rounded-lg">
+              {renderCountdown()}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {activeTab === "rules" && currentTime < votingStartTime && (
+        <section className="mb-12 bg-[#171717] shadow-md rounded-lg overflow-hidden">
+          <h2
+            className="text-2xl font-semibold text-white bg-[#7c2ccd] p-4 cursor-pointer flex justify-between items-center"
+            onClick={() => setShowRules(!showRules)}
+          >
+            Rules
+            <span>{showRules ? "▲" : "▼"}</span>
+          </h2>
+          {showRules && (
+            <ul className="p-6 space-y-4 list-decimal list-inside text-gray-300">
+              {rules.map((rule, index) => (
+                <li key={index}>{rule}</li>
+              ))}
+            </ul>
+          )}
         </section>
       )}
 
