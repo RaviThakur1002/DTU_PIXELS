@@ -35,7 +35,7 @@ export function Countdown({ targetDate }) {
 
     return (
       <span key={interval}>
-        {timeLeft[interval]} {interval}{" "}
+        {(interval === "seconds" ? timeLeft[interval] : timeLeft[interval].toString() + " : ")}
       </span>
     );
   });

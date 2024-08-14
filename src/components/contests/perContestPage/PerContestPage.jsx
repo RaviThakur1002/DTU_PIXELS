@@ -6,6 +6,7 @@ import LoadingSpinner from "../../Utilities/LoadingSpinner";
 import Countdown from "./Countdown";
 import RemoveContest from "./RemoveContest";
 import ContestActions from "./ContestActions";
+import { ChevronUp, ChevronDown } from "lucide-react";
 
 function PerContestPage() {
   const { contestId } = useParams();
@@ -15,6 +16,7 @@ function PerContestPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentStage, setCurrentStage] = useState(null);
+  const [showRules, setShowRules] = useState(false);
 
   const rules = [
     "Eligibility: Each participant can submit only one entry per contest.",
@@ -155,10 +157,10 @@ function PerContestPage() {
 
   UplaodService.setContestId(contestId);
 
- const formatDateTime = (date) => {
+  const formatDateTime = (date) => {
     return date.toLocaleString("en-US", {
       year: "numeric",
-      month: "long",
+      month: "numeric",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
@@ -173,7 +175,9 @@ function PerContestPage() {
             <p className="font-semibold text-white">Contest Starts In:</p>
             <Countdown targetDate={contestStartTime} />
             <br />
-            <p className="text-gray-300">Please Register to take part in the Contest.</p>
+            <p className="text-gray-300">
+              Please Register to take part in the Contest.
+            </p>
           </div>
         );
       case "votingStart":
@@ -182,7 +186,9 @@ function PerContestPage() {
             <p className="font-semibold text-white">Voting Starts In:</p>
             <Countdown targetDate={votingStartTime} />
             <br />
-            <p className="text-gray-300">Contestants should Upload their Entries</p>
+            <p className="text-gray-300">
+              Contestants should Upload their Entries
+            </p>
           </div>
         );
       case "contestEnd":
@@ -191,7 +197,9 @@ function PerContestPage() {
             <p className="font-semibold text-white">Contest Ends In:</p>
             <Countdown targetDate={contestEndTime} />
             <br />
-            <p className="text-gray-300">Voting has started. Please feel free to vote.</p>
+            <p className="text-gray-300">
+              Voting has started. Please feel free to vote.
+            </p>
           </div>
         );
       case "ended":
@@ -203,35 +211,35 @@ function PerContestPage() {
 
   return (
     <div className="mx-auto p-6 font-sans bg-gradient-to-b from-[#080808] to-[#171717] text-white">
-  <div className="flex justify-between">
-  <button
-    onClick={() => navigate("/contest")}
-    className="flex items-center text-[#cba6f7] font-bold mb-4 bg-[#1e1e2e] rounded-full px-4 py-2 hover:bg-[#313244] transition-colors duration-200"
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-5 w-5 mr-2"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M15 18l-6-6 6-6" />
-    </svg>
-    Go Back to Contests
-  </button>
-  {currentTime > contestEndTime ? null : (
-    <RemoveContest contestId={contestId} />
-  )}
-</div>
+      <div className="flex justify-between">
+        <button
+          onClick={() => navigate("/contest")}
+          className="flex items-center text-[#cba6f7] font-bold mb-4 bg-[#1e1e2e] rounded-full px-4 py-2 hover:bg-[#313244] transition-colors duration-200"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 mr-2"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+          Go Back to Contests
+        </button>
+        {currentTime > contestEndTime ? null : (
+          <RemoveContest contestId={contestId} />
+        )}
+      </div>
 
-   <h1 className="text-4xl font-bold text-[#cba6f7] border-b-2 border-[#6528d7] pb-4 mb-8 bg-gradient-to-r from-[#6528d7] via-[#c638ab] to-[#b00bef] text-transparent bg-clip-text">
+      <h1 className="text-4xl font-bold text-[#cba6f7] border-b-2 border-[#6528d7] pb-4 mb-8 bg-gradient-to-r from-[#6528d7] via-[#c638ab] to-[#b00bef] text-transparent bg-clip-text">
         Contest No- {contestId}, Theme- {contestData.theme}
       </h1>
 
-        <section className="mb-12 bg-[#171717] shadow-md rounded-lg overflow-hidden">
+      <section className="mb-12 bg-[#171717] shadow-md rounded-lg overflow-hidden">
         <h2 className="text-2xl font-semibold text-white bg-[#7c2ccd] p-4">
           Contest Timeline
         </h2>
@@ -260,16 +268,26 @@ function PerContestPage() {
 
       {currentTime < votingStartTime && (
         <section className="mb-12 bg-[#171717] shadow-md rounded-lg overflow-hidden">
-          <h2 className="text-2xl font-semibold text-white bg-[#7c2ccd]  p-4">
+          <h2
+            className="text-2xl font-semibold text-white bg-[#7c2ccd] p-4 cursor-pointer flex justify-between items-center"
+            onClick={() => setShowRules(!showRules)}
+          >
             Rules
+            {showRules ? <ChevronUp className="border border-white rounded-full p-1 h-9 w-9 hover:text-gray-400" /> : <ChevronDown className="border border-white rounded-full p-1 h-9 w-9 hover:text-gray-400" />}
           </h2>
-          <ul className="p-6 space-y-4 list-decimal list-inside text-gray-300">
-            {rules.map((rule, index) => (
-              <li key={index}>
-                {rule}
-              </li>
-            ))}
-          </ul>
+          {showRules && (
+            <div className="relative">
+              <div className="p-6 overflow-x-auto">
+                <div className="p-1 whitespace-nowrap">
+                  {rules.map((rule, index) => (
+                    <div key={index} className="flex-none p-1 pl-1 w-80">
+                      <span className="font-bold">{index + 1}.</span> {rule}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </section>
       )}
 
