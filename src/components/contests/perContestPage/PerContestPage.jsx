@@ -285,21 +285,27 @@ function PerContestPage() {
         </section>
       )}
 
-      {activeTab === "rules" && currentTime < votingStartTime && (
+{activeTab === 'rules' && currentTime < votingStartTime && (
         <section className="mb-12 bg-[#171717] shadow-md rounded-lg overflow-hidden">
-          <h2
+          <h2 
             className="text-2xl font-semibold text-white bg-[#7c2ccd] p-4 cursor-pointer flex justify-between items-center"
             onClick={() => setShowRules(!showRules)}
           >
             Rules
-            <span>{showRules ? "▲" : "▼"}</span>
+            <span>{showRules ? '▲' : '▼'}</span>
           </h2>
           {showRules && (
-            <ul className="p-6 space-y-4 list-decimal list-inside text-gray-300">
-              {rules.map((rule, index) => (
-                <li key={index}>{rule}</li>
-              ))}
-            </ul>
+            <div className="relative">
+              <div className="p-6 overflow-x-auto">
+                <div className="p-1 whitespace-nowrap">
+                  {rules.map((rule, index) => (
+                    <div key={index} className="flex-none p-1 pl-1 w-80">
+                      <span className="font-bold">{index + 1}.</span> {rule}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           )}
         </section>
       )}
