@@ -119,6 +119,9 @@ function ContestActions({
         setMessageWithTimer("Registration failed. Please reload.", "error");
       }
     }
+    else{
+      setMessageWithTimer("You must be logged in to register.", "error");
+    }
   };
 
   if (loading) {

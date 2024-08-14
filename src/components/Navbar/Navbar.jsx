@@ -217,7 +217,7 @@ const Navbar = () => {
             </div>
           ) : (
             <button
-              className={`flex items-center justify-center mt-1 px-3 py-2 ${isFloating ? "text-black" : "bg-white text-gray-900"
+              className={`flex items-center justify-center px-3 py-2 ${isFloating ? "bg-white text-black" : "bg-white text-gray-900"
                 } border border-[#c638ab] rounded-md shadow-sm hover:bg-gray-200  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 transition-colors duration-300`}
               onClick={authService.googleSignIn}
             >
