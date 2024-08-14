@@ -19,11 +19,14 @@ function PerContestPage() {
   const [showRules, setShowRules] = useState(false);
 
   const rules = [
+    "Contest Phases: The contest will proceed in three phases - Registration, Submission, and Voting.",
+    "Registration: Participants must register before the specified deadline to be eligible for the contest.",
+    "Submission Phase: After registration, participants can submit their entries during the submission window.",
     "Eligibility: Each participant can submit only one entry per contest.",
     "Submission Guidelines: All entries must be original and captured by the participant. Photos must be submitted in JPEG or PNG format, with a file size not exceeding 20 MB, and must adhere to the contest theme.",
     "Editing and Alterations: Basic editing (e.g., cropping, brightness/contrast adjustment) is allowed, but extensive manipulations are not permitted. Filters should not alter the integrity of the original photo.",
     "Copyright and Ownership: Participants retain full copyright of their work. By submitting an entry, participants grant DTU PIXELS the right to use the images for promotional purposes, with credit to the photographer.",
-    "Judging Criteria: Entries will be judged based on creativity, relevance to the theme, and overall visual appeal. The decision will be done on the basis of most votes.",
+    "Judging Criteria: The decision will be done on the basis of most votes.",
     "Disqualification: Any form of plagiarism or failure to adhere to the theme or guidelines will result in disqualification.",
     "Submission Deadlines: Entries must be submitted before the contest end date and time. Late submissions will not be considered.",
     "Fair Play: Participants should not engage in unethical practices, including vote manipulation or derogatory comments about other submissions.",
