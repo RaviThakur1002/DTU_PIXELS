@@ -1,4 +1,11 @@
-import React, { useState, useCallback, useEffect, useRef, memo, useMemo } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  memo,
+  useMemo,
+} from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaSync, FaTimes } from "react-icons/fa";
 import { useInView } from "react-intersection-observer";
@@ -7,7 +14,7 @@ import "./Gallery.css";
 const LazyImage = memo(({ src, alt, className, onClick }) => {
   const [ref, inView] = useInView({
     triggerOnce: true,
-    rootMargin: '200px 0px',
+    rootMargin: "200px 0px",
   });
 
   return (
@@ -21,73 +28,99 @@ const LazyImage = memo(({ src, alt, className, onClick }) => {
   );
 });
 
-const Article = memo(({ id, photoUrl, userName, quote, onClick, isProfile, gridColumns }) => {
-  const [isFlipped, setIsFlipped] = useState(false);
+const Article = memo(
+  ({ id, photoUrl, userName, quote, onClick, isProfile, gridColumns }) => {
+    const [isFlipped, setIsFlipped] = useState(false);
+    const flipTimeoutRef = useRef(null);
 
-  const handleFlip = useCallback((e) => {
-    e.stopPropagation();
-    setIsFlipped(prev => !prev);
-  }, []);
+    const handleFlip = useCallback((e) => {
+      e.stopPropagation();
+      setIsFlipped((prev) => !prev);
+    }, []);
 
-  const aspectRatioClass = useMemo(() => {
-    switch(gridColumns) {
-      case 1: return 'aspect-[12/13]';
-      case 2: return 'aspect-[5/5]';
-      case 3: return 'aspect-[6/6]';
-      case 4: return 'aspect-[3/3]';
-      default: return 'aspect-[5/6]';
-    }
-  }, [gridColumns]);
+    useEffect(() => {
+      if (isFlipped) {
+        flipTimeoutRef.current = setTimeout(() => {
+          setIsFlipped(false);
+        }, 10000); 
+      }
 
-  return (
-    <div className="p-2 rounded-xl shadow-md bg-[#101010] border border-[#525252]">
-      <div className={`relative w-full ${aspectRatioClass} perspective-1000`}>
-        <motion.div
-          className="w-full h-full preserve-3d"
-          animate={{ rotateY: isFlipped ? 180 : 0 }}
-          transition={{ duration: 0.5, ease: "linear" }}
-        >
-          <div className="absolute w-full h-full backface-hidden">
-            <LazyImage
-              src={photoUrl}
-              alt={userName}
-              className="h-full w-full object-cover rounded-xl cursor-pointer"
-              onClick={onClick}
-            />
-          </div>
-          {/* Back of the card */}
-          <div className="absolute w-full h-full backface-hidden rotate-y-180 bg-black flex flex-col items-center justify-center p-2 sm:p-4 rounded-xl">
-            <div className="text-center w-full">
-              <svg
-                className="w-6 h-6 sm:w-8 sm:h-8 text-[#4C1A75] mb-2 sm:mb-4 mx-auto"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-              </svg>
-              <p className="text-[#CC3DAB] italic text-xs sm:text-sm md:text-base lg:text-lg font-fira-sans line-clamp-4 sm:line-clamp-6">"{quote}"</p>
+      return () => {
+        if (flipTimeoutRef.current) {
+          clearTimeout(flipTimeoutRef.current);
+        }
+      };
+    }, [isFlipped]);
+
+    const aspectRatioClass = useMemo(() => {
+      switch (gridColumns) {
+        case 1:
+          return "aspect-[12/13]";
+        case 2:
+          return "aspect-[5/5]";
+        case 3:
+          return "aspect-[6/6]";
+        case 4:
+          return "aspect-[3/3]";
+        default:
+          return "aspect-[5/6]";
+      }
+    }, [gridColumns]);
+
+    return (
+      <div className="p-2 rounded-xl shadow-md bg-[#101010] border border-[#525252]">
+        <div className={`relative w-full ${aspectRatioClass} perspective-1000`}>
+          <motion.div
+            className="w-full h-full preserve-3d"
+            animate={{ rotateY: isFlipped ? 180 : 0 }}
+            transition={{ duration: 0.5, ease: "linear" }}
+          >
+            <div className="absolute w-full h-full backface-hidden">
+              <LazyImage
+                src={photoUrl}
+                alt={userName}
+                className="h-full w-full object-cover rounded-xl cursor-pointer"
+                onClick={onClick}
+              />
             </div>
-          </div>
-        </motion.div>
-        <button
-          className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 bg-black bg-opacity-50 text-white p-1 sm:p-2 rounded-full hover:bg-opacity-75 transition-all duration-300 z-10"
-          onClick={handleFlip}
-        >
-          <FaSync className="text-xs sm:text-sm md:text-base" />
-        </button>
-      </div>
-      {!isProfile && (
-        <div className="p-2 sm:p-5 pb-0">
-          <article className="flex items-center justify-start">
-            <ul>
-              <li className="text-[#cba6f7] font-bold text-xs sm:text-sm md:text-base">{userName}</li>
-            </ul>
-          </article>
+            {/* Back of the card */}
+            <div className="absolute w-full h-full backface-hidden rotate-y-180 bg-black flex flex-col items-center justify-center p-2 sm:p-4 rounded-xl">
+              <div className="text-center w-full">
+                <svg
+                  className="w-6 h-6 sm:w-8 sm:h-8 text-[#4C1A75] mb-2 sm:mb-4 mx-auto"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                </svg>
+                <p className="text-[#CC3DAB] italic text-xs sm:text-sm md:text-base lg:text-lg font-fira-sans line-clamp-4 sm:line-clamp-6">
+                  "{quote}"
+                </p>
+              </div>
+            </div>
+          </motion.div>
+          <button
+            className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 bg-black bg-opacity-50 text-white p-1 sm:p-2 rounded-full hover:bg-opacity-75 transition-all duration-300 z-10"
+            onClick={handleFlip}
+          >
+            <FaSync className="text-xs sm:text-sm md:text-base" />
+          </button>
         </div>
-      )}
-    </div>
-  );
-});
+        {!isProfile && (
+          <div className="p-2 sm:p-5 pb-0">
+            <article className="flex items-center justify-start">
+              <ul>
+                <li className="text-[#cba6f7] font-bold text-xs sm:text-sm md:text-base">
+                  {userName}
+                </li>
+              </ul>
+            </article>
+          </div>
+        )}
+      </div>
+    );
+  },
+);
 
 const Images = memo(({ imageData, isProfile, gridColumns }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -110,7 +143,7 @@ const Images = memo(({ imageData, isProfile, gridColumns }) => {
 
   const prevImage = useCallback(() => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + imageData.length) % imageData.length
+      (prevIndex) => (prevIndex - 1 + imageData.length) % imageData.length,
     );
   }, [imageData.length]);
 
@@ -175,12 +208,17 @@ const Images = memo(({ imageData, isProfile, gridColumns }) => {
   }, [isPopupOpen, nextImage, prevImage]);
 
   const gridClass = useMemo(() => {
-    switch(gridColumns) {
-      case 1: return 'grid-cols-1';
-      case 2: return 'grid-cols-2';
-      case 3: return 'grid-cols-3';
-      case 4: return 'grid-cols-4';
-      default: return 'grid-cols-1';
+    switch (gridColumns) {
+      case 1:
+        return "grid-cols-1";
+      case 2:
+        return "grid-cols-2";
+      case 3:
+        return "grid-cols-3";
+      case 4:
+        return "grid-cols-4";
+      default:
+        return "grid-cols-1";
     }
   }, [gridColumns]);
 
