@@ -26,7 +26,7 @@ export function Countdown({ targetDate }) {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [targetDate]);
+  });
 
   const timerComponents = [];
 
