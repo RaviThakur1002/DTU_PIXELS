@@ -7,6 +7,10 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Environment variables
+.env
+
+# Node modules
 node_modules
 bun.lockb
 dist
@@ -28,3 +32,4 @@ dist-ssr
 /.pnp
 .pnp.js
 package-lock.json
+
