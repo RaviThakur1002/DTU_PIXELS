@@ -5,6 +5,8 @@ import { faTrophy } from '@fortawesome/free-solid-svg-icons';
 import Pagination from '../../Utilities/Pagination';
 import { NavLink } from 'react-router-dom';
 import { useContest } from '../../contexts/ContestContext';
+import LoginModal from '../../Utilities/LoginModal';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const contestsPerPage = 4;
 
@@ -12,6 +14,7 @@ const ContestPage = () => {
   const { allContestData } = useContest();
   const [pastPage, setPastPage] = useState(1);
   const [currentTime, setCurrentTime] = useState(new Date().getTime());
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -19,6 +22,15 @@ const ContestPage = () => {
     }, 60000); // Update every minute
 
     return () => clearInterval(timer);
+  }, []);
+  
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user); 
+    });
+
+    return () => unsubscribe(); 
   }, []);
 
   const { currentContests, pastContests } = useMemo(() => {
@@ -53,6 +65,7 @@ const ContestPage = () => {
 
   return (
     <>
+      {!isLoggedIn && (<LoginModal />)}
       <div className="bg-gradient-to-b from-[#000000] to-[#171717] text-white py-20">
         <div className="container mx-auto flex flex-col items-center justify-center">
           <FontAwesomeIcon icon={faTrophy} className="text-[#cba6f7] text-8xl mb-4" />
