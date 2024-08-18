@@ -5,10 +5,10 @@ import Contact from "../Footer/Contact";
 import Info from "./Info";
 import Gallery from "./Gallery";
 import DailyQuiz, { QuizButton } from "../Quiz/DailyQuiz.jsx";
-import { getAuth } from 'firebase/auth';
-import { getDatabase, ref, get } from 'firebase/database';
-import app from '../../config/conf.js';
-
+import { getAuth } from "firebase/auth";
+import { getDatabase, ref, get } from "firebase/database";
+import app from "../../config/conf.js";
+import LoginModal from "../Utilities/LoginModal.jsx";
 
 const CanvasEffect = () => {
   const canvasRef = useRef(null);
@@ -79,27 +79,42 @@ const CanvasEffect = () => {
 const HomeScreen = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [streak, setStreak] = useState(0);
   const [longestStreak, setLongestStreak] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
-    const fetchUserData = async () => {
-      const auth = getAuth(app);
-      const db = getDatabase(app);
-      const user = auth.currentUser;
+    const auth = getAuth(app);
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsLoggedIn(!!user);
       if (user) {
-        const userRef = ref(db, `users/${user.uid}`);
-        const snapshot = await get(userRef);
-        if (snapshot.exists()) {
-          const userData = snapshot.val();
-          setStreak(userData.streak || 0);
-          setLongestStreak(userData.longestStreak || 0);
-        }
+        fetchUserData(user);
       }
-    };
-    fetchUserData();
+    });
+
+    return () => unsubscribe();
   }, []);
+
+  const fetchUserData = async (user) => {
+    const db = getDatabase(app);
+    const userRef = ref(db, `users/${user.uid}`);
+    const snapshot = await get(userRef);
+    if (snapshot.exists()) {
+      const userData = snapshot.val();
+      setStreak(userData.streak || 0);
+      setLongestStreak(userData.longestStreak || 0);
+    }
+  };
+
+  const handleQuizButtonClick = () => {
+    if (isLoggedIn) {
+      setShowQuiz(true);
+    } else {
+      setShowLoginModal(true);
+    }
+  };
 
   const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
@@ -151,8 +166,9 @@ const HomeScreen = () => {
                 Join a thriving community, unleash your creativity, connect with
                 like-minded visionaries, and elevate your craft to new heights.
               </motion.p>
-              <QuizButton 
-                onClick={() => setShowQuiz(true)} 
+              <QuizButton
+                onClick={handleQuizButtonClick}
+                className="px-6 py-3 bg-gradient-to-r from-[#6528d7] to-[#b00bef] text-white font-semibold rounded-full hover:from-[#b00bef] hover:to-[#6528d7] transition transform hover:scale-105"
               />
             </motion.div>
             <motion.div className="md:w-1/2" variants={fadeInUp}>
@@ -190,12 +206,12 @@ const HomeScreen = () => {
                     {item}
                   </span>
                 </motion.div>
-              )
+              ),
             )}
           </motion.div>
         </div>
       </motion.div>
-      
+
       {/* Info component */}
       <div className="relative z-10">
         <Info />
@@ -205,12 +221,16 @@ const HomeScreen = () => {
       <div className="relative z-10">
         <Gallery />
       </div>
-      
+
       {/* DailyQuiz component */}
       {showQuiz && (
         <div className="relative z-20">
           <DailyQuiz onClose={() => setShowQuiz(false)} />
         </div>
+      )}
+
+      {showLoginModal && (
+        <LoginModal onClose={() => setShowLoginModal(false)} />
       )}
 
       {/* Contact component */}
