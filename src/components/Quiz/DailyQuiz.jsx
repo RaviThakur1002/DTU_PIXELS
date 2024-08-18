@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { getAuth } from 'firebase/auth';
-import { getDatabase, ref, get, set } from 'firebase/database';
-import app from '../../config/conf.js';
-import { quizData } from './quizData';
-import LoadingSpinner from '../Utilities/LoadingSpinner.jsx';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import { getAuth } from "firebase/auth";
+import { getDatabase, ref, get, set } from "firebase/database";
+import app from "../../config/conf.js";
+import { quizData } from "./quizData";
+import LoadingSpinner from "../Utilities/LoadingSpinner.jsx";
 
 const Container = styled.div`
-  background: linear-gradient(135deg, #6528d7 0%, #b00bef 100%);
+  background: linear-gradient(135deg, #1f2937 0%, #000000 100%);
   color: white;
   padding: 2rem;
   border-radius: 20px;
   max-width: 600px;
   margin: 2rem auto;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 
   @media (max-width: 768px) {
@@ -23,19 +23,21 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
+  font-family: 'Poppins';
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
   text-align: center;
-  color: #f0e68c;
+  color: #c4a0ef;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-
+  
   @media (max-width: 768px) {
     font-size: 2rem;
   }
 `;
 
+
 const QuizCard = styled.div`
-  background-color: rgba(23, 23, 23, 0.8);
+  background-color:#1f2937;
   padding: 2rem;
   border-radius: 15px;
   margin-top: 1rem;
@@ -75,15 +77,17 @@ const Button = styled.button`
 `;
 
 const OptionButton = styled(Button)`
-  background-color: ${props => (props.selected ? 'rgba(101, 40, 215, 0.5)' : 'rgba(255, 255, 255, 0.1)')};
-  border: 2px solid ${props => (props.selected ? '#f0e68c' : 'transparent')};
+  background-color: ${(props) =>
+    props.selected ? "rgba(101, 40, 215, 0.5)" : "rgba(255, 255, 255, 0.1)"};
+  border: 2px solid ${(props) => (props.selected ? "#f0e68c" : "transparent")};
   color: white;
   font-weight: bold;
   margin-bottom: 1rem;
   transition: all 0.3s ease;
 
   &:hover {
-    background-color: ${props => (props.selected ? 'rgba(101, 40, 215, 0.7)' : 'rgba(255, 255, 255, 0.3)')};
+    background-color: ${(props) =>
+    props.selected ? "rgba(101, 40, 215, 0.7)" : "rgba(255, 255, 255, 0.3)"};
   }
 `;
 
@@ -132,7 +136,7 @@ const Question = styled.p`
   font-size: 1.4rem;
   margin-bottom: 1.5rem;
   text-align: center;
-  color: #f0e68c;
+  color: #D1D1D1;
 
   @media (max-width: 768px) {
     font-size: 1.2rem;
@@ -144,7 +148,7 @@ const Result = styled.div`
   text-align: center;
   font-size: 1.5rem;
   font-weight: bold;
-  color: ${props => (props.correct ? '#4caf50' : '#ff6b6b')};
+  color: ${(props) => (props.correct ? "#4caf50" : "#ff6b6b")};
 
   @media (max-width: 768px) {
     font-size: 1.3rem;
@@ -201,21 +205,49 @@ const QuizButtonContainer = styled.div`
 `;
 
 const OptionIcon = ({ number }) => (
-  <svg width="30" height="30" viewBox="0 0 30 30" style={{ marginRight: '1rem', flexShrink: 0 }}>
-    <circle cx="15" cy="15" r="14" fill="rgba(255, 255, 255, 0.2)" stroke="#f0e68c" strokeWidth="2" />
-    <text x="15" y="20" textAnchor="middle" fill="white" fontSize="14" fontWeight="bold">{number}</text>
+  <svg
+    width="30"
+    height="30"
+    viewBox="0 0 30 30"
+    style={{ marginRight: "1rem", flexShrink: 0 }}
+  >
+    <circle
+      cx="15"
+      cy="15"
+      r="14"
+      fill="rgba(255, 255, 255, 0.2)"
+      stroke="#f0e68c"
+      strokeWidth="2"
+    />
+    <text
+      x="15"
+      y="20"
+      textAnchor="middle"
+      fill="white"
+      fontSize="14"
+      fontWeight="bold"
+    >
+      {number}
+    </text>
   </svg>
 );
 
 const StreakIcon = () => (
-  <svg width="30" height="30" viewBox="0 0 24 24" style={{ marginRight: '0.75rem' }}>
-    <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z" 
-          fill="#ff6b6b" />
+  <svg
+    width="30"
+    height="30"
+    viewBox="0 0 24 24"
+    style={{ marginRight: "0.75rem" }}
+  >
+    <path
+      d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"
+      fill="#ff6b6b"
+    />
   </svg>
 );
 
 const AttemptedBadge = styled.div`
-  background-color: #ff6b6b;
+  background-color: #1e40af;
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 20px;
@@ -231,7 +263,9 @@ export const QuizButton = ({ onClick, className }) => (
   >
     Today's Quiz
   </button>
-);const DailyQuiz = ({ onClose }) => {
+);
+
+  const DailyQuiz = ({ onClose }) => {
   const [quiz, setQuiz] = useState(null);
   const [userAnswer, setUserAnswer] = useState(null);
   const [timeLeft, setTimeLeft] = useState(30);
@@ -274,16 +308,18 @@ export const QuizButton = ({ onClick, className }) => (
 
   const getCurrentDateKey = () => {
     const now = new Date();
-    return now.toISOString().split('T')[0];
+    return now.toISOString().split("T")[0];
   };
 
-const fetchTodayQuiz = () => {
-  const startDate = new Date('2024-08-18'); // Set a fixed start date
-  const today = new Date();
-  const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-  const quizIndex = daysSinceStart % quizData.length;
-  setQuiz(quizData[quizIndex]);
-};
+  const fetchTodayQuiz = () => {
+    const startDate = new Date("2024-08-18"); // Set a fixed start date
+    const today = new Date();
+    const daysSinceStart = Math.floor(
+      (today - startDate) / (1000 * 60 * 60 * 24),
+    );
+    const quizIndex = daysSinceStart % quizData.length;
+    setQuiz(quizData[quizIndex]);
+  };
 
   const checkQuizAttempted = async () => {
     const user = auth.currentUser;
@@ -319,7 +355,9 @@ const fetchTodayQuiz = () => {
   };
 
   const handleTimeUp = () => {
-    setQuizResult(`Oops! Time's up. The correct answer is: ${quiz.correctAnswer}`);
+    setQuizResult(
+      `Oops! Time's up. The correct answer is: ${quiz.correctAnswer}`,
+    );
     setQuizAttempted(true);
     updateUserData(false);
   };
@@ -330,18 +368,20 @@ const fetchTodayQuiz = () => {
       const userRef = ref(db, `users/${user.uid}`);
       const userSnapshot = await get(userRef);
       const userData = userSnapshot.val() || {};
-      
+
       let newStreak = isCorrect ? (userData.streak || 0) + 1 : 0;
       let newLongestStreak = Math.max(userData.longestStreak || 0, newStreak);
-      
-      await set(userRef, { 
+
+      await set(userRef, {
         ...userData,
-        streak: newStreak, 
+        streak: newStreak,
         longestStreak: newLongestStreak,
         lastQuizDate: getCurrentDateKey(),
-        lastQuizResult: isCorrect ? "Correct!" : `Wrong. The correct answer is: ${quiz.correctAnswer}`
+        lastQuizResult: isCorrect
+          ? "Correct!"
+          : `Wrong. The correct answer is: ${quiz.correctAnswer}`,
       });
-      
+
       setStreak(newStreak);
       setLongestStreak(newLongestStreak);
     }
@@ -350,8 +390,12 @@ const fetchTodayQuiz = () => {
   const handleQuizSubmit = async () => {
     const isCorrect = userAnswer === quiz.correctAnswer;
     await updateUserData(isCorrect);
-    
-    setQuizResult(isCorrect ? "Correct!" : `Wrong. The correct answer is: ${quiz.correctAnswer}`);
+
+    setQuizResult(
+      isCorrect
+        ? "Correct!"
+        : `Wrong. The correct answer is: ${quiz.correctAnswer}`,
+    );
     setQuizAttempted(true);
     setUserAnswer(null);
   };
@@ -364,22 +408,16 @@ const fetchTodayQuiz = () => {
     );
   }
 
-  if (loading) {
-    return (
-      <PopupContent>
-        <p>Loading...</p>
-      </PopupContent>
-    );
-  }
-
-    return (
+   return (
     <PopupOverlay>
       <PopupContent>
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <Title>Snap & Learn</Title>
 
         <QuizCard>
-          {quizAttempted ? (
+          {loading ? (
+            <LoadingSpinner quote="..." />
+          ) : quizAttempted ? (
             <div>
               <AttemptedBadge>Attempted</AttemptedBadge>
               <Question>{quiz.question}</Question>
