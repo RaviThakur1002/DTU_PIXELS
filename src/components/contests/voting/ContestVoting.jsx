@@ -29,34 +29,41 @@ const ContestVoting = () => {
             console.error("Contest ID is not set in UploadService.");
         }
     }, []);
+// In ContestVoting.jsx
 
-    useEffect(() => {
-        if (contestId) {
-            const database = getDatabase(app);
-            const contestRef = ref(database, `contests/${contestId}`);
+useEffect(() => {
+  if (contestId) {
+    const database = getDatabase(app);
+    const contestRef = ref(database, `contests/${contestId}`);
 
-            const unsubscribe = onValue(contestRef, (snapshot) => {
-                const contestData = snapshot.val();
-                if (contestData) {
-                    const { contestEndDate, contestEndTime, entries: entriesData } = contestData;
-                    const endDateTime = new Date(`${contestEndDate}T${contestEndTime}`);
-                    setContestEndDateTime(endDateTime);
-                    
-                    if (entriesData) {
-                        const entriesArray = Object.entries(entriesData).map(
-                            ([key, value]) => ({
-                                id: key,
-                                ...value,
-                            }),
-                        );
-                        setEntries(entriesArray);
-                    }
-                }
-            });
-
-            return () => unsubscribe();
+    const unsubscribe = onValue(contestRef, (snapshot) => {
+      const contestData = snapshot.val();
+      if (contestData) {
+        const { contestEndDate, contestEndTime, entries: entriesData } = contestData;
+        const endDateTime = new Date(`${contestEndDate}T${contestEndTime}`);
+        setContestEndDateTime(endDateTime);
+        
+        if (entriesData) {
+          const entriesArray = Object.entries(entriesData).map(
+            ([key, value]) => ({
+              id: key,
+              ...value,
+            }),
+          );
+          // Sort entries: winner first, then by vote count
+          entriesArray.sort((a, b) => {
+            if (a.isWinner && !b.isWinner) return -1;
+            if (!a.isWinner && b.isWinner) return 1;
+            return b.voteCount - a.voteCount || b.timestamp - a.timestamp;
+          });
+          setEntries(entriesArray);
         }
-    }, [contestId]);
+      }
+    });
+
+    return () => unsubscribe();
+  }
+}, [contestId]);
 
     useEffect(() => {
         if (contestId) {

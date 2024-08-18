@@ -7,23 +7,30 @@ function Standings({ contestId }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(10); 
 
-  useEffect(() => {
-    const fetchSubmissions = async () => {
-      const db = getDatabase();
-      const contestRef = ref(db, `contests/${contestId}/entries`);
-      const snapshot = await get(contestRef);
-      if (snapshot.exists()) {
-        const submissionsData = snapshot.val();
-        const sortedSubmissions = Object.entries(submissionsData)
-          .map(([submissionId, data]) => ({ submissionId, ...data }))
-          .sort((a, b) => b.voteCount - a.voteCount);
-        setSubmissions(sortedSubmissions);
-      } else {
-        console.log('No submissions found');
-      }
-    };
-    fetchSubmissions();
-  }, [contestId]);
+useEffect(() => {
+  const fetchSubmissions = async () => {
+    const db = getDatabase();
+    const contestRef = ref(db, `contests/${contestId}/entries`);
+    const snapshot = await get(contestRef);
+    if (snapshot.exists()) {
+      const submissionsData = snapshot.val();
+      const sortedSubmissions = Object.entries(submissionsData)
+        .map(([submissionId, data]) => ({ submissionId, ...data }))
+        .sort((a, b) => {
+          if (a.isWinner && !b.isWinner) return -1;
+          if (!a.isWinner && b.isWinner) return 1;
+          if (b.voteCount !== a.voteCount) {
+            return b.voteCount - a.voteCount;
+          }
+          return a.timestamp - b.timestamp;
+        });
+      setSubmissions(sortedSubmissions);
+    } else {
+      console.log('No submissions found');
+    }
+  };
+  fetchSubmissions();
+}, [contestId]);
 
   // Get current submissions
   const indexOfLastSubmission = currentPage * postsPerPage;

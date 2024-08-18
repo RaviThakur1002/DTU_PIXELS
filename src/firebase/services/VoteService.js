@@ -1,4 +1,4 @@
-import { getDatabase, ref, runTransaction, get } from "firebase/database";
+import { getDatabase, ref, runTransaction, get, update } from "firebase/database";
 import { getAuth } from "firebase/auth";
 import app from "../../config/conf.js";
 
@@ -27,6 +27,8 @@ class VoteService {
       photoData.voteCount = (photoData.voteCount || 0) + 1;
       return photoData;
     });
+
+    await this.updateWinnerStatus(contestId);
   }
 
   async getVotedPhoto(contestId) {
@@ -36,6 +38,36 @@ class VoteService {
     const userVoteRef = ref(this.database, `users/${user.uid}/contests/${contestId}/vote`);
     const snapshot = await get(userVoteRef);
     return snapshot.val();
+  }
+
+  async updateWinnerStatus(contestId) {
+    const contestRef = ref(this.database, `contests/${contestId}/entries`);
+    const snapshot = await get(contestRef);
+    if (snapshot.exists()) {
+      const entries = snapshot.val();
+      let winningEntry = null;
+      let winningId = null;
+
+      Object.entries(entries).forEach(([id, entry]) => {
+        if (!winningEntry || 
+            entry.voteCount > winningEntry.voteCount || 
+            (entry.voteCount === winningEntry.voteCount && entry.timestamp < winningEntry.timestamp)) {
+          winningEntry = entry;
+          winningId = id;
+        }
+      });
+
+      // Update all entries to set isWinner to false
+      const updates = {};
+      Object.keys(entries).forEach(id => {
+        updates[`${id}/isWinner`] = false;
+      });
+
+      // Set the winning entry's isWinner to true
+      updates[`${winningId}/isWinner`] = true;
+
+      await update(contestRef, updates);
+    }
   }
 }
 

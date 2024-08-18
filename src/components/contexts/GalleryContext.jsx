@@ -44,6 +44,7 @@ export const GalleryProvider = ({ children }) => {
               userName: entry.userName,
               quote: entry.quote,
               timestamp: entry.timestamp,
+              isWinner: entry.isWinner,
             });
           });
         }

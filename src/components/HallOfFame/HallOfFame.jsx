@@ -12,38 +12,8 @@ const HallOfFame = () => {
 
   useEffect(() => {
     if (allGalleryData) {
-      const winners = [];
-
-      const contestWinners = allGalleryData.reduce((acc, image) => {
-        const { contestId, userName, photoUrl, likeCount, contestTheme } =
-          image;
-
-        if (!acc[contestId] || acc[contestId].likeCount < likeCount) {
-          acc[contestId] = {
-            contestId,
-            userName,
-            photoUrl,
-            likeCount,
-            contestTheme,
-          };
-        }
-
-        return acc;
-      }, {});
-
-      for (const contestId in contestWinners) {
-        const winner = contestWinners[contestId];
-        winners.push({
-          id: contestId,
-          contestNo: contestId,
-          contestName: winner.contestTheme,
-          winnerName: winner.userName,
-          winnerPhoto: winner.photoUrl,
-          likeCount: winner.likeCount,
-        });
-      }
-
-      winners.sort((a, b) => b.contestNo - a.contestNo);
+      const winners = allGalleryData.filter(image => image.isWinner);
+      winners.sort((a, b) => b.voteCount - a.voteCount);
       setHallOfFameData(winners);
     }
   }, [allGalleryData]);
@@ -53,13 +23,15 @@ const HallOfFame = () => {
       const imagePromises = hallOfFameData.map((winner) => {
         return new Promise((resolve) => {
           const img = new Image();
-          img.src = winner.winnerPhoto;
+          img.src = winner.photoUrl;
           img.onload = resolve;
           img.onerror = resolve;
         });
       });
 
       Promise.all(imagePromises).then(() => setImagesLoaded(true));
+    } else {
+      setImagesLoaded(true);
     }
   }, [hallOfFameData]);
 
@@ -98,9 +70,21 @@ const HallOfFame = () => {
       </div>
 
       {/* Right side */}
-      <div className="w-full md:w-1/2 overflow-hidden h-[calc(100vh-64px)]">
+      <div className="w-full md:w-1/2 overflow-y-auto h-[calc(100vh-64px)]">
         <AnimatePresence>
-          {!isLoading && imagesLoaded && (
+          {isLoading && <LoadingSpinner />}
+          {!isLoading && imagesLoaded && hallOfFameData.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+              className="flex justify-center items-center h-full"
+            >
+              <p className="text-gray-300 text-xl">No images in the Hall of Fame yet.</p>
+            </motion.div>
+          )}
+          {!isLoading && imagesLoaded && hallOfFameData.length > 0 && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -126,15 +110,16 @@ const HallOfFame = () => {
                     }}
                   >
                     <img
-                      src={winner.winnerPhoto}
-                      alt={winner.winnerName}
+                      src={winner.photoUrl}
+                      alt={winner.userName}
                       className="w-full h-auto object-cover"
                     />
                     <div className="p-4">
                       <h2 className="text-[#cba6f7] text-xl font-semibold">
-                        {winner.winnerName}
+                        {winner.userName}
                       </h2>
-                      <p className="text-gray-300">{winner.contestName}</p>
+                      <p className="text-gray-300">{winner.contestTheme}</p>
+                    
                     </div>
                   </motion.div>
                 ))}
@@ -142,7 +127,6 @@ const HallOfFame = () => {
             </motion.div>
           )}
         </AnimatePresence>
-        {(isLoading || !imagesLoaded) && <LoadingSpinner />}
       </div>
     </div>
   );
