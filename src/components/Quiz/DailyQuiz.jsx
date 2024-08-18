@@ -224,15 +224,14 @@ const AttemptedBadge = styled.div`
   text-align: center;
 `;
 
-export const QuizButton = ({ onClick }) => (
-  <QuizButtonContainer>
-    <QuizButtonStyled onClick={onClick}>
-      Today's Quiz
-    </QuizButtonStyled>
-  </QuizButtonContainer>
-);
-
-const DailyQuiz = ({ onClose }) => {
+export const QuizButton = ({ onClick, className }) => (
+  <button
+    onClick={onClick}
+    className={`px-6 py-3 bg-gradient-to-r from-[#6528d7] to-[#b00bef] text-white font-semibold rounded-full hover:from-[#b00bef] hover:to-[#6528d7] transition transform hover:scale-105 ${className}`}
+  >
+    Today's Quiz
+  </button>
+);const DailyQuiz = ({ onClose }) => {
   const [quiz, setQuiz] = useState(null);
   const [userAnswer, setUserAnswer] = useState(null);
   const [timeLeft, setTimeLeft] = useState(30);
