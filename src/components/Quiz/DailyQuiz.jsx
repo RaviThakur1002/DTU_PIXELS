@@ -6,9 +6,8 @@ import app from '../../config/conf.js';
 import { quizData } from './quizData';
 import LoadingSpinner from '../Utilities/LoadingSpinner.jsx';
 
-
 const Container = styled.div`
-  background: linear-gradient(135deg, #ff61d2 0%, #fe9090 100%);
+  background: linear-gradient(135deg, #6528d7 0%, #b00bef 100%);
   color: white;
   padding: 2rem;
   border-radius: 20px;
@@ -24,24 +23,27 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
   text-align: center;
+  color: #f0e68c;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 
   @media (max-width: 768px) {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
 `;
 
 const QuizCard = styled.div`
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(23, 23, 23, 0.8);
   padding: 2rem;
   border-radius: 15px;
   margin-top: 1rem;
   backdrop-filter: blur(10px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 
   @media (max-width: 768px) {
-    padding: 1rem;
+    padding: 1.5rem;
   }
 `;
 
@@ -49,41 +51,50 @@ const Button = styled.button`
   background-color: rgba(255, 255, 255, 0.1);
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.25rem;
   border-radius: 25px;
   cursor: pointer;
-  margin: 0.5rem 0;
+  margin: 0.75rem 0;
   transition: all 0.3s ease;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  font-size: 1rem;
+  font-size: 1.1rem;
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
   }
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    transform: none;
   }
 `;
 
 const OptionButton = styled(Button)`
-  background-color: ${props => (props.selected ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.1)')};
-  border: 2px solid white;
+  background-color: ${props => (props.selected ? 'rgba(101, 40, 215, 0.5)' : 'rgba(255, 255, 255, 0.1)')};
+  border: 2px solid ${props => (props.selected ? '#f0e68c' : 'transparent')};
   color: white;
   font-weight: bold;
   margin-bottom: 1rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: ${props => (props.selected ? 'rgba(101, 40, 215, 0.7)' : 'rgba(255, 255, 255, 0.3)')};
+  }
 `;
 
 const SubmitButton = styled(Button)`
-  background-color: #2ecc71;
+  background-color: #4caf50;
   justify-content: center;
   font-weight: bold;
+  font-size: 1.2rem;
+  margin-top: 1.5rem;
   &:hover {
-    background-color: #27ae60;
+    background-color: #45a049;
   }
 `;
 
@@ -91,46 +102,52 @@ const StreakDisplay = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 1rem;
-  font-size: 1.2rem;
+  margin-top: 1.5rem;
+  font-size: 1.3rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 0.75rem;
+  border-radius: 15px;
 
   @media (max-width: 768px) {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 `;
 
 const TimeDisplay = styled.div`
   position: relative;
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: bold;
-  margin: 0 auto 1rem;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 `;
 
 const Question = styled.p`
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
   text-align: center;
+  color: #f0e68c;
 
   @media (max-width: 768px) {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
 `;
 
 const Result = styled.div`
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   text-align: center;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: bold;
+  color: ${props => (props.correct ? '#4caf50' : '#ff6b6b')};
 
   @media (max-width: 768px) {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
   }
 `;
 
@@ -140,7 +157,7 @@ const PopupOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -155,13 +172,18 @@ const PopupContent = styled(Container)`
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 15px;
   background: none;
   border: none;
   color: white;
-  font-size: 1.5rem;
+  font-size: 2rem;
   cursor: pointer;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: rotate(90deg);
+  }
 `;
 
 const QuizButtonStyled = styled(Button)`
@@ -175,29 +197,37 @@ const QuizButtonContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 `;
 
 const OptionIcon = ({ number }) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" style={{ marginRight: '1rem', flexShrink: 0 }}>
-    <circle cx="12" cy="12" r="10" fill="rgba(255, 255, 255, 0.3)" />
-    <text x="12" y="16" textAnchor="middle" fill="white" fontSize="12">{number}</text>
+  <svg width="30" height="30" viewBox="0 0 30 30" style={{ marginRight: '1rem', flexShrink: 0 }}>
+    <circle cx="15" cy="15" r="14" fill="rgba(255, 255, 255, 0.2)" stroke="#f0e68c" strokeWidth="2" />
+    <text x="15" y="20" textAnchor="middle" fill="white" fontSize="14" fontWeight="bold">{number}</text>
   </svg>
 );
 
-const StreakIcon = ({ streak }) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" style={{ marginRight: '0.5rem' }}>
+const StreakIcon = () => (
+  <svg width="30" height="30" viewBox="0 0 24 24" style={{ marginRight: '0.75rem' }}>
     <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z" 
-          fill={streak > 0 ? "#e74c3c" : "#95a5a6"} />
-    <text x="12" y="16" textAnchor="middle" fill="white" fontSize="10">{streak}</text>
+          fill="#ff6b6b" />
   </svg>
 );
 
-export const QuizButton = ({ onClick}) => (
+const AttemptedBadge = styled.div`
+  background-color: #ff6b6b;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-align: center;
+`;
+
+export const QuizButton = ({ onClick }) => (
   <QuizButtonContainer>
     <QuizButtonStyled onClick={onClick}>
       Today's Quiz
-     
     </QuizButtonStyled>
   </QuizButtonContainer>
 );
@@ -248,12 +278,13 @@ const DailyQuiz = ({ onClose }) => {
     return now.toISOString().split('T')[0];
   };
 
-  const fetchTodayQuiz = () => {
-    const today = new Date();
-    const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
-    const quizIndex = dayOfYear % quizData.length;
-    setQuiz(quizData[quizIndex]);
-  };
+const fetchTodayQuiz = () => {
+  const startDate = new Date('2024-08-18'); // Set a fixed start date
+  const today = new Date();
+  const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+  const quizIndex = daysSinceStart % quizData.length;
+  setQuiz(quizData[quizIndex]);
+};
 
   const checkQuizAttempted = async () => {
     const user = auth.currentUser;
@@ -342,20 +373,19 @@ const DailyQuiz = ({ onClose }) => {
     );
   }
 
-   return (
+    return (
     <PopupOverlay>
       <PopupContent>
         <CloseButton onClick={onClose}>&times;</CloseButton>
-        <Title>Daily Frontend Quiz</Title>
-
+        <Title>Snap & Learn</Title>
 
         <QuizCard>
           {quizAttempted ? (
             <div>
-              <h2>Today's Quiz (Attempted)</h2>
+              <AttemptedBadge>Attempted</AttemptedBadge>
               <Question>{quiz.question}</Question>
-              <p>Correct Answer: {quiz.correctAnswer}</p>
-              {quizResult && <Result>{quizResult}</Result>}
+              <p style={{ textAlign: 'center', marginBottom: '1rem' }}>Correct Answer: <span style={{ color: '#4caf50', fontWeight: 'bold' }}>{quiz.correctAnswer}</span></p>
+              {quizResult && <Result correct={quizResult === "Correct!"}>{quizResult}</Result>}
             </div>
           ) : (
             <>
@@ -379,7 +409,7 @@ const DailyQuiz = ({ onClose }) => {
           )}
         </QuizCard>
         <StreakDisplay>
-          <StreakIcon streak={streak} />
+          <StreakIcon />
           <span>Current Streak: {streak} | Longest Streak: {longestStreak}</span>
         </StreakDisplay>
       </PopupContent>
