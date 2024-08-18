@@ -84,13 +84,14 @@ const HomeScreen = () => {
   const [longestStreak, setLongestStreak] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  useEffect(() => {
+ useEffect(() => {
     setIsVisible(true);
     const auth = getAuth(app);
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setIsLoggedIn(!!user);
       if (user) {
         fetchUserData(user);
+        setShowLoginModal(false); // Close the login modal when user logs in
       }
     });
 
@@ -115,6 +116,11 @@ const HomeScreen = () => {
       setShowLoginModal(true);
     }
   };
+
+  const closeLoginModal = () => {
+    setShowLoginModal(false);
+  };
+
 
   const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
@@ -229,8 +235,8 @@ const HomeScreen = () => {
         </div>
       )}
 
-      {showLoginModal && (
-        <LoginModal onClose={() => setShowLoginModal(false)} />
+       {showLoginModal && (
+        <LoginModal onClose={closeLoginModal} />
       )}
 
       {/* Contact component */}
@@ -242,3 +248,4 @@ const HomeScreen = () => {
 };
 
 export default HomeScreen;
+
