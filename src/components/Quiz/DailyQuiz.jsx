@@ -167,7 +167,7 @@ const SubmitButton = styled(Button)`
 const StreakDisplay = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   margin-top: 1.5rem;
   padding: 0.75rem 1.5rem;
   background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
@@ -178,7 +178,8 @@ const StreakItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 1rem;
+  flex: 1;
+  text-align: center;
 
   &:first-child {
     border-right: 1px solid rgba(255, 255, 255, 0.2);
@@ -195,22 +196,14 @@ const StreakValue = styled.span`
   font-size: 1.5rem;
   font-weight: bold;
   color: #C4A0EF;
+  display: block;
+  width: 100%;
+  text-align: center;
 `;
-
-
-const StreakIcon = () => (
-   <svg
-    width="32"
-    height="32"
-    viewBox="0 0 24 24"
-    style={{ marginRight: "0.75rem" }}
-  >
-    <path
-      d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"
-      fill="#ff6b6b"
-    />
-  </svg>
-);
+const StreakIcon = styled.div`
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+`;
 
 const TimeDisplay = styled.div`
   position: relative;
@@ -450,38 +443,40 @@ const DailyQuiz = ({ onClose }) => {
     setUserAnswer(answer);
   };
 
-  const handleTimeUp = () => {
-    setQuizResult("Time's up");
-    setQuizAttempted(true);
-    setShowInitialResult(true);
-    updateUserData(false);
-  };
+const handleTimeUp = () => {
+  setQuizResult("Time's up");
+  setQuizAttempted(true);
+  setShowInitialResult(true);
+  updateUserData(false, true); // Add a parameter to indicate time-up
+};
 
 
-  const updateUserData = async (isCorrect) => {
-    const user = auth.currentUser;
-    if (user && quiz) {
-      const userRef = ref(db, `users/${user.uid}`);
-      const userSnapshot = await get(userRef);
-      const userData = userSnapshot.val() || {};
+const updateUserData = async (isCorrect, isTimeUp = false) => {
+  const user = auth.currentUser;
+  if (user && quiz) {
+    const userRef = ref(db, `users/${user.uid}`);
+    const userSnapshot = await get(userRef);
+    const userData = userSnapshot.val() || {};
 
-      let newStreak = isCorrect ? (userData.streak || 0) + 1 : 0;
-      let newLongestStreak = Math.max(userData.longestStreak || 0, newStreak);
+    let newStreak = isCorrect ? (userData.streak || 0) + 1 : 0;
+    let newLongestStreak = Math.max(userData.longestStreak || 0, newStreak);
 
-      await set(userRef, {
-        ...userData,
-        streak: newStreak,
-        longestStreak: newLongestStreak,
-        lastQuizDate: getCurrentDateKey(),
-        lastQuizResult: isCorrect
-          ? "Correct!"
-          : `Wrong. The correct answer is: ${quiz.correctAnswer}`,
-      });
+    await set(userRef, {
+      ...userData,
+      streak: newStreak,
+      longestStreak: newLongestStreak,
+      lastQuizDate: getCurrentDateKey(),
+      lastQuizResult: isCorrect
+        ? "Correct!"
+        : isTimeUp
+        ? "Time's up"
+        : `Wrong. The correct answer is: ${quiz.correctAnswer}`,
+    });
 
-      setStreak(newStreak);
-      setLongestStreak(newLongestStreak);
-    }
-  };
+    setStreak(newStreak);
+    setLongestStreak(newLongestStreak);
+  }
+};
 
   const handleQuizSubmit = async () => {
     const isCorrect = userAnswer === quiz.correctAnswer;
@@ -585,7 +580,18 @@ const getVerdictColor = (verdict) => {
           )}
         </QuizCard>
        <StreakDisplay>
-  <StreakIcon />
+  <StreakIcon>
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"
+        fill="#ff6b6b"
+      />
+    </svg>
+  </StreakIcon>
   <StreakItem>
     <StreakLabel>Current Streak</StreakLabel>
     <StreakValue>{streak}</StreakValue>
