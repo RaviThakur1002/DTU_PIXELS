@@ -23,31 +23,93 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
-  font-family: 'Poppins';
+  font-family: "Poppins";
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
   text-align: center;
   color: #c4a0ef;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-  
+
   @media (max-width: 768px) {
     font-size: 2rem;
   }
 `;
 
-
 const QuizCard = styled.div`
-  background-color:#1f2937;
+  background-color: #1f2937;
   padding: 2rem;
   border-radius: 15px;
   margin-top: 1rem;
   backdrop-filter: blur(10px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px; // Adjust this value as needed
 
   @media (max-width: 768px) {
     padding: 1.5rem;
   }
 `;
+
+const TickSVG = () => (
+  <svg
+    width="50"
+    height="50"
+    viewBox="0 0 50 50"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="25" cy="25" r="23" stroke="#4CAF50" strokeWidth="4" />
+    <path
+      d="M15 25L22 32L35 19"
+      stroke="#4CAF50"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const CrossSVG = () => (
+  <svg
+    width="50"
+    height="50"
+    viewBox="0 0 50 50"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="25" cy="25" r="23" stroke="#FF6B6B" strokeWidth="4" />
+    <path
+      d="M17 17L33 33M33 17L17 33"
+      stroke="#FF6B6B"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const StopwatchSVG = () => (
+  <svg
+    width="50"
+    height="50"
+    viewBox="0 0 50 50"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="25" cy="25" r="23" stroke="#FFA500" strokeWidth="4" />
+    <circle cx="25" cy="25" r="18" stroke="#FFA500" strokeWidth="2" />
+    <path
+      d="M25 15V25L32 32"
+      stroke="#FFA500"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
 
 const Button = styled.button`
   background-color: rgba(255, 255, 255, 0.1);
@@ -87,7 +149,7 @@ const OptionButton = styled(Button)`
 
   &:hover {
     background-color: ${(props) =>
-    props.selected ? "rgba(101, 40, 215, 0.7)" : "rgba(255, 255, 255, 0.3)"};
+      props.selected ? "rgba(101, 40, 215, 0.7)" : "rgba(255, 255, 255, 0.3)"};
   }
 `;
 
@@ -107,15 +169,48 @@ const StreakDisplay = styled.div`
   align-items: center;
   justify-content: center;
   margin-top: 1.5rem;
-  font-size: 1.3rem;
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 0.75rem;
-  border-radius: 15px;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  border-radius: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+`;
+const StreakItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 1rem;
 
-  @media (max-width: 768px) {
-    font-size: 1.1rem;
+  &:first-child {
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
   }
 `;
+
+const StreakLabel = styled.span`
+  font-size: 0.9rem;
+  color: #9CA3AF;
+  margin-bottom: 0.25rem;
+`;
+
+const StreakValue = styled.span`
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #C4A0EF;
+`;
+
+
+const StreakIcon = () => (
+   <svg
+    width="32"
+    height="32"
+    viewBox="0 0 24 24"
+    style={{ marginRight: "0.75rem" }}
+  >
+    <path
+      d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"
+      fill="#ff6b6b"
+    />
+  </svg>
+);
 
 const TimeDisplay = styled.div`
   position: relative;
@@ -136,7 +231,7 @@ const Question = styled.p`
   font-size: 1.4rem;
   margin-bottom: 1.5rem;
   text-align: center;
-  color: #D1D1D1;
+  color: #d1d1d1;
 
   @media (max-width: 768px) {
     font-size: 1.2rem;
@@ -149,6 +244,18 @@ const Result = styled.div`
   font-size: 1.5rem;
   font-weight: bold;
   color: ${(props) => (props.correct ? "#4caf50" : "#ff6b6b")};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    margin-bottom: 1rem;
+  }
+
+  p {
+    margin: 0.5rem 0;
+  }
 
   @media (max-width: 768px) {
     font-size: 1.3rem;
@@ -232,19 +339,7 @@ const OptionIcon = ({ number }) => (
   </svg>
 );
 
-const StreakIcon = () => (
-  <svg
-    width="30"
-    height="30"
-    viewBox="0 0 24 24"
-    style={{ marginRight: "0.75rem" }}
-  >
-    <path
-      d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"
-      fill="#ff6b6b"
-    />
-  </svg>
-);
+
 
 const AttemptedBadge = styled.div`
   background-color: #1e40af;
@@ -265,7 +360,7 @@ export const QuizButton = ({ onClick, className }) => (
   </button>
 );
 
-  const DailyQuiz = ({ onClose }) => {
+const DailyQuiz = ({ onClose }) => {
   const [quiz, setQuiz] = useState(null);
   const [userAnswer, setUserAnswer] = useState(null);
   const [timeLeft, setTimeLeft] = useState(30);
@@ -274,6 +369,7 @@ export const QuizButton = ({ onClick, className }) => (
   const [longestStreak, setLongestStreak] = useState(0);
   const [quizResult, setQuizResult] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showInitialResult, setShowInitialResult] = useState(false);
 
   const auth = getAuth(app);
   const db = getDatabase(app);
@@ -355,12 +451,12 @@ export const QuizButton = ({ onClick, className }) => (
   };
 
   const handleTimeUp = () => {
-    setQuizResult(
-      `Oops! Time's up. The correct answer is: ${quiz.correctAnswer}`,
-    );
+    setQuizResult("Time's up");
     setQuizAttempted(true);
+    setShowInitialResult(true);
     updateUserData(false);
   };
+
 
   const updateUserData = async (isCorrect) => {
     const user = auth.currentUser;
@@ -391,24 +487,72 @@ export const QuizButton = ({ onClick, className }) => (
     const isCorrect = userAnswer === quiz.correctAnswer;
     await updateUserData(isCorrect);
 
-    setQuizResult(
-      isCorrect
-        ? "Correct!"
-        : `Wrong. The correct answer is: ${quiz.correctAnswer}`,
-    );
+    setQuizResult(isCorrect ? "Correct!" : "Wrong");
     setQuizAttempted(true);
+    setShowInitialResult(true);
     setUserAnswer(null);
   };
 
-  if (!quiz) {
-    return (
-      <PopupContent>
-        <p>Loading...</p>
-      </PopupContent>
-    );
-  }
+  const renderInitialResult = () => {
+    switch (quizResult) {
+      case "Correct!":
+        return (
+          <Result correct={true}>
+            <TickSVG />
+            <p>Correct!</p>
+          </Result>
+        );
+      case "Wrong":
+        return (
+          <Result correct={false}>
+            <CrossSVG />
+            <p>Wrong</p>
+            <p>The correct answer is: {quiz.correctAnswer}</p>
+          </Result>
+        );
+      case "Time's up":
+        return (
+          <Result correct={false}>
+            <StopwatchSVG />
+            <p>Oops! Time's up</p>
+            <p>The correct answer is: {quiz.correctAnswer}</p>
+          </Result>
+        );
+      default:
+        return null;
+    }
+  };
 
-   return (
+
+const renderAttemptedQuiz = () => (
+  <div>
+    <AttemptedBadge>Attempted</AttemptedBadge>
+    <Question>{quiz.question}</Question>
+    <p style={{ textAlign: 'center', marginBottom: '1rem' }}>
+      Correct Answer: <span style={{ color: '#4caf50', fontWeight: 'bold' }}>{quiz.correctAnswer}</span>
+    </p>
+    <p style={{ textAlign: 'center', marginBottom: '1rem' }}>
+      Your verdict: <span style={{ fontWeight: 'bold', color: getVerdictColor(quizResult.split('.')[0]) }}>
+        {quizResult.split('.')[0]}
+      </span>
+    </p>
+  </div>
+);
+
+const getVerdictColor = (verdict) => {
+  switch (verdict) {
+    case "Correct!":
+      return '#4caf50';
+    case "Wrong":
+      return '#ff6b6b';
+    case "Time's up":
+      return '#ffa500';
+    default:
+      return '#ffffff';
+  }
+};
+
+  return (
     <PopupOverlay>
       <PopupContent>
         <CloseButton onClick={onClose}>&times;</CloseButton>
@@ -416,14 +560,9 @@ export const QuizButton = ({ onClick, className }) => (
 
         <QuizCard>
           {loading ? (
-            <LoadingSpinner quote="..." />
+            <LoadingSpinner quote="Quizzzing" />
           ) : quizAttempted ? (
-            <div>
-              <AttemptedBadge>Attempted</AttemptedBadge>
-              <Question>{quiz.question}</Question>
-              <p style={{ textAlign: 'center', marginBottom: '1rem' }}>Correct Answer: <span style={{ color: '#4caf50', fontWeight: 'bold' }}>{quiz.correctAnswer}</span></p>
-              {quizResult && <Result correct={quizResult === "Correct!"}>{quizResult}</Result>}
-            </div>
+            showInitialResult ? renderInitialResult() : renderAttemptedQuiz()
           ) : (
             <>
               <TimeDisplay>{timeLeft}</TimeDisplay>
@@ -445,13 +584,20 @@ export const QuizButton = ({ onClick, className }) => (
             </>
           )}
         </QuizCard>
-        <StreakDisplay>
-          <StreakIcon />
-          <span>Current Streak: {streak} | Longest Streak: {longestStreak}</span>
-        </StreakDisplay>
+       <StreakDisplay>
+  <StreakIcon />
+  <StreakItem>
+    <StreakLabel>Current Streak</StreakLabel>
+    <StreakValue>{streak}</StreakValue>
+  </StreakItem>
+  <StreakItem>
+    <StreakLabel>Longest Streak</StreakLabel>
+    <StreakValue>{longestStreak}</StreakValue>
+  </StreakItem>
+</StreakDisplay>
       </PopupContent>
     </PopupOverlay>
   );
 };
-
 export default DailyQuiz;
+
