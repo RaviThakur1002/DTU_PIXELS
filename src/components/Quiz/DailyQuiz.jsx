@@ -23,15 +23,15 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
-  font-family: "Poppins";
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
+  font-family: "Jersey 10", sans-serif;
+  font-size: 3.1rem;
+  margin-bottom: 1rem;
   text-align: center;
   color: #c4a0ef;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 
-  @media (max-width: 768px) {
-    font-size: 2rem;
+  @media (max-width: 480px) {
+    font-size: 1.75rem;
   }
 `;
 
@@ -149,7 +149,7 @@ const OptionButton = styled(Button)`
 
   &:hover {
     background-color: ${(props) =>
-      props.selected ? "rgba(101, 40, 215, 0.7)" : "rgba(255, 255, 255, 0.3)"};
+    props.selected ? "rgba(101, 40, 215, 0.7)" : "rgba(255, 255, 255, 0.3)"};
   }
 `;
 
@@ -188,14 +188,14 @@ const StreakItem = styled.div`
 
 const StreakLabel = styled.span`
   font-size: 0.9rem;
-  color: #9CA3AF;
+  color: #9ca3af;
   margin-bottom: 0.25rem;
 `;
 
 const StreakValue = styled.span`
   font-size: 1.5rem;
   font-weight: bold;
-  color: #C4A0EF;
+  color: #c4a0ef;
   display: block;
   width: 100%;
   text-align: center;
@@ -221,6 +221,7 @@ const TimeDisplay = styled.div`
 `;
 
 const Question = styled.p`
+  font-family: "Inter", sans-serif;
   font-size: 1.4rem;
   margin-bottom: 1.5rem;
   text-align: center;
@@ -266,12 +267,25 @@ const PopupOverlay = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  padding: 20px;
 `;
 
 const PopupContent = styled(Container)`
   position: relative;
   max-height: 90vh;
   overflow-y: auto;
+  width: 90%;
+  max-width: 600px;
+  margin: 0;
+
+  @media (max-height: 700px) {
+    max-height: 95vh;
+  }
+
+  @media (max-width: 480px) {
+    width: 95%;
+    padding: 1rem;
+  }
 `;
 
 const CloseButton = styled.button`
@@ -331,8 +345,6 @@ const OptionIcon = ({ number }) => (
     </text>
   </svg>
 );
-
-
 
 const AttemptedBadge = styled.div`
   background-color: #1e40af;
@@ -443,40 +455,39 @@ const DailyQuiz = ({ onClose }) => {
     setUserAnswer(answer);
   };
 
-const handleTimeUp = () => {
-  setQuizResult("Time's up");
-  setQuizAttempted(true);
-  setShowInitialResult(true);
-  updateUserData(false, true); // Add a parameter to indicate time-up
-};
+  const handleTimeUp = () => {
+    setQuizResult("Time's up");
+    setQuizAttempted(true);
+    setShowInitialResult(true);
+    updateUserData(false, true); // Add a parameter to indicate time-up
+  };
 
+  const updateUserData = async (isCorrect, isTimeUp = false) => {
+    const user = auth.currentUser;
+    if (user && quiz) {
+      const userRef = ref(db, `users/${user.uid}`);
+      const userSnapshot = await get(userRef);
+      const userData = userSnapshot.val() || {};
 
-const updateUserData = async (isCorrect, isTimeUp = false) => {
-  const user = auth.currentUser;
-  if (user && quiz) {
-    const userRef = ref(db, `users/${user.uid}`);
-    const userSnapshot = await get(userRef);
-    const userData = userSnapshot.val() || {};
+      let newStreak = isCorrect ? (userData.streak || 0) + 1 : 0;
+      let newLongestStreak = Math.max(userData.longestStreak || 0, newStreak);
 
-    let newStreak = isCorrect ? (userData.streak || 0) + 1 : 0;
-    let newLongestStreak = Math.max(userData.longestStreak || 0, newStreak);
+      await set(userRef, {
+        ...userData,
+        streak: newStreak,
+        longestStreak: newLongestStreak,
+        lastQuizDate: getCurrentDateKey(),
+        lastQuizResult: isCorrect
+          ? "Correct!"
+          : isTimeUp
+            ? "Time's up"
+            : `Wrong. The correct answer is: ${quiz.correctAnswer}`,
+      });
 
-    await set(userRef, {
-      ...userData,
-      streak: newStreak,
-      longestStreak: newLongestStreak,
-      lastQuizDate: getCurrentDateKey(),
-      lastQuizResult: isCorrect
-        ? "Correct!"
-        : isTimeUp
-        ? "Time's up"
-        : `Wrong. The correct answer is: ${quiz.correctAnswer}`,
-    });
-
-    setStreak(newStreak);
-    setLongestStreak(newLongestStreak);
-  }
-};
+      setStreak(newStreak);
+      setLongestStreak(newLongestStreak);
+    }
+  };
 
   const handleQuizSubmit = async () => {
     const isCorrect = userAnswer === quiz.correctAnswer;
@@ -518,53 +529,65 @@ const updateUserData = async (isCorrect, isTimeUp = false) => {
     }
   };
 
+  const renderAttemptedQuiz = () => (
+    <div>
+      <AttemptedBadge>Attempted</AttemptedBadge>
+      <Question>{quiz.question}</Question>
+      <p style={{ textAlign: "center", marginBottom: "1rem" }}>
+        Correct Answer:{" "}
+        <span style={{ color: "#4caf50", fontWeight: "bold" }}>
+          {quiz.correctAnswer}
+        </span>
+      </p>
+      <p style={{ textAlign: "center", marginBottom: "1rem" }}>
+        Your verdict:{" "}
+        <span
+          style={{
+            fontWeight: "bold",
+            color: getVerdictColor(quizResult.split(".")[0]),
+          }}
+        >
+          {quizResult.split(".")[0]}
+        </span>
+      </p>
+    </div>
+  );
 
-const renderAttemptedQuiz = () => (
-  <div>
-    <AttemptedBadge>Attempted</AttemptedBadge>
-    <Question>{quiz.question}</Question>
-    <p style={{ textAlign: 'center', marginBottom: '1rem' }}>
-      Correct Answer: <span style={{ color: '#4caf50', fontWeight: 'bold' }}>{quiz.correctAnswer}</span>
-    </p>
-    <p style={{ textAlign: 'center', marginBottom: '1rem' }}>
-      Your verdict: <span style={{ fontWeight: 'bold', color: getVerdictColor(quizResult.split('.')[0]) }}>
-        {quizResult.split('.')[0]}
-      </span>
-    </p>
-  </div>
-);
-
-const getVerdictColor = (verdict) => {
-  switch (verdict) {
-    case "Correct!":
-      return '#4caf50';
-    case "Wrong":
-      return '#ff6b6b';
-    case "Time's up":
-      return '#ffa500';
-    default:
-      return '#ffffff';
-  }
-};
+  const getVerdictColor = (verdict) => {
+    switch (verdict) {
+      case "Correct!":
+        return "#4caf50";
+      case "Wrong":
+        return "#ff6b6b";
+      case "Time's up":
+        return "#ffa500";
+      default:
+        return "#ffffff";
+    }
+  };
 
   return (
     <PopupOverlay>
       <PopupContent>
         <CloseButton onClick={onClose}>&times;</CloseButton>
-        <Title>Snap & Learn</Title>
+        <Title>Pixel Perfect</Title>
 
         <QuizCard>
           {loading ? (
             <LoadingSpinner quote="Quizzzing" />
           ) : quizAttempted ? (
-            showInitialResult ? renderInitialResult() : renderAttemptedQuiz()
+            showInitialResult ? (
+              renderInitialResult()
+            ) : (
+              renderAttemptedQuiz()
+            )
           ) : (
             <>
               <TimeDisplay>{timeLeft}</TimeDisplay>
               <Question>{quiz.question}</Question>
               {quiz.options.map((option, index) => (
-                <OptionButton 
-                  key={index} 
+                <OptionButton
+                  key={index}
                   onClick={() => handleAnswerSelect(option)}
                   disabled={timeLeft === 0}
                   selected={userAnswer === option}
@@ -573,37 +596,35 @@ const getVerdictColor = (verdict) => {
                   {option}
                 </OptionButton>
               ))}
-              <SubmitButton onClick={handleQuizSubmit} disabled={!userAnswer || timeLeft === 0}>
+              <SubmitButton
+                onClick={handleQuizSubmit}
+                disabled={!userAnswer || timeLeft === 0}
+              >
                 Submit Answer
               </SubmitButton>
             </>
           )}
         </QuizCard>
-       <StreakDisplay>
-  <StreakIcon>
-    <svg
-      width="32"
-      height="32"
-      viewBox="0 0 24 24"
-    >
-      <path
-        d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"
-        fill="#ff6b6b"
-      />
-    </svg>
-  </StreakIcon>
-  <StreakItem>
-    <StreakLabel>Current Streak</StreakLabel>
-    <StreakValue>{streak}</StreakValue>
-  </StreakItem>
-  <StreakItem>
-    <StreakLabel>Longest Streak</StreakLabel>
-    <StreakValue>{longestStreak}</StreakValue>
-  </StreakItem>
-</StreakDisplay>
+        <StreakDisplay>
+          <StreakIcon>
+            <svg width="32" height="32" viewBox="0 0 24 24">
+              <path
+                d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"
+                fill="#ff6b6b"
+              />
+            </svg>
+          </StreakIcon>
+          <StreakItem>
+            <StreakLabel>Current Streak</StreakLabel>
+            <StreakValue>{streak}</StreakValue>
+          </StreakItem>
+          <StreakItem>
+            <StreakLabel>Longest Streak</StreakLabel>
+            <StreakValue>{longestStreak}</StreakValue>
+          </StreakItem>
+        </StreakDisplay>
       </PopupContent>
     </PopupOverlay>
   );
 };
 export default DailyQuiz;
-
