@@ -28,7 +28,7 @@ const dailyTitles = [
   "Lens Lingo",
   "Reflex Rift",
   "Depth Duel",
-  "Capture IQ"
+  "Capture IQ",
 ];
 
 const Container = styled.div`
@@ -283,7 +283,7 @@ const Result = styled.div`
 
 const PopupOverlay = styled.div`
   position: fixed;
-  top: 0;
+  top:8vh;
   left: 0;
   right: 0;
   bottom: 0;
@@ -400,28 +400,28 @@ const DailyQuiz = ({ onClose }) => {
   const [quizResult, setQuizResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showInitialResult, setShowInitialResult] = useState(false);
- const [dailyTitle, setDailyTitle] = useState("");
+  const [dailyTitle, setDailyTitle] = useState("");
 
   const auth = getAuth(app);
   const db = getDatabase(app);
 
-useEffect(() => {
-  const checkQuizStatus = async () => {
-    setLoading(true);
-    fetchTodayQuiz(); // This now sets the daily title
-    if (auth.currentUser) {
-      const attempted = await checkQuizAttempted();
-      if (attempted) {
-        setQuizAttempted(true);
-      } else {
-        setTimeLeft(30);
+  useEffect(() => {
+    const checkQuizStatus = async () => {
+      setLoading(true);
+      fetchTodayQuiz(); // This now sets the daily title
+      if (auth.currentUser) {
+        const attempted = await checkQuizAttempted();
+        if (attempted) {
+          setQuizAttempted(true);
+        } else {
+          setTimeLeft(30);
+        }
+        await fetchUserData();
       }
-      await fetchUserData();
-    }
-    setLoading(false);
-  };
-  checkQuizStatus();
-}, [auth.currentUser]);
+      setLoading(false);
+    };
+    checkQuizStatus();
+  }, [auth.currentUser]);
 
   useEffect(() => {
     let timer;
@@ -438,18 +438,18 @@ useEffect(() => {
     return now.toISOString().split("T")[0];
   };
 
-const fetchTodayQuiz = () => {
-  const startDate = new Date("2024-08-18"); // Set a fixed start date
-  const today = new Date();
-  const daysSinceStart = Math.floor(
-    (today - startDate) / (1000 * 60 * 60 * 24)
-  );
-  const quizIndex = daysSinceStart % quizData.length;
-  const titleIndex = daysSinceStart % dailyTitles.length;
-  
-  setDailyTitle(dailyTitles[titleIndex]);
-  setQuiz(quizData[quizIndex]);
-};
+  const fetchTodayQuiz = () => {
+    const startDate = new Date("2024-08-18"); // Set a fixed start date
+    const today = new Date();
+    const daysSinceStart = Math.floor(
+      (today - startDate) / (1000 * 60 * 60 * 24),
+    );
+    const quizIndex = daysSinceStart % quizData.length;
+    const titleIndex = daysSinceStart % dailyTitles.length;
+
+    setDailyTitle(dailyTitles[titleIndex]);
+    setQuiz(quizData[quizIndex]);
+  };
 
   const checkQuizAttempted = async () => {
     const user = auth.currentUser;
@@ -488,7 +488,7 @@ const fetchTodayQuiz = () => {
     setQuizResult("Time's up");
     setQuizAttempted(true);
     setShowInitialResult(true);
-    updateUserData(false, true); 
+    updateUserData(false, true);
   };
 
   const updateUserData = async (isCorrect, isTimeUp = false) => {
@@ -648,7 +648,7 @@ const fetchTodayQuiz = () => {
             <StreakValue>{streak}</StreakValue>
           </StreakItem>
           <StreakItem>
-            <StreakLabel>Longest Streak</StreakLabel>
+            <StreakLabel>Max Streak</StreakLabel>
             <StreakValue>{longestStreak}</StreakValue>
           </StreakItem>
         </StreakDisplay>
