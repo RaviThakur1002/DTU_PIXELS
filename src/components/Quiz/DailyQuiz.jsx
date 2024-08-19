@@ -24,7 +24,7 @@ const Container = styled.div`
 
 const Title = styled.h1`
   font-family: "Jersey 10", sans-serif;
-  font-size: 3.1rem;
+  font-size: 3.6rem;
   margin-bottom: 1rem;
   text-align: center;
   color: #c4a0ef;
