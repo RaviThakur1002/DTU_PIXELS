@@ -9,6 +9,7 @@ import LoadingSpinner from "../Utilities/LoadingSpinner.jsx";
 const dailyTitles = [
   "Light Lore",
   "Optic Opus",
+  "Zoom Zenith",
   "Angle Ace",
   "ISO Enigma",
   "Lens Logic",
@@ -21,7 +22,6 @@ const dailyTitles = [
   "Lux Quest",
   "Pixel Prose",
   "Shot Riddle",
-  "Zoom Zenith",
   "View Vault",
   "Shutter Wit",
   "Crop Craft",
@@ -56,7 +56,7 @@ const Title = styled.h1`
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 
   @media (max-width: 480px) {
-    font-size: 2.5rem;
+    font-size: 3.3rem;
   }
 `;
 
@@ -301,7 +301,7 @@ const PopupContent = styled(Container)`
   overflow-y: auto;
   width: 90%;
   max-width: 600px;
-  margin: 0;
+  margin-top: 20px;
 
   @media (max-height: 700px) {
     max-height: 95vh;
