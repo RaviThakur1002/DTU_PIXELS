@@ -6,6 +6,31 @@ import app from "../../config/conf.js";
 import { quizData } from "./quizData";
 import LoadingSpinner from "../Utilities/LoadingSpinner.jsx";
 
+const dailyTitles = [
+  "Light Lore",
+  "Optic Opus",
+  "Angle Ace",
+  "ISO Enigma",
+  "Lens Logic",
+  "Chroma Quiz",
+  "Flash Flux",
+  "Focus Flair",
+  "Iris Intel",
+  "Snap Savvy",
+  "Frame Fable",
+  "Lux Quest",
+  "Pixel Prose",
+  "Shot Riddle",
+  "Zoom Zenith",
+  "View Vault",
+  "Shutter Wit",
+  "Crop Craft",
+  "Lens Lingo",
+  "Reflex Rift",
+  "Depth Duel",
+  "Capture IQ"
+];
+
 const Container = styled.div`
   background: linear-gradient(135deg, #1f2937 0%, #000000 100%);
   color: white;
@@ -31,7 +56,7 @@ const Title = styled.h1`
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 
   @media (max-width: 480px) {
-    font-size: 1.75rem;
+    font-size: 2.5rem;
   }
 `;
 
@@ -375,27 +400,28 @@ const DailyQuiz = ({ onClose }) => {
   const [quizResult, setQuizResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showInitialResult, setShowInitialResult] = useState(false);
+ const [dailyTitle, setDailyTitle] = useState("");
 
   const auth = getAuth(app);
   const db = getDatabase(app);
 
-  useEffect(() => {
-    const checkQuizStatus = async () => {
-      setLoading(true);
-      await fetchTodayQuiz();
-      if (auth.currentUser) {
-        const attempted = await checkQuizAttempted();
-        if (attempted) {
-          setQuizAttempted(true);
-        } else {
-          setTimeLeft(30);
-        }
-        await fetchUserData();
+useEffect(() => {
+  const checkQuizStatus = async () => {
+    setLoading(true);
+    fetchTodayQuiz(); // This now sets the daily title
+    if (auth.currentUser) {
+      const attempted = await checkQuizAttempted();
+      if (attempted) {
+        setQuizAttempted(true);
+      } else {
+        setTimeLeft(30);
       }
-      setLoading(false);
-    };
-    checkQuizStatus();
-  }, [auth.currentUser]);
+      await fetchUserData();
+    }
+    setLoading(false);
+  };
+  checkQuizStatus();
+}, [auth.currentUser]);
 
   useEffect(() => {
     let timer;
@@ -412,15 +438,18 @@ const DailyQuiz = ({ onClose }) => {
     return now.toISOString().split("T")[0];
   };
 
-  const fetchTodayQuiz = () => {
-    const startDate = new Date("2024-08-18"); // Set a fixed start date
-    const today = new Date();
-    const daysSinceStart = Math.floor(
-      (today - startDate) / (1000 * 60 * 60 * 24),
-    );
-    const quizIndex = daysSinceStart % quizData.length;
-    setQuiz(quizData[quizIndex]);
-  };
+const fetchTodayQuiz = () => {
+  const startDate = new Date("2024-08-18"); // Set a fixed start date
+  const today = new Date();
+  const daysSinceStart = Math.floor(
+    (today - startDate) / (1000 * 60 * 60 * 24)
+  );
+  const quizIndex = daysSinceStart % quizData.length;
+  const titleIndex = daysSinceStart % dailyTitles.length;
+  
+  setDailyTitle(dailyTitles[titleIndex]);
+  setQuiz(quizData[quizIndex]);
+};
 
   const checkQuizAttempted = async () => {
     const user = auth.currentUser;
@@ -459,7 +488,7 @@ const DailyQuiz = ({ onClose }) => {
     setQuizResult("Time's up");
     setQuizAttempted(true);
     setShowInitialResult(true);
-    updateUserData(false, true); // Add a parameter to indicate time-up
+    updateUserData(false, true); 
   };
 
   const updateUserData = async (isCorrect, isTimeUp = false) => {
@@ -570,7 +599,7 @@ const DailyQuiz = ({ onClose }) => {
     <PopupOverlay>
       <PopupContent>
         <CloseButton onClick={onClose}>&times;</CloseButton>
-        <Title>Pixel Perfect</Title>
+        {dailyTitle && <Title>{dailyTitle}</Title>}
 
         <QuizCard>
           {loading ? (
