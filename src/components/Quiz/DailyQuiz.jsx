@@ -296,19 +296,17 @@ const PopupOverlay = styled.div`
 `;
 
 const PopupContent = styled(Container)`
-  position: relative;
+  position: fixed;
   max-height: 90vh;
   overflow-y: auto;
   width: 90%;
   max-width: 600px;
   margin-top: 20px;
 
-  @media (max-height: 700px) {
-    max-height: 95vh;
-  }
+
 
   @media (max-width: 480px) {
-    width: 95%;
+    width: 95%; 
     padding: 1rem;
   }
 `;
