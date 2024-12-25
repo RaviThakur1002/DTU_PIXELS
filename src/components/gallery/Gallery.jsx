@@ -136,7 +136,7 @@ const Gallery = ({ userName = null, isProfile = false }) => {
 
   return (
     <div className="bg-black">
-      {!isLoggedIn && (<LoginModal/>)}
+      {/* {!isLoggedIn && (<LoginModal/>)} */}
       <div className="bg-gradient-to-b from-[#000000] to-[#171717] rounded-lg py-10">
         <div className="container mx-auto flex flex-col items-center justify-center">
           <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-[#6528d7] via-[#c638ab] to-[#b00bef] text-transparent bg-clip-text">
