@@ -8,10 +8,10 @@ const LoadingSpinner = ({ quote = "Whispering to the pixels 💜" }) => {
         <Oval
           height={80}
           width={80}
-          color="#cba6f7"  // Match with the text color from the HomeScreen
+          color="#cba6f7"  
           visible={true}
           ariaLabel="oval-loading"
-          secondaryColor="#b00bef" // Match with the gradient color from the HomeScreen
+          secondaryColor="#b00bef" 
           strokeWidth={2}
           strokeWidthSecondary={2}
         />

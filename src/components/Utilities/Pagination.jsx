@@ -18,7 +18,7 @@ const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage, act
 
   const activeButtonClass = activeColor 
     ? `bg-${activeColor} text-white` 
-    : "bg-[#6528d7] text-white"; // Default active color matching HomeScreen
+    : "bg-[#6528d7] text-white";
 
   return (
     <nav className="flex items-center justify-center mt-8">

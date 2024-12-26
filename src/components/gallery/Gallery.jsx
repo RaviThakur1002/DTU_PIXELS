@@ -11,7 +11,6 @@ import LoadingSpinner from "../Utilities/LoadingSpinner.jsx";
 import { useGallery } from "../contexts/GalleryContext.jsx";
 import "./Gallery.css";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import LoginModal from "../Utilities/LoginModal.jsx";
 
 const Images = lazy(() => import("./Images"));
 

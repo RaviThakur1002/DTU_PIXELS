@@ -86,7 +86,6 @@ function PerContestPage() {
 
       const now = new Date();
 
-      // Find the next upcoming event
       const nextEvent = timeEvents.find((event) => event.time > now);
 
       if (nextEvent) {
@@ -100,7 +99,6 @@ function PerContestPage() {
     }
   }, [contestData, currentTime]);
 
-  //for countdown
   useEffect(() => {
     if (contestData) {
       const contestStartTime = new Date(

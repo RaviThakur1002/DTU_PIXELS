@@ -56,10 +56,7 @@ function RemoveContest({ contestId }) {
 
       const highestIdRef = ref(db, `highestContestId`);
       await runTransaction(highestIdRef, (current)=>{
-        if(current===contestId){
-          return current-1;
-        }
-        return current;
+        return Math.max(0, current-1);
       })
 
       setMessageWithTimer("Contest removed successfully", "success");

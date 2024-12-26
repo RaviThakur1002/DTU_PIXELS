@@ -36,11 +36,8 @@ function Profile() {
       try {
         await roleService.setRole(userId, "admin");
       } catch (error) {
-        // Handle error
       }
-    } else {
-      // Handle lack of permission
-    }
+    } 
   };
 
   if (isLoading) {

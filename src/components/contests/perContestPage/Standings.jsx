@@ -5,34 +5,33 @@ import Pagination from '../../Utilities/Pagination';
 function Standings({ contestId }) {
   const [submissions, setSubmissions] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage] = useState(10); 
+  const [postsPerPage] = useState(10);
 
-useEffect(() => {
-  const fetchSubmissions = async () => {
-    const db = getDatabase();
-    const contestRef = ref(db, `contests/${contestId}/entries`);
-    const snapshot = await get(contestRef);
-    if (snapshot.exists()) {
-      const submissionsData = snapshot.val();
-      const sortedSubmissions = Object.entries(submissionsData)
-        .map(([submissionId, data]) => ({ submissionId, ...data }))
-        .sort((a, b) => {
-          if (a.isWinner && !b.isWinner) return -1;
-          if (!a.isWinner && b.isWinner) return 1;
-          if (b.voteCount !== a.voteCount) {
-            return b.voteCount - a.voteCount;
-          }
-          return a.timestamp - b.timestamp;
-        });
-      setSubmissions(sortedSubmissions);
-    } else {
-      console.log('No submissions found');
-    }
-  };
-  fetchSubmissions();
-}, [contestId]);
+  useEffect(() => {
+    const fetchSubmissions = async () => {
+      const db = getDatabase();
+      const contestRef = ref(db, `contests/${contestId}/entries`);
+      const snapshot = await get(contestRef);
+      if (snapshot.exists()) {
+        const submissionsData = snapshot.val();
+        const sortedSubmissions = Object.entries(submissionsData)
+          .map(([submissionId, data]) => ({ submissionId, ...data }))
+          .sort((a, b) => {
+            if (a.isWinner && !b.isWinner) return -1;
+            if (!a.isWinner && b.isWinner) return 1;
+            if (b.voteCount !== a.voteCount) {
+              return b.voteCount - a.voteCount;
+            }
+            return a.timestamp - b.timestamp;
+          });
+        setSubmissions(sortedSubmissions);
+      } else {
+        console.log('No submissions found');
+      }
+    };
+    fetchSubmissions();
+  }, [contestId]);
 
-  // Get current submissions
   const indexOfLastSubmission = currentPage * postsPerPage;
   const indexOfFirstSubmission = indexOfLastSubmission - postsPerPage;
   const currentSubmissions = submissions.slice(indexOfFirstSubmission, indexOfLastSubmission);
@@ -49,7 +48,7 @@ useEffect(() => {
               <th className="w-1/3 px-6 py-3 text-center text-xs font-medium text-[#cba6f7] uppercase tracking-wider">Likes</th>
             </tr>
           </thead>
-         <tbody className="divide-y divide-[#2c2c2e]">
+          <tbody className="divide-y divide-[#2c2c2e]">
             {currentSubmissions.map((submission, index) => (
               <tr key={submission.submissionId} className={index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'}>
                 <td className="w-1/3 px-6 py-4 whitespace-nowrap">
@@ -70,10 +69,10 @@ useEffect(() => {
           </tbody>
         </table>
       </div>
-{submissions.length === 0 && (
+      {submissions.length === 0 && (
         <p className="text-center text-[#cba6f7] mt-4">No submissions found.</p>
       )}
-      
+
       {submissions.length > postsPerPage && (
         <Pagination
           totalPosts={submissions.length}
